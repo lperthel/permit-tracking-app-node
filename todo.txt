@@ -1,8 +1,14 @@
 Impl styling
+  - all products 
+    - style delete and update buttons
+    - do a table
+
+Template
+  - change new product to template based form
 
 Impl Validation
-- validate fields for create (template)
-- validate fields for update (reactive)
+- validate fields for create (template) / do error stlying
+- validate fields for update (reactive) / do error stlying
 
 
 Imlp error handling 

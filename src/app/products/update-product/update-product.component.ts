@@ -1,8 +1,15 @@
-import { Component, input, OnInit } from '@angular/core';
+import {
+  Component,
+  input,
+  OnInit,
+  TemplateRef,
+  viewChild,
+} from '@angular/core';
 import { Product } from '../product/product.model';
 import { ProductService } from '../product/product.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-update-product',
@@ -16,8 +23,13 @@ export class UpdateProductComponent implements OnInit {
   foundProduct: Product | undefined;
   form!: FormGroup;
   writeFailed: boolean;
+  modal = viewChild.required<TemplateRef<any>>('content');
 
-  constructor(private productService: ProductService, private router: Router) {
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private modalService: NgbModal
+  ) {
     this.writeFailed = false;
   }
 
@@ -38,9 +50,24 @@ export class UpdateProductComponent implements OnInit {
         quantity: new FormControl(this.product.quantity),
       });
     }
+    this.open(this.modal());
   }
 
-  onSubmit() {
+  open(content: TemplateRef<any>) {
+    this.modalService
+      .open(content, { ariaLabelledBy: 'modal-basic-title' })
+      .result.then(
+        (result) => {
+          this.createProduct();
+          this.router.navigateByUrl('/');
+        },
+        (reason) => {
+          this.router.navigateByUrl('/');
+        }
+      );
+  }
+
+  createProduct() {
     const newProduct: Product = {
       id: this.product.id,
       name: this.form.value.name,
