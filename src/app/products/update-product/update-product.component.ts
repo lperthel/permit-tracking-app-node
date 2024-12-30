@@ -49,12 +49,16 @@ export class UpdateProductComponent implements OnInit {
       quantity: parseInt(this.form.value.quantity),
     };
 
-    this.productService.updateProduct(newProduct).subscribe({
-      error: (err) => {
-        this.writeFailed = true;
-        console.log(err);
-      },
-    });
+    const subscription = this.productService
+      .updateProduct(newProduct)
+      .subscribe({
+        error: (err) => {
+          this.writeFailed = true;
+          console.log(err);
+        },
+      });
+
+    this.productService.closeConnection(subscription);
 
     if (this.writeFailed) {
       this.writeFailed = false;

@@ -3,9 +3,6 @@ import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { Product } from './product.model';
 
-@Injectable({
-  providedIn: 'root',
-})
 @Injectable({ providedIn: 'root' })
 export class ProductService {
   private apiServer = 'http://localhost:3000';
@@ -14,10 +11,10 @@ export class ProductService {
       'Content-Type': 'application/json',
     }),
   };
-  // products: Product[] = [];
+
   products = signal<Product[]>([]);
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private destroyRef: DestroyRef) {}
 
   createProduct(product: Product): Observable<Product> {
     return this.httpClient.post<Product>(
@@ -54,5 +51,9 @@ export class ProductService {
       product,
       this.httpOptions
     );
+  }
+
+  closeConnection(sub: Subscription) {
+    this.destroyRef.onDestroy(() => sub.unsubscribe());
   }
 }

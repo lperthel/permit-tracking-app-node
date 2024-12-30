@@ -1,29 +1,6 @@
 {
   "products": [
     {
-      "id": "6",
-      "name": "Generic Wooden Cheese",
-      "description": "aoeuaoeu",
-      "price": "489.00",
-      "quantity": 86401
-    },
-    {
-      "id": "7",
-      "name": "Generic Rubber Shirt",
-      "description": "Sint eligendi odio similique voluptates et recusandae. Vel nobis incidunt.",
-      "price": "685.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
-      "quantity": 94164
-    },
-    {
-      "id": "8",
-      "name": "Gorgeous Cotton Towels",
-      "description": "Eos adipisci a dicta magnam quia dolore. Veritatis est id hic aspernatur iusto ut. Ab voluptatibus aut debitis corrupti occaecati tempore. Commodi quasi optio et. Omnis quos ut alias provident. Quis qui ut aut nobis.",
-      "price": "424.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
-      "quantity": 63258
-    },
-    {
       "id": "9",
       "name": "Unbranded Granite Chicken",
       "description": "Nemo illum consectetur veritatis ut totam qui voluptas eligendi. Nam vel perferendis quae aut. Est veritatis voluptatem et totam. Ut rerum expedita necessitatibus sed quisquam eius minima voluptatem. Saepe amet in omnis eum.",
@@ -2360,18 +2337,11 @@
       "quantity": 92283
     },
     {
-      "id": "",
+      "id": "ef9f510f-9e83-80a1-866b-0443397f8e4d",
       "name": "aoeu",
-      "description": "aoeu",
-      "price": "123.00",
-      "quantity": 1
-    },
-    {
-      "id": "",
-      "name": "aoeu",
-      "description": "aoeu",
-      "price": "123.00",
-      "quantity": 1
+      "description": "....",
+      "price": "12.11",
+      "quantity": 4
     }
   ]
 }

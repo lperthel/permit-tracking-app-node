@@ -24,12 +24,17 @@ export class AllProductsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.refreshProductsFromDB();
+  }
+
+  refreshProductsFromDB() {
     const sub = this.productService.requestAllProducts.subscribe({
       next: (resp) => {
         this.productService.products.set(resp);
       },
       error: (err) => console.log(err),
     });
+    this.productService.closeConnection(sub);
   }
 
   onUpdate(productId: string) {
@@ -37,12 +42,14 @@ export class AllProductsComponent implements OnInit {
   }
 
   onDelete(productId: string) {
-    this.productService.deletProduct(productId).subscribe({
+    const sub = this.productService.deletProduct(productId).subscribe({
       error: (err) => {
         this.writeFailed = true;
         console.log(err);
       },
     });
+
+    this.productService.closeConnection(sub);
 
     if (this.writeFailed) {
       this.writeFailed = false;

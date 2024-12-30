@@ -1,13 +1,15 @@
-do routerlink for update button
-when component load's make a request for the product id and save a copy.
-build update menu and display it
-prefill fields with update info
-change some data
-press submit button
-call handler 
-in handler, pdate the product it db
-remove the product array logic
-route back to main page on handler completion
-change new product to button
+Impl styling
 
-do error handling and test
+Impl Validation
+- validate fields for create (template)
+- validate fields for update (reactive)
+
+
+Imlp error handling 
+- failed create
+- failed delete
+- failed get product
+- failed update products
+
+
+test

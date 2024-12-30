@@ -1,5 +1,14 @@
 <div>
-  <a routerLink="/new-product">New Product</a>
+  <button type="button" class="btn btn-primary" [routerLink]="'/new-product'">
+    New Product
+  </button>
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="refreshProductsFromDB()"
+  >
+    Refresh Products from DB
+  </button>
 </div>
 <div>
   <router-outlet />
