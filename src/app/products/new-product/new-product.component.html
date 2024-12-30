@@ -1,0 +1,35 @@
+<div></div>
+<dialog open>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label for="name">Name</label>
+    <input id="name" formControlName="name" />
+    <label for="name">Description</label>
+    <input id="name" formControlName="description" />
+    <label for="name">Price</label>
+    <input id="name" formControlName="price" />
+    <label for="name">Quantity</label>
+    <input id="name" formControlName="quantity" />
+    <button type="submit">Submit</button>
+    <button type="button" (click)="onCancel()">Cancel</button>
+  </form>
+
+  <!-- <form #updateForm="ngForm" (ngSumit)="onSubmit(updateForm)">
+    <label>
+      Name
+      <input ngModel name="name" #name="ngModel" />
+    </label>
+    <label>
+      Description
+      <input ngModel name="desc" #desc="ngModel" />
+    </label>
+    <label>
+      Price
+      <input ngModel name="price" #price="ngModel" />
+    </label>
+    <label>
+      Quantity
+      <input ngModel name="quanity" #quantity="ngModel" />
+    </label>
+    <button type="submit">Submit Updates</button>
+  </form> -->
+</dialog>

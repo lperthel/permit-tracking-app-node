@@ -1,0 +1,27 @@
+<div></div>
+<dialog open>
+  <!-- @if(foundProduct){ -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>
+      Name
+      <input name="name" formControlName="name" />
+    </label>
+    <label>
+      Description
+      <input name="description" formControlName="description" />
+    </label>
+    <label>
+      Price
+      <input name="price" formControlName="price" />
+    </label>
+    <label>
+      Quantity
+      <input name="quanity" formControlName="quantity" />
+    </label>
+    <button type="submit">Submit Updates</button>
+  </form>
+  <!-- } @else{
+  <p>Error occured</p>
+  <button [routerLink]="'/'">Go Back</button>
+  } -->
+</dialog>

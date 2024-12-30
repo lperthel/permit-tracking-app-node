@@ -1,0 +1,32 @@
+<div>
+  <a routerLink="/new-product">New Product</a>
+</div>
+<div>
+  <router-outlet />
+</div>
+<table role="table">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Description</th>
+      <th scope="col">Price</th>
+      <th scope="col">Quantity</th>
+      <th scope="col"><span class="sr-only">Delete Buttons</span></th>
+      <th scope="col"><span class="sr-only">Update Buttons</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for(product of productService.products();track product.id){
+    <tr>
+      <th scope="row">
+        {{ product.name }}
+      </th>
+      <td>{{ product.description }}</td>
+      <td>{{ product.price }}</td>
+      <td>{{ product.quantity }}</td>
+      <td><button (click)="onDelete(product.id)">Delete</button></td>
+      <td><button [routerLink]="['/update', product.id]">Update</button></td>
+    </tr>
+    }
+  </tbody>
+</table>
