@@ -57,3 +57,9 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+References:
+
+- https://material.angular.io/components/table/overview
+- https://medium.com/@sehban.alam/1-of-the-best-ways-to-integrate-pagination-in-angular-2146fe699a1e
+- https://www.angularjswiki.com/material/mat-table-pagination/

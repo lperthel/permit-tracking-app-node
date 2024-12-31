@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { DestroyRef, inject, Injectable, signal } from '@angular/core';
+import { DestroyRef, Injectable, signal } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { Product } from './product.model';
 
