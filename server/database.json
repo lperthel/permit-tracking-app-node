@@ -1,27 +1,11 @@
 {
   "products": [
     {
-      "id": "9",
-      "name": "aoeu Granite Chicken",
-      "description": "Nemo illum consectetur veritatis ut totam qui voluptas eligendi. Nam vel perferendis quae aut. Est veritatis voluptatem et totam. Ut rerum expedita necessitatibus sed quisquam eius minima voluptatem. Saepe amet in omnis eum.",
-      "price": "997.00",
-      "quantity": 105
-    },
-    {
       "id": "10",
       "name": "Refined Concrete Chair",
       "description": "Consectetur laudantium similique vel ut modi. Nihil vel ut amet. Omnis dolores ad. Tempora libero totam quasi rerum ut aut adipisci dolor. Nihil suscipit autem aut nihil enim quaerat consectetur delectus est.",
-      "price": "967.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
+      "price": "977.00",
       "quantity": 89983
-    },
-    {
-      "id": "11",
-      "name": "Gorgeous Granite Bacon",
-      "description": "Corrupti aperiam laboriosam rem harum. Ut iure deleniti neque corrupti voluptas. Aut vero nulla iure alias esse.",
-      "price": "602.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
-      "quantity": 55817
     },
     {
       "id": "12",
@@ -2248,14 +2232,6 @@
       "quantity": 57206
     },
     {
-      "id": "290",
-      "name": "Fantastic Steel Salad",
-      "description": "Qui est voluptatem fugit laborum blanditiis rerum. Accusamus voluptatem rem et blanditiis quia.",
-      "price": "947.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
-      "quantity": 58180
-    },
-    {
       "id": "291",
       "name": "Practical Metal Bike",
       "description": "Explicabo eveniet dolores fugiat aut voluptas laborum. Qui molestiae voluptas assumenda nemo amet. Nulla error dolore reiciendis neque excepturi sint non quam. Impedit aut impedit illum nemo voluptas quia ut ut. Est exercitationem blanditiis consequatur aliquam modi repellendus aut consequatur ducimus. Ut deleniti consequuntur et sint quibusdam ratione voluptas.",
@@ -2326,21 +2302,6 @@
       "price": "79.00",
       "imageUrl": "https://source.unsplash.com/1600x900/?product",
       "quantity": 34941
-    },
-    {
-      "id": "300",
-      "name": "Ergonomic Plastic Chicken",
-      "description": "Ducimus laborum et voluptas vel magni voluptatem voluptatem. Id dolores quae. Ipsum et accusamus voluptas et dolor in rem. Nisi beatae dolor mollitia aspernatur recusandae sunt. Aut accusamus doloremque.",
-      "price": "627.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
-      "quantity": 92283
-    },
-    {
-      "id": "ef9f510f-9e83-80a1-866b-0443397f8e4d",
-      "name": "aoeu",
-      "description": "....",
-      "price": "12.11",
-      "quantity": 4
     }
   ]
 }
