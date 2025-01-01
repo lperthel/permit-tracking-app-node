@@ -8,10 +8,14 @@
       (click)="modal.dismiss('Cross click')"
     ></button>
   </div>
-  <div class="modal-body">
-    <form [formGroup]="form" class="needs-validation">
+  <form
+    [formGroup]="form"
+    class="needs-validation"
+    (ngSubmit)="createProduct()"
+  >
+    <div class="modal-body">
       <div class="form-group">
-        <label for="name">Name</label>
+        <label for="name">Name*</label>
         <div class="input-group has-validation">
           <input id="name" class="form-control" formControlName="name" />
         </div>
@@ -20,7 +24,7 @@
           <p class="lp-control-error">{{ errorMessages.invalidName }}</p>
         </div>
         }
-        <label for="description">Description</label>
+        <label for="description">Description*</label>
         <div class="input-group has-validation">
           <input
             id="description"
@@ -33,7 +37,7 @@
           <p class="lp-control-error">{{ errorMessages.invalidDescription }}</p>
         </div>
         }
-        <label for="price">Price</label>
+        <label for="price">Price*</label>
         <div class="input-group has-validation">
           <input id="price" class="form-control" formControlName="price" />
         </div>
@@ -42,7 +46,7 @@
           <p class="lp-control-error">{{ errorMessages.invalidPrice }}</p>
         </div>
         }
-        <label for="quantity">Quantity</label>
+        <label for="quantity">Quantity*</label>
         <div class="input-group has-validation">
           <input
             id="quantity"
@@ -56,15 +60,10 @@
         </div>
         }
       </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-outline-secondary"
-      (click)="modal.close('Save click')"
-    >
-      Save
-    </button>
-  </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-outline-secondary">Submit</button>
+    </div>
+  </form>
 </ng-template>

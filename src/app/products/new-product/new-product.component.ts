@@ -120,6 +120,11 @@ export class NewProductComponent implements OnInit {
 
   createProduct() {
     console.log('form submitted');
+    this.form.markAllAsTouched();
+
+    if (this.form.invalid) {
+      return;
+    }
 
     const product: Product = {
       id: UUID.UUID(),
@@ -128,16 +133,19 @@ export class NewProductComponent implements OnInit {
       price: this.form.value.price || '',
       quantity: parseInt(this.form.value.quantity || '0', 10),
     };
+
     const sub = this.productService.createProduct(product).subscribe({
       next: (val) => {
         this.productService.products.update((oldProducts) => [
           ...oldProducts,
           product,
         ]);
+        this.modalService.dismissAll('save-click');
       },
     });
     this.productService.closeConnection(sub);
   }
+
   onCancel() {
     this.router.navigateByUrl('/');
   }
