@@ -1,4 +1,10 @@
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Product } from '../product/product.model';
 import { ProductService } from '../product/product.service';
 import { UUID } from 'angular2-uuid';
@@ -26,21 +32,27 @@ import {
   styleUrl: './new-product.component.css',
 })
 export class NewProductComponent implements OnInit {
-  modal = viewChild.required<TemplateRef<any>>('content');
-  closeResult: WritableSignal<string> = signal('');
-
-  form = new FormGroup({
-    name: new FormControl(''),
-    description: new FormControl(''),
-    price: new FormControl(''),
-    quantity: new FormControl(''),
-  });
-
   constructor(
     private modalService: NgbModal,
     private productService: ProductService,
     private router: Router
   ) {}
+  modal = viewChild.required<TemplateRef<any>>('content');
+  closeResult: WritableSignal<string> = signal('');
+  private fb = inject(NonNullableFormBuilder);
+
+  form = this.fb.group({
+    name: [''],
+    description: [''],
+    price: [''],
+    quantity: [''],
+  });
+
+  get invalidName() {
+    return (
+      this.form.controls['name'].touched && this.form.controls['name'].invalid
+    );
+  }
 
   ngOnInit(): void {
     this.open(this.modal());
