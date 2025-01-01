@@ -2,6 +2,15 @@ import { inject } from '@angular/core';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 
 export class ProductForm {
+  errorMessages = {
+    invalidName: 'Name is required and must be less than 256 characters',
+    invalidDescription:
+      'Description is required and must be less than 256 characters',
+    invalidPrice:
+      'Price is required, must be less than 256 characters, and follow the formatting of USD.',
+    invalidQuantity:
+      'Quantity is required, must be less than 256 characters, and must be numeric',
+  };
   private fb = inject(NonNullableFormBuilder);
 
   patterns = {

@@ -34,16 +34,6 @@ import { ProductForm } from '../product-form.model';
   styleUrl: './new-product.component.css',
 })
 export class NewProductComponent implements OnInit {
-  errorMessages = {
-    invalidName: 'Name is required and must be less than 256 characters',
-    invalidDescription:
-      'Description is required and must be less than 256 characters',
-    invalidPrice:
-      'Price is required, must be less than 256 characters, and follow the formatting of USD.',
-    invalidQuantity:
-      'Quantity is required, must be less than 256 characters, and must be numeric',
-  };
-
   constructor(
     private modalService: NgbModal,
     private productService: ProductService,
