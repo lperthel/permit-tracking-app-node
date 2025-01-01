@@ -9,20 +9,52 @@
     ></button>
   </div>
   <div class="modal-body">
-    <form [formGroup]="form">
+    <form [formGroup]="form" class="needs-validation">
       <div class="form-group">
         <label for="name">Name</label>
-        <input id="name" class="form-control" formControlName="name" />
+        <div class="input-group has-validation">
+          <input id="name" class="form-control" formControlName="name" />
+        </div>
+        @if(invalidName){
+        <div>
+          <p class="lp-control-error">{{ errorMessages.invalidName }}</p>
+        </div>
+        }
         <label for="description">Description</label>
-        <input
-          id="description"
-          class="form-control"
-          formControlName="description"
-        />
+        <div class="input-group has-validation">
+          <input
+            id="description"
+            class="form-control"
+            formControlName="description"
+          />
+        </div>
+        @if(invalidDescription){
+        <div>
+          <p class="lp-control-error">{{ errorMessages.invalidDescription }}</p>
+        </div>
+        }
         <label for="price">Price</label>
-        <input id="price" class="form-control" formControlName="price" />
+        <div class="input-group has-validation">
+          <input id="price" class="form-control" formControlName="price" />
+        </div>
+        @if(invalidPrice){
+        <div>
+          <p class="lp-control-error">{{ errorMessages.invalidPrice }}</p>
+        </div>
+        }
         <label for="quantity">Quantity</label>
-        <input id="quantity" class="form-control" formControlName="quantity" />
+        <div class="input-group has-validation">
+          <input
+            id="quantity"
+            class="form-control"
+            formControlName="quantity"
+          />
+        </div>
+        @if(invalidQuanity){
+        <div>
+          <p class="lp-control-error">{{ errorMessages.invalidQuantity }}</p>
+        </div>
+        }
       </div>
     </form>
   </div>

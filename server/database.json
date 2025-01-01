@@ -2302,6 +2302,20 @@
       "price": "79.00",
       "imageUrl": "https://source.unsplash.com/1600x900/?product",
       "quantity": 34941
+    },
+    {
+      "id": "b46d4428-5414-efe3-dc0a-a1842b1b5eb5",
+      "name": "aoeu",
+      "description": "",
+      "price": "",
+      "quantity": 0
+    },
+    {
+      "id": "aed0e0ed-1c59-ffa2-60f3-d7f22f1fa5d5",
+      "name": "",
+      "description": "",
+      "price": "",
+      "quantity": 0
     }
   ]
 }

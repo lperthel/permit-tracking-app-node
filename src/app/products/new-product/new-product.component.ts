@@ -4,6 +4,7 @@ import {
   FormGroup,
   NonNullableFormBuilder,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { Product } from '../product/product.model';
 import { ProductService } from '../product/product.service';
@@ -32,6 +33,16 @@ import {
   styleUrl: './new-product.component.css',
 })
 export class NewProductComponent implements OnInit {
+  errorMessages = {
+    invalidName: 'Name is required and must be less than 256 characters',
+    invalidDescription:
+      'Description is required and must be less than 256 characters',
+    invalidPrice:
+      'Price is required, must be less than 256 characters, and follow the formatting of USD.',
+    invalidQuantity:
+      'Quantity is required, must be less than 256 characters, and must be numeric',
+  };
+
   constructor(
     private modalService: NgbModal,
     private productService: ProductService,
@@ -41,16 +52,50 @@ export class NewProductComponent implements OnInit {
   closeResult: WritableSignal<string> = signal('');
   private fb = inject(NonNullableFormBuilder);
 
+  patterns = {
+    price: '^[0-9]{1,253}(\\.[0-9]{1,2})?$',
+    quantity: '^[0-9]{1,255}$',
+  };
+
   form = this.fb.group({
-    name: [''],
-    description: [''],
-    price: [''],
-    quantity: [''],
+    name: ['', [Validators.required, Validators.maxLength(255)]],
+    description: ['', Validators.required, Validators.maxLength(255)],
+    price: [
+      '',
+      [
+        Validators.required,
+        Validators.maxLength(255),
+        Validators.pattern(this.patterns.price),
+      ],
+    ],
+    quantity: [
+      '',
+      [
+        Validators.required,
+        Validators.maxLength(255),
+        Validators.pattern(this.patterns.quantity),
+      ],
+    ],
   });
 
   get invalidName() {
+    return this.form.controls.name.touched && this.form.controls.name.invalid;
+  }
+
+  get invalidDescription() {
     return (
-      this.form.controls['name'].touched && this.form.controls['name'].invalid
+      this.form.controls.description.touched &&
+      this.form.controls.description.invalid
+    );
+  }
+
+  get invalidPrice() {
+    return this.form.controls.price.touched && this.form.controls.price.invalid;
+  }
+
+  get invalidQuanity() {
+    return (
+      this.form.controls.quantity.touched && this.form.controls.quantity.invalid
     );
   }
 
@@ -75,6 +120,7 @@ export class NewProductComponent implements OnInit {
 
   createProduct() {
     console.log('form submitted');
+
     const product: Product = {
       id: UUID.UUID(),
       name: this.form.value.name || '',
@@ -83,7 +129,12 @@ export class NewProductComponent implements OnInit {
       quantity: parseInt(this.form.value.quantity || '0', 10),
     };
     const sub = this.productService.createProduct(product).subscribe({
-      next: (val) => console.log(val),
+      next: (val) => {
+        this.productService.products.update((oldProducts) => [
+          ...oldProducts,
+          product,
+        ]);
+      },
     });
     this.productService.closeConnection(sub);
   }

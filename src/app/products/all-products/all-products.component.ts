@@ -10,10 +10,17 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-all-products',
-  imports: [RouterOutlet, RouterLink, MatTableModule, MatPaginatorModule],
+  imports: [
+    CurrencyPipe,
+    RouterOutlet,
+    RouterLink,
+    MatTableModule,
+    MatPaginatorModule,
+  ],
   templateUrl: './all-products.component.html',
   styleUrl: './all-products.component.css',
 })
