@@ -9,7 +9,7 @@
     ></button>
   </div>
   <form
-    [formGroup]="form"
+    [formGroup]="productForm.form"
     class="needs-validation"
     (ngSubmit)="createProduct()"
   >
@@ -19,7 +19,7 @@
         <div class="input-group has-validation">
           <input id="name" class="form-control" formControlName="name" />
         </div>
-        @if(invalidName){
+        @if(productForm.invalidName){
         <div>
           <p class="lp-control-error">{{ errorMessages.invalidName }}</p>
         </div>
@@ -32,7 +32,7 @@
             formControlName="description"
           />
         </div>
-        @if(invalidDescription){
+        @if(productForm.invalidDescription){
         <div>
           <p class="lp-control-error">{{ errorMessages.invalidDescription }}</p>
         </div>
@@ -41,7 +41,7 @@
         <div class="input-group has-validation">
           <input id="price" class="form-control" formControlName="price" />
         </div>
-        @if(invalidPrice){
+        @if(productForm.invalidPrice){
         <div>
           <p class="lp-control-error">{{ errorMessages.invalidPrice }}</p>
         </div>
@@ -54,7 +54,7 @@
             formControlName="quantity"
           />
         </div>
-        @if(invalidQuanity){
+        @if(productForm.invalidQuanity){
         <div>
           <p class="lp-control-error">{{ errorMessages.invalidQuantity }}</p>
         </div>
