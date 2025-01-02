@@ -10,6 +10,7 @@ import { ProductService } from '../product/product.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProductForm } from '../product-form.model';
 
 @Component({
   selector: 'app-update-product',
@@ -21,9 +22,9 @@ export class UpdateProductComponent implements OnInit {
   productId = input.required<string>();
   private product!: Product;
   foundProduct: Product | undefined;
-  form!: FormGroup;
   writeFailed: boolean;
   modal = viewChild.required<TemplateRef<any>>('content');
+  productForm = new ProductForm();
 
   constructor(
     private productService: ProductService,
@@ -43,11 +44,11 @@ export class UpdateProductComponent implements OnInit {
       console.error('could not get product for id ' + this.productId);
     } else {
       this.product = this.foundProduct;
-      this.form = new FormGroup({
-        name: new FormControl(this.product.name),
-        description: new FormControl(this.product.description),
-        price: new FormControl(this.product.price),
-        quantity: new FormControl(this.product.quantity),
+      this.productForm.form.patchValue({
+        name: this.product.name,
+        description: this.product.description,
+        price: this.product.price,
+        quantity: this.product.quantity.toString(),
       });
     }
     this.open(this.modal());
@@ -58,7 +59,7 @@ export class UpdateProductComponent implements OnInit {
       .open(content, { ariaLabelledBy: 'modal-basic-title' })
       .result.then(
         (result) => {
-          this.createProduct();
+          this.updateProduct();
           this.router.navigateByUrl('/');
         },
         (reason) => {
@@ -67,18 +68,22 @@ export class UpdateProductComponent implements OnInit {
       );
   }
 
-  createProduct() {
+  updateProduct() {
+    if (this.productForm.form.invalid) {
+      return;
+    }
     const newProduct: Product = {
       id: this.product.id,
-      name: this.form.value.name,
-      description: this.form.value.description,
-      price: this.form.value.price,
-      quantity: parseInt(this.form.value.quantity),
+      name: this.productForm.form.value['name']!,
+      description: this.productForm.form.value['description']!,
+      price: this.productForm.form.value.price!,
+      quantity: parseInt(this.productForm.form.value.quantity!),
     };
 
     const subscription = this.productService
       .updateProduct(newProduct)
       .subscribe({
+        next: (resp) => (this.writeFailed = false),
         error: (err) => {
           this.writeFailed = true;
           console.log(err);
@@ -90,12 +95,16 @@ export class UpdateProductComponent implements OnInit {
     if (this.writeFailed) {
       this.writeFailed = false;
     } else {
-      this.productService.products.set(
-        this.productService.products().map((oldProduct) => {
-          if (oldProduct.id === this.product.id) return newProduct;
-          else return oldProduct;
-        })
-      );
+      this.productService.products.update((products) => {
+        return products.map((oldProduct) => {
+          if (oldProduct.id === this.product.id) {
+            return newProduct;
+          } else {
+            return oldProduct;
+          }
+        });
+      });
+      this.modalService.dismissAll('save-click');
     }
 
     this.router.navigateByUrl('/');

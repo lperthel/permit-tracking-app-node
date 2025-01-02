@@ -8,74 +8,70 @@
       (click)="modal.dismiss('Cross click')"
     ></button>
   </div>
-  <div class="modal-body">
-    <form [formGroup]="form">
+  <form
+    [formGroup]="productForm.form"
+    class="needs-validation"
+    (ngSubmit)="updateProduct()"
+  >
+    <div class="modal-body">
       <div class="form-group">
-        <label for="name"> Name</label>
-        <input
-          id="name"
-          name="name"
-          class="form-control"
-          formControlName="name"
-        />
-        <label for="description"> Description</label>
-        <input
-          id="description"
-          name="description"
-          class="form-control"
-          formControlName="description"
-        />
-        <label for="price">Price</label>
-        <input
-          id="price"
-          name="price"
-          class="form-control"
-          formControlName="price"
-        />
-        <label for="quantity"> Quantity </label>
-        <input
-          id="quantity"
-          name="quanity"
-          class="form-control"
-          formControlName="quantity"
-        />
+        <label for="name">Name*</label>
+        <div class="input-group has-validation">
+          <input id="name" class="form-control" formControlName="name" />
+        </div>
+        @if(productForm.invalidName){
+        <div>
+          <p class="lp-control-error">
+            {{ productForm.errorMessages.invalidName }}
+          </p>
+        </div>
+        }
+        <label for="description">Description*</label>
+        <div class="input-group has-validation">
+          <input
+            id="description"
+            class="form-control"
+            formControlName="description"
+          />
+        </div>
+        @if(productForm.invalidDescription){
+        <div>
+          <p class="lp-control-error">
+            {{ productForm.errorMessages.invalidDescription }}
+          </p>
+        </div>
+        }
+        <label for="price">Price*</label>
+        <div class="input-group has-validation">
+          <input id="price" class="form-control" formControlName="price" />
+        </div>
+        @if(productForm.invalidPrice){
+        <div>
+          <p class="lp-control-error">
+            {{ productForm.errorMessages.invalidPrice }}
+          </p>
+        </div>
+        }
+        <label for="quantity">Quantity*</label>
+        <div class="input-group has-validation">
+          <input
+            id="quantity"
+            class="form-control"
+            formControlName="quantity"
+          />
+        </div>
+        @if(productForm.invalidQuanity){
+        <div>
+          <p class="lp-control-error">
+            {{ productForm.errorMessages.invalidQuantity }}
+          </p>
+        </div>
+        }
       </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-outline-secondary"
-      (click)="modal.close('Save click')"
-    >
-      Save
-    </button>
-  </div>
-</ng-template>
+    </div>
 
-<!-- <div></div>
-<dialog open>
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <label>
-      Name
-      <input name="name" formControlName="name" />
-    </label>
-    <label>
-      Description
-      <input name="description" formControlName="description" />
-    </label>
-    <label>
-      Price
-      <input name="price" formControlName="price" />
-    </label>
-    <label>
-      Quantity
-      <input name="quanity" formControlName="quantity" />
-    </label>
-    <button type="submit">Submit Updates</button>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-outline-secondary">Submit</button>
+    </div>
   </form>
-  } @else{
-  <p>Error occured</p>
-  <button [routerLink]="'/'">Go Back</button>
-  }
-</dialog> -->
+</ng-template>

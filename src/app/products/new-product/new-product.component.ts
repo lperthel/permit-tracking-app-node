@@ -25,6 +25,7 @@ import {
   NgbDatepickerModule,
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
+import { ProductForm } from '../product-form.model';
 
 @Component({
   selector: 'app-new-product',
@@ -33,71 +34,14 @@ import {
   styleUrl: './new-product.component.css',
 })
 export class NewProductComponent implements OnInit {
-  errorMessages = {
-    invalidName: 'Name is required and must be less than 256 characters',
-    invalidDescription:
-      'Description is required and must be less than 256 characters',
-    invalidPrice:
-      'Price is required, must be less than 256 characters, and follow the formatting of USD.',
-    invalidQuantity:
-      'Quantity is required, must be less than 256 characters, and must be numeric',
-  };
-
   constructor(
     private modalService: NgbModal,
     private productService: ProductService,
     private router: Router
   ) {}
+  productForm = new ProductForm();
   modal = viewChild.required<TemplateRef<any>>('content');
   closeResult: WritableSignal<string> = signal('');
-  private fb = inject(NonNullableFormBuilder);
-
-  patterns = {
-    price: '^[0-9]{1,253}(\\.[0-9]{1,2})?$',
-    quantity: '^[0-9]{1,255}$',
-  };
-
-  form = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(255)]],
-    description: ['', Validators.required, Validators.maxLength(255)],
-    price: [
-      '',
-      [
-        Validators.required,
-        Validators.maxLength(255),
-        Validators.pattern(this.patterns.price),
-      ],
-    ],
-    quantity: [
-      '',
-      [
-        Validators.required,
-        Validators.maxLength(255),
-        Validators.pattern(this.patterns.quantity),
-      ],
-    ],
-  });
-
-  get invalidName() {
-    return this.form.controls.name.touched && this.form.controls.name.invalid;
-  }
-
-  get invalidDescription() {
-    return (
-      this.form.controls.description.touched &&
-      this.form.controls.description.invalid
-    );
-  }
-
-  get invalidPrice() {
-    return this.form.controls.price.touched && this.form.controls.price.invalid;
-  }
-
-  get invalidQuanity() {
-    return (
-      this.form.controls.quantity.touched && this.form.controls.quantity.invalid
-    );
-  }
 
   ngOnInit(): void {
     this.open(this.modal());
@@ -120,18 +64,18 @@ export class NewProductComponent implements OnInit {
 
   createProduct() {
     console.log('form submitted');
-    this.form.markAllAsTouched();
+    this.productForm.form.markAllAsTouched();
 
-    if (this.form.invalid) {
+    if (this.productForm.form.invalid) {
       return;
     }
 
     const product: Product = {
       id: UUID.UUID(),
-      name: this.form.value.name || '',
-      description: this.form.value.description || '',
-      price: this.form.value.price || '',
-      quantity: parseInt(this.form.value.quantity || '0', 10),
+      name: this.productForm.form.value.name || '',
+      description: this.productForm.form.value.description || '',
+      price: this.productForm.form.value.price || '',
+      quantity: parseInt(this.productForm.form.value.quantity || '0', 10),
     };
 
     const sub = this.productService.createProduct(product).subscribe({
