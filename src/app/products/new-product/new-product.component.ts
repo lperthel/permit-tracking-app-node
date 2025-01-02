@@ -80,10 +80,6 @@ export class NewProductComponent implements OnInit {
 
     const sub = this.productService.createProduct(product).subscribe({
       next: (val) => {
-        this.productService.products.update((oldProducts) => [
-          ...oldProducts,
-          product,
-        ]);
         this.modalService.dismissAll('save-click');
       },
     });
