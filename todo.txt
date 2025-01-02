@@ -1,18 +1,9 @@
-Template
-  - change new product to template based form
-
-Impl Validation
-- validate fields for create (template) / do error stlying
-- validate fields for update (reactive) / do error stlying
-
-
 Imlp error handling 
 - failed create
 - failed delete
 - failed get product
 - failed update products
 
-Navgation
-- do replace url so user can't go back
+do popup modal for reflesh products from db.
 
 test

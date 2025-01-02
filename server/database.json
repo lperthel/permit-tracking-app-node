@@ -5,23 +5,7 @@
       "name": "Refined Concrete Chair",
       "description": "Consectetur laudantium similique vel ut modi. Nihil vel ut amet. Omnis dolores ad. Tempora libero totam quasi rerum ut aut adipisci dolor. Nihil suscipit autem aut nihil enim quaerat consectetur delectus est.",
       "price": "977.00",
-      "quantity": 89983
-    },
-    {
-      "id": "12",
-      "name": "Practical Rubber Towels",
-      "description": "Sit rem enim natus quasi. Modi quae illo.",
-      "price": "724.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
-      "quantity": 13403
-    },
-    {
-      "id": "13",
-      "name": "Sleek Cotton Pants",
-      "description": "Velit ut facere ut rem. Molestias id et quisquam quia ea consequuntur officia enim fugit. Quas perspiciatis velit minus porro fugit. Officia quam earum quod. Nesciunt aliquid saepe.",
-      "price": "809.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
-      "quantity": 32865
+      "quantity": 4
     },
     {
       "id": "14",
