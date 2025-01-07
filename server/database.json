@@ -1,34 +1,17 @@
 {
   "products": [
     {
-      "id": "10",
-      "name": "Refined Concrete Chair",
-      "description": "Consectetur laudantium similique vel ut modi. Nihil vel ut amet. Omnis dolores ad. Tempora libero totam quasi rerum ut aut adipisci dolor. Nihil suscipit autem aut nihil enim quaerat consectetur delectus est.",
-      "price": "977.00",
-      "quantity": 4
-    },
-    {
-      "id": "14",
-      "name": "Tasty Plastic Sausages",
-      "description": "Dolorum enim officiis deleniti. Iste eos non. Est et vel tenetur error aut exercitationem. Et saepe consequatur. Voluptas est qui nihil qui et veniam ullam.",
-      "price": "591.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
-      "quantity": 7842
-    },
-    {
       "id": "15",
-      "name": "Ergonomic Frozen Towels",
-      "description": "Architecto nisi nesciunt odit neque et quis. Vel cum pariatur accusantium culpa quia nesciunt corporis fugiat magni. Aut nobis hic voluptate voluptatem voluptatem in. Non voluptatum recusandae nemo inventore qui. Placeat quidem quis facilis nostrum incidunt quia quia qui.",
+      "name": "Ergonomic Frozen Towels1",
+      "description": "Architecto nisi",
       "price": "296.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
       "quantity": 78768
     },
     {
       "id": "16",
       "name": "Small Granite Fish",
-      "description": "Sit molestiae et est. Eius voluptatem est aliquid neque ex.",
+      "description": "Sit molestiae et est. Eius voluptatem est aliquid neque ex.3",
       "price": "224.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
       "quantity": 25451
     },
     {
@@ -68,7 +51,6 @@
       "name": "Fantastic Cotton Chicken",
       "description": "Molestiae autem eum aut fuga aliquam et dolorem et officiis. Veritatis dolorem possimus maiores commodi repellendus iusto. Minima ea eum amet ea voluptatem. At atque rerum distinctio esse dolorem quaerat. Magnam suscipit et sed sint sed consequuntur est ab laborum.",
       "price": "684.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
       "quantity": 12230
     },
     {
@@ -2286,20 +2268,6 @@
       "price": "79.00",
       "imageUrl": "https://source.unsplash.com/1600x900/?product",
       "quantity": 34941
-    },
-    {
-      "id": "b46d4428-5414-efe3-dc0a-a1842b1b5eb5",
-      "name": "aoeu",
-      "description": "",
-      "price": "",
-      "quantity": 0
-    },
-    {
-      "id": "aed0e0ed-1c59-ffa2-60f3-d7f22f1fa5d5",
-      "name": "",
-      "description": "",
-      "price": "",
-      "quantity": 0
     },
     {
       "id": "8e9bd8f0-a783-6fa5-0875-e4b6ec0401e4",

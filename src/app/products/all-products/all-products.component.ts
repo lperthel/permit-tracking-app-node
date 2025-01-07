@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, viewChild } from '@angular/core';
+import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { Product } from '../product/product.model';
 import { ProductService } from '../product/product.service';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -12,6 +12,7 @@ import {
 import { toObservable } from '@angular/core/rxjs-interop';
 import { CurrencyPipe } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
+import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-all-products',
@@ -21,6 +22,7 @@ import { RouterTestingModule } from '@angular/router/testing';
     RouterLink,
     MatTableModule,
     MatPaginatorModule,
+    NgbAlertModule,
   ],
   templateUrl: './all-products.component.html',
   styleUrl: './all-products.component.css',
@@ -37,7 +39,8 @@ export class AllProductsComponent implements OnInit {
   ];
   pageSize = 10;
   paginator = viewChild.required<MatPaginator>(MatPaginator);
-
+  restError = signal<string>('');
+  manuallyUpdateProductsSuccessful = signal<string>('');
   dataSource = new MatTableDataSource<Product>();
   productService = inject(ProductService);
   private products$ = toObservable(this.productService.products);
@@ -55,12 +58,20 @@ export class AllProductsComponent implements OnInit {
 
   constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
 
+  manuallyUpdateProductsFromDB() {
+    this.manuallyUpdateProductsSuccessful.set(
+      this.productService.successfulProductRetirevalMessage
+    );
+    this.refreshProductsFromDB();
+  }
+
   refreshProductsFromDB() {
     const sub = this.productService.requestAllProducts.subscribe({
       next: (resp) => {
         this.productService.products.set(resp);
+        this.restError.set('');
       },
-      error: (err) => console.log(err),
+      error: (err: Error) => this.restError.set(err.message),
     });
     this.productService.closeConnection(sub);
   }
@@ -71,23 +82,11 @@ export class AllProductsComponent implements OnInit {
 
   onDelete(productId: string) {
     const sub = this.productService.deletProduct(productId).subscribe({
-      error: (err) => {
-        this.writeFailed = true;
-        console.log(err);
-      },
+      next: (val) => this.restError.set(''),
+      error: (err: Error) => this.restError.set(err.message),
     });
 
     this.productService.closeConnection(sub);
-
-    if (this.writeFailed) {
-      this.writeFailed = false;
-    } else {
-      // this.productService.products.set(
-      //   this.productService
-      //     .products()
-      //     .filter((product) => product.id != productId)
-      // );
-    }
 
     this.router.navigate(['/'], {
       relativeTo: this.activatedRoute,

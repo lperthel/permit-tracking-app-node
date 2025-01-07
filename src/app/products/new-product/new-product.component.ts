@@ -20,12 +20,12 @@ import {
   WritableSignal,
 } from '@angular/core';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductForm } from '../product-form.model';
 
 @Component({
   selector: 'app-new-product',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgbAlertModule],
   templateUrl: './new-product.component.html',
   styleUrl: './new-product.component.css',
 })
@@ -77,6 +77,7 @@ export class NewProductComponent implements OnInit {
 
     const sub = this.productService.createProduct(product).subscribe({
       next: (val) => {
+        this.restError.set('');
         this.modalService.dismissAll('save-click');
       },
       error: (err: Error) => {

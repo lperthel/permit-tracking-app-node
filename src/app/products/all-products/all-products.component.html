@@ -3,16 +3,26 @@
     <button type="button" class="btn btn-primary" [routerLink]="'/new-product'">
       New Product
     </button>
-    <button
-      type="button"
-      class="btn btn-secondary"
-      (click)="refreshProductsFromDB()"
-    >
+    <button class="btn btn-secondary" (click)="manuallyUpdateProductsFromDB()">
       Refresh Products from DB
     </button>
   </div>
 </header>
 <article>
+  @if(restError()){
+  <ngb-alert [type]="'danger'" [dismissible]="false" class="mt-3">
+    {{ restError() }}
+  </ngb-alert>
+  } @if(manuallyUpdateProductsSuccessful()){
+  <ngb-alert
+    #alert
+    [type]="'success'"
+    [dismissible]="true"
+    (closed)="alert.close(); manuallyUpdateProductsSuccessful.set('')"
+  >
+    {{ manuallyUpdateProductsSuccessful() }}
+  </ngb-alert>
+  }
   <div>
     <router-outlet />
   </div>
