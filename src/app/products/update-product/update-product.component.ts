@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { Product } from '../product/product.model';
 import { ProductService } from '../product/product.service';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductForm } from '../product-form.model';
 
@@ -95,15 +95,6 @@ export class UpdateProductComponent implements OnInit {
     if (this.writeFailed) {
       this.writeFailed = false;
     } else {
-      this.productService.products.update((products) => {
-        return products.map((oldProduct) => {
-          if (oldProduct.id === this.product.id) {
-            return newProduct;
-          } else {
-            return oldProduct;
-          }
-        });
-      });
       this.modalService.dismissAll('save-click');
     }
 

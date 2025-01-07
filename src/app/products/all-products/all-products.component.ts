@@ -11,6 +11,7 @@ import {
 } from '@angular/router';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { CurrencyPipe } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
 
 @Component({
   selector: 'app-all-products',
@@ -81,11 +82,11 @@ export class AllProductsComponent implements OnInit {
     if (this.writeFailed) {
       this.writeFailed = false;
     } else {
-      this.productService.products.set(
-        this.productService
-          .products()
-          .filter((product) => product.id != productId)
-      );
+      // this.productService.products.set(
+      //   this.productService
+      //     .products()
+      //     .filter((product) => product.id != productId)
+      // );
     }
 
     this.router.navigate(['/'], {

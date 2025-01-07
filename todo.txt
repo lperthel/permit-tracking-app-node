@@ -6,4 +6,6 @@ Imlp error handling
 
 do popup modal for reflesh products from db.
 
+Change modal to after view init
+
 test
