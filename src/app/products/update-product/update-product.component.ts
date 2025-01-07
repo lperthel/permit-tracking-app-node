@@ -95,15 +95,6 @@ export class UpdateProductComponent implements OnInit {
     if (this.writeFailed) {
       this.writeFailed = false;
     } else {
-      // this.productService.products.update((products) => {
-      //   return products.map((oldProduct) => {
-      //     if (oldProduct.id === this.product.id) {
-      //       return newProduct;
-      //     } else {
-      //       return oldProduct;
-      //     }
-      //   });
-      // });
       this.modalService.dismissAll('save-click');
     }
 

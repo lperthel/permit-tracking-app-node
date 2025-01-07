@@ -20,11 +20,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 
-import {
-  ModalDismissReasons,
-  NgbDatepickerModule,
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductForm } from '../product-form.model';
 
 @Component({
@@ -42,6 +38,7 @@ export class NewProductComponent implements OnInit {
   productForm = new ProductForm();
   modal = viewChild.required<TemplateRef<any>>('content');
   closeResult: WritableSignal<string> = signal('');
+  restError = signal<string>('');
 
   ngOnInit(): void {
     this.open(this.modal());
@@ -72,15 +69,18 @@ export class NewProductComponent implements OnInit {
 
     const product: Product = {
       id: UUID.UUID(),
-      name: this.productForm.form.value.name || '',
-      description: this.productForm.form.value.description || '',
-      price: this.productForm.form.value.price || '',
-      quantity: parseInt(this.productForm.form.value.quantity || '0', 10),
+      name: this.productForm.form.value.name!,
+      description: this.productForm.form.value.description!,
+      price: this.productForm.form.value.price!,
+      quantity: parseInt(this.productForm.form.value.quantity!),
     };
 
     const sub = this.productService.createProduct(product).subscribe({
       next: (val) => {
         this.modalService.dismissAll('save-click');
+      },
+      error: (err: Error) => {
+        this.restError.set(err.message);
       },
     });
     this.productService.closeConnection(sub);

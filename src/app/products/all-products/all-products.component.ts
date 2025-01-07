@@ -11,6 +11,7 @@ import {
 } from '@angular/router';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { CurrencyPipe } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
 
 @Component({
   selector: 'app-all-products',

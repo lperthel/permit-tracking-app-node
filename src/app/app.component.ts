@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AllProductsComponent } from './products/all-products/all-products.component';
 
@@ -9,5 +9,5 @@ import { AllProductsComponent } from './products/all-products/all-products.compo
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'angular-CRUD-Tables';
+  title = 'All Products';
 }

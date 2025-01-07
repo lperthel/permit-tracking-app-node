@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UpdateProductComponent } from './update-product.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { routes } from '../../app.routes';
 
 describe('UpdateProductComponent', () => {
   let component: UpdateProductComponent;
@@ -8,9 +11,9 @@ describe('UpdateProductComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UpdateProductComponent]
-    })
-    .compileComponents();
+      imports: [UpdateProductComponent],
+      providers: [provideRouter(routes), provideHttpClient()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(UpdateProductComponent);
     component = fixture.componentInstance;

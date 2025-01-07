@@ -5,7 +5,7 @@ import { Product } from './product.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private apiServer = 'http://localhost:3000';
+  apiServer = 'http://localhost:3000';
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
