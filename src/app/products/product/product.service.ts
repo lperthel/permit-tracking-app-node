@@ -13,6 +13,8 @@ export class ProductService {
   };
 
   products = signal<Product[]>([]);
+  successfulProductRetirevalMessage =
+    'Products successfully updated from database';
 
   constructor(private httpClient: HttpClient, private destroyRef: DestroyRef) {}
 
@@ -30,7 +32,10 @@ export class ProductService {
         catchError((err) => {
           this.products.set(backupProducts);
           return throwError(
-            () => new Error('REST call to create new product failed.')
+            () =>
+              new Error(
+                'An error occurred trying to connect to the server. Please contact the server administrator.'
+              )
           );
         })
       );
@@ -42,7 +47,10 @@ export class ProductService {
       .pipe(
         catchError((err) => {
           return throwError(
-            () => new Error('REST call to get all products failed')
+            () =>
+              new Error(
+                'An error occurred trying to connect to the server. Please contact the server administrator.'
+              )
           );
         })
       );
@@ -64,7 +72,10 @@ export class ProductService {
         catchError((err) => {
           this.products.set(backupProducts);
           return throwError(
-            () => new Error('REST call to delete product failed')
+            () =>
+              new Error(
+                'An error occurred trying to connect to the server. Please contact the server administrator.'
+              )
           );
         })
       );
@@ -93,7 +104,10 @@ export class ProductService {
         catchError((error) => {
           this.products.set(backupProducts);
           return throwError(
-            () => new Error('Rest call to update products failed.')
+            () =>
+              new Error(
+                'An error occurred trying to connect to the server. Please contact the server administrator.'
+              )
           );
         })
       );
