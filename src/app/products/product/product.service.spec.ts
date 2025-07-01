@@ -38,7 +38,7 @@ describe('ProductService', () => {
         console.log(products);
         expect(products).toBeTruthy('No products returned.');
         expect(products.length).toBe(3, 'incorrect nubmer of products');
-        const product = products.find((product) => product.id === '1');
+        const product = products.find((product) => product.uuid === '1');
         expect(product?.name === 'Refined Concrete Chair');
       },
     });

@@ -48,7 +48,10 @@
     <ng-container matColumnDef="update">
       <th mat-header-cell *matHeaderCellDef>Update</th>
       <td mat-cell *matCellDef="let product">
-        <button class="btn btn-primary" [routerLink]="['/update', product.id]">
+        <button
+          class="btn btn-primary"
+          [routerLink]="['/update', product.uuid]"
+        >
           Update
         </button>
       </td>
@@ -57,7 +60,7 @@
     <ng-container matColumnDef="delete">
       <th mat-header-cell *matHeaderCellDef>Delete</th>
       <td mat-cell *matCellDef="let product">
-        <button class="btn btn-danger" (click)="onDelete(product.id)">
+        <button class="btn btn-danger" (click)="onDelete(product.uuid)">
           Delete
         </button>
       </td>
