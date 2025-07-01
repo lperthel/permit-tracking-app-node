@@ -37,7 +37,7 @@ export class UpdateProductComponent implements OnInit {
     console.log(`productId: ${this.productId}`);
     this.foundProduct = this.productService
       .products()
-      .find((product) => this.productId() === product.id);
+      .find((product) => this.productId() === product.uuid);
 
     if (!this.foundProduct) {
       console.error('could not get product for id ' + this.productId);
@@ -73,7 +73,7 @@ export class UpdateProductComponent implements OnInit {
       return;
     }
     const newProduct: Product = {
-      id: this.product.id,
+      uuid: this.product.uuid,
       name: this.productForm.form.value['name']!,
       description: this.productForm.form.value['description']!,
       price: this.productForm.form.value.price!,

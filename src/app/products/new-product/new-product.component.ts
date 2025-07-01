@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Product } from '../product/product.model';
 import { ProductService } from '../product/product.service';
-import { UUID } from 'angular2-uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { Router } from '@angular/router';
 import {
   Component,
@@ -68,7 +68,7 @@ export class NewProductComponent implements OnInit {
     }
 
     const product: Product = {
-      id: UUID.UUID(),
+      uuid: uuidv4(),
       name: this.productForm.form.value.name!,
       description: this.productForm.form.value.description!,
       price: this.productForm.form.value.price!,
