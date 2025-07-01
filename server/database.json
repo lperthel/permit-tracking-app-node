@@ -54,19 +54,10 @@
       "quantity": 12230
     },
     {
-      "id": "22",
-      "name": "Small Wooden Towels",
-      "description": "Quis aut nam magnam. Corporis laudantium alias voluptatibus ipsa sint fugit optio soluta. Nam assumenda saepe eos ut eum dolorem ut quisquam rerum.",
-      "price": "45.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
-      "quantity": 70039
-    },
-    {
       "id": "23",
-      "name": "Handmade Steel Soap",
+      "name": "update to angular 20",
       "description": "In aliquam sit placeat est atque. Eaque autem omnis magnam et fugit. Hic quidem magni.",
       "price": "896.00",
-      "imageUrl": "https://source.unsplash.com/1600x900/?product",
       "quantity": 46028
     },
     {
