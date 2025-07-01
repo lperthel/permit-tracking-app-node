@@ -2,7 +2,7 @@ import { Product } from '../src/app/products/product/product.model';
 
 export const PRODUCTS: Product[] = [
   {
-    id: '1',
+    uuid: '1',
     name: 'Refined Concrete Chair',
     description:
       'Consectetur laudantium similique vel ut modi. Nihil vel ut amet. Omnis dolores ad. Tempora libero totam quasi rerum ut aut adipisci dolor. Nihil suscipit autem aut nihil enim quaerat consectetur delectus est.',
@@ -10,7 +10,7 @@ export const PRODUCTS: Product[] = [
     quantity: 4,
   },
   {
-    id: '2',
+    uuid: '2',
     name: 'Tasty Plastic Sausages',
     description:
       'Dolorum enim officiis deleniti. Iste eos non. Est et vel tenetur error aut exercitationem. Et saepe consequatur. Voluptas est qui nihil qui et veniam ullam.',
@@ -18,7 +18,7 @@ export const PRODUCTS: Product[] = [
     quantity: 7842,
   },
   {
-    id: '3',
+    uuid: '3',
     name: 'Ergonomic Frozen Towels',
     description:
       'Architecto nisi nesciunt odit neque et quis. Vel cum pariatur accusantium culpa quia nesciunt corporis fugiat magni. Aut nobis hic voluptate voluptatem voluptatem in. Non voluptatum recusandae nemo inventore qui. Placeat quidem quis facilis nostrum incidunt quia quia qui.',
