@@ -12,7 +12,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "generate": "node ./server/generateData.js > ./server/database.json",
-    "server": "json-server --watch ./server/database.json"
+    "generate": "node ./generateData.mjs",
+    "gs": "npm run generate && npm run server",
+    "server": "json-server --watch ./database.json"
   }
 }

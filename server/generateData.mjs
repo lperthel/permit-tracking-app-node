@@ -1,6 +1,24 @@
 import { v4 as uuidv4 } from "uuid";
 import { faker } from "@faker-js/faker";
 import { writeFile } from "fs/promises";
+import { unlink } from "fs/promises";
+import { existsSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+// Path resolution
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const outputFile = join(__dirname, "database.json");
+
+// Delete file if it exists
+if (existsSync(outputFile)) {
+  try {
+    await unlink(outputFile);
+    console.log("🗑️  Existing database.json deleted.");
+  } catch (err) {
+    console.error("⚠️  Failed to delete existing file:", err);
+  }
+}
 
 var database = { products: [] };
 
@@ -15,8 +33,8 @@ for (var i = 1; i <= 300; i++) {
 }
 
 try {
-  await writeFile("database.json", JSON.stringify(database, null, 2));
-  console.log("Data written to database.json");
+  await writeFile(outputFile, JSON.stringify(database, null, 2));
+  console.log("✅ database.json written successfully.");
 } catch (err) {
-  console.error("Error writing file:", err);
+  console.error("❌ Error writing file:", err);
 }
