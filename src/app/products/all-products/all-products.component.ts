@@ -13,6 +13,10 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { CurrencyPipe } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  APP_DESCRIPTION,
+  APP_HEADER,
+} from '../../assets/constants/app-description';
 
 @Component({
   selector: 'app-all-products',
@@ -28,6 +32,9 @@ import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './all-products.component.css',
 })
 export class AllProductsComponent implements OnInit {
+  PAGE_HEADER = APP_HEADER;
+  PAGE_DESC = APP_DESCRIPTION;
+
   private writeFailed = false;
   columnsToDisplay = [
     'name',

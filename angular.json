@@ -16,7 +16,10 @@
             "outputPath": "dist/angular-crud-tables",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js", "@angular/localize/init"],
+            "polyfills": [
+              "zone.js",
+              "@angular/localize/init"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -68,12 +71,47 @@
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n"
+        },
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "angular-CRUD-Tables:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "angular-CRUD-Tables:serve:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "watch": true,
+            "headless": false
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "angular-CRUD-Tables:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "angular-CRUD-Tables:serve:production"
+            }
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "9ee4d542-c2d3-4518-9690-51a79eb753a7"
+    "analytics": "9ee4d542-c2d3-4518-9690-51a79eb753a7",
+    "schematicCollections": [
+      "@cypress/schematic",
+      "@schematics/angular"
+    ]
   },
   "schematics": {
     "@schematics/angular:component": {

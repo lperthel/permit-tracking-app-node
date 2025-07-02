@@ -1,11 +1,12 @@
 <header>
-  <div class="flex-container">
-    <button type="button" class="btn btn-primary" [routerLink]="'/new-product'">
-      New Product
-    </button>
-    <button class="btn btn-secondary" (click)="manuallyUpdateProductsFromDB()">
-      Refresh Products from DB
-    </button>
+  <div class="px-4 mt-5 mb-3 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis">
+      {{ PAGE_HEADER }}
+    </h1>
+    <div class="col-lg-6 mx-auto">
+      <h2 class="display-5 mb-4">⚙️ About This App</h2>
+      <p class="lead" [innerHTML]="PAGE_DESC"></p>
+    </div>
   </div>
 </header>
 <article>
@@ -26,7 +27,14 @@
   <div>
     <router-outlet />
   </div>
-
+  <div class="flex-container">
+    <button type="button" class="btn btn-primary" [routerLink]="'/new-product'">
+      New Product
+    </button>
+    <button class="btn btn-secondary" (click)="manuallyUpdateProductsFromDB()">
+      Refresh Products from DB
+    </button>
+  </div>
   <table mat-table [dataSource]="dataSource">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Name</th>
