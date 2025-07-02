@@ -1,5 +1,5 @@
 export interface Product {
-  uuid: string;
+  id: string;
   name: string;
   description: string;
   price: string;

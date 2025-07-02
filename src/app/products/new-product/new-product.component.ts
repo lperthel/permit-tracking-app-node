@@ -68,7 +68,7 @@ export class NewProductComponent implements OnInit {
     }
 
     const product: Product = {
-      uuid: uuidv4(),
+      id: uuidv4(),
       name: this.productForm.form.value.name!,
       description: this.productForm.form.value.description!,
       price: this.productForm.form.value.price!,

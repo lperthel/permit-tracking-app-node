@@ -60,7 +60,7 @@ export class ProductService {
     const backupProducts = this.products();
 
     this.products.update((oldProducts) =>
-      oldProducts.filter((product) => product.uuid != productId)
+      oldProducts.filter((product) => product.id != productId)
     );
 
     return this.httpClient
@@ -86,7 +86,7 @@ export class ProductService {
 
     this.products.update((products) => {
       return products.map((oldProduct) => {
-        if (oldProduct.uuid === newProduct.uuid) {
+        if (oldProduct.id === newProduct.id) {
           return newProduct;
         } else {
           return oldProduct;
@@ -96,7 +96,7 @@ export class ProductService {
 
     return this.httpClient
       .put<Product>(
-        this.apiServer + '/products/' + newProduct.uuid,
+        this.apiServer + '/products/' + newProduct.id,
         newProduct,
         this.httpOptions
       )
