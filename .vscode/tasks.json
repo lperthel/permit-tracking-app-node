@@ -37,6 +37,12 @@
           }
         }
       }
+    },
+    {
+      "label": "cy:build",
+      "type": "shell",
+      "command": "npx tsc --project cypress/tsconfig.cypress.json",
+      "problemMatcher": []
     }
   ]
 }

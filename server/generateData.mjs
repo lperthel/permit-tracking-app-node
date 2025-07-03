@@ -6,6 +6,8 @@ import { existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
+faker.seed(123);
+
 // Path resolution
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outputFile = join(__dirname, "database.json");

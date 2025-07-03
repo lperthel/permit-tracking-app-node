@@ -35,26 +35,56 @@
       Refresh Products from DB
     </button>
   </div>
-  <table mat-table [dataSource]="dataSource">
+  <table mat-table [dataSource]="dataSource" data-testid="inventory-table">
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <th
+        mat-header-cell
+        data-testid="inventory-table-name-header"
+        *matHeaderCellDef
+      >
+        Name
+      </th>
       <td mat-cell *matCellDef="let product">{{ product.name }}</td>
     </ng-container>
     <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        data-testid="inventory-table-description-header"
+      >
+        Description
+      </th>
       <td mat-cell *matCellDef="let product">{{ product.description }}</td>
     </ng-container>
     <ng-container matColumnDef="price">
-      <th mat-header-cell *matHeaderCellDef>Price</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        data-testid="inventory-table-price-header"
+      >
+        Price
+      </th>
       <td mat-cell *matCellDef="let product">{{ product.price | currency }}</td>
     </ng-container>
     <ng-container matColumnDef="quantity">
-      <th mat-header-cell *matHeaderCellDef>Quantity</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        data-testid="inventory-table-quantity-header"
+      >
+        Quantity
+      </th>
       <td mat-cell *matCellDef="let product">{{ product.quantity }}</td>
     </ng-container>
 
     <ng-container matColumnDef="update">
-      <th mat-header-cell *matHeaderCellDef>Update</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        data-testid="inventory-table-update-header"
+      >
+        Update
+      </th>
       <td mat-cell *matCellDef="let product">
         <button class="btn btn-primary" [routerLink]="['/update', product.id]">
           Update
@@ -63,7 +93,13 @@
     </ng-container>
 
     <ng-container matColumnDef="delete">
-      <th mat-header-cell *matHeaderCellDef>Delete</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        data-testid="inventory-table-delete-header"
+      >
+        Delete
+      </th>
       <td mat-cell *matCellDef="let product">
         <button class="btn btn-danger" (click)="onDelete(product.id)">
           Delete
