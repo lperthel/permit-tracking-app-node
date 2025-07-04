@@ -3,14 +3,25 @@ import {
   APP_HEADER,
 } from '../../src/app/assets/constants/app-description';
 
-describe('Test appearance of seeded inventory in the table', () => {
+describe('Test appearance of seeded inventory in the table with default items per page (10)', () => {
   it('Visits the initial landing page and tests that the seeded value appears in the first row on the first page as expected', () => {
     cy.visit('http://localhost:4200/');
-    cy.contains(APP_HEADER.trim()).should('exist');
-  });
-  it('Visits the initial landing page, selects the second page, and tests that the seeded value appears in the first row as expected', () => {
-    cy.visit('http://localhost:4200/');
-    cy.contains(APP_HEADER.trim()).should('exist');
+    // Check the contents of the first row
+    cy.contains(
+      '[data-testid="inventory-table-name-cell0"]',
+      'Practical Concrete Cheese'
+    ).should('exist');
+    cy.contains(
+      '[data-testid="inventory-table-description-cell0"]',
+      'Curo vomer stillicidium denique cruciamentum conicio suspendo decens. Cubicularis taceo auctor. Exercitationem exercitationem reiciendis ulciscor. Perferendis suppono commodi conturbo calco claudeo quos aliquam.'
+    ).should('exist');
+    cy.contains(
+      '[data-testid="inventory-table-price-cell0"]',
+      '$434.29'
+    ).should('exist');
+    cy.contains('[data-testid="inventory-table-quantity-cell0"]', '43').should(
+      'exist'
+    );
   });
 });
 
@@ -47,6 +58,8 @@ describe('Test mat table columns and features', () => {
     cy.get('[data-testid="inventory-table"] th')
       .should('contain.text', 'Name')
       .and('contain.text', 'Price')
-      .and('contain.text', 'Quantity');
+      .and('contain.text', 'Quantity')
+      .and('contain.text', 'Update')
+      .and('contain.text', 'Delete');
   });
 });
