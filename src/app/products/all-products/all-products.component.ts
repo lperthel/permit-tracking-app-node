@@ -66,25 +66,26 @@ export class AllProductsComponent implements OnInit {
   ngAfterViewInit(): void {
     //set attributes for data-testid used during Cypress testing
     const nextPageButton = document.querySelector(
-      'button.mat-paginator-navigation-next'
+      'button.mat-mdc-paginator-navigation-next'
     );
     if (nextPageButton)
       nextPageButton.setAttribute('data-testid', 'pagination-next');
 
     const previousPageButton = document.querySelector(
-      'button.mat-paginator-navigation-previous'
+      'button.mat-mdc-paginator-navigation-previous'
     );
     if (previousPageButton)
       previousPageButton.setAttribute('data-testid', 'pagination-prev');
 
     const lastPageButton = document.querySelector(
-      'button.mat-paginator-navigation-last'
+      'button.mat-mdc-paginator-navigation-last'
     );
+    console.log(`last page button = ${lastPageButton}`);
     if (lastPageButton)
       lastPageButton.setAttribute('data-testid', 'pagination-last');
 
     const firstPageButton = document.querySelector(
-      'button.mat-paginator-navigation-first'
+      'button.mat-mdc-paginator-navigation-first'
     );
     if (firstPageButton)
       firstPageButton.setAttribute('data-testid', 'pagination-first');

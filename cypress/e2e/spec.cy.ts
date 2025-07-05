@@ -3,6 +3,8 @@ import {
   APP_HEADER,
 } from '../../src/app/assets/constants/app-description';
 
+import { Product } from '../../src/app/products/product/product.model';
+
 const validateRow = (
   index: number,
   name: string,
@@ -27,27 +29,77 @@ const validateRow = (
   ).should('exist');
 };
 
-describe('Paginator Behavior: Change items per page and validate table content', () => {
-  const visitAppAndNavigateToNextPage = (dataTestId: string) => {
-    cy.visit('http://localhost:4200/');
-    cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
-      .find(`[aria-label="${dataTestId}"]`)
-      .click();
-  };
+const clickButton = (dataTestId: string) => {
+  cy.get(`[data-testid="${dataTestId}"]`).click();
+};
 
-  const testFirstElementOnFirstPage = () => {
+const navigateToPaginationPage = (dataTestId: string) => {
+  cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
+    .find(`[data-testid="${dataTestId}"]`)
+    .click();
+};
+
+const newProduct: Product = {
+  id: '223423',
+  name: 'New Product',
+  description: 'This is an Product added by a cypress integration Test',
+  price: '$35.01',
+  quantity: 4,
+};
+
+describe('Product Modal', () => {
+  beforeEach(() => {
+    // Load the page/component that includes the modal
+    cy.visit('/your-modal-page'); // Replace with actual route
+    cy.get('[data-testid="modal-header"]').should('exist'); // ensure modal is open
+  });
+
+  it('should render all required elements', () => {
+    cy.get('[data-testid="modal-title"]').should(
+      'contain.text',
+      'Profile update'
+    );
+    cy.get('[data-testid="modal-close-button"]').should('exist');
+    cy.get('[data-testid="product-form"]').should('exist');
+    cy.get('[data-testid="input-name"]').should('exist');
+    cy.get('[data-testid="input-description"]').should('exist');
+    cy.get('[data-testid="input-price"]').should('exist');
+    cy.get('[data-testid="input-quantity"]').should('exist');
+    cy.get('[data-testid="submit-button"]').should('exist');
+  });
+
+  it.skip('should show error messages when fields are invalid', () => {
+    cy.get('[data-testid="submit-button"]').click();
+    cy.get('[data-testid="error-name"]').should('exist');
+    cy.get('[data-testid="error-description"]').should('exist');
+    cy.get('[data-testid="error-price"]').should('exist');
+    cy.get('[data-testid="error-quantity"]').should('exist');
+  });
+});
+
+describe('CRUD Behavior: Try to add a new item and validate the expect behavior', () => {
+  it('Add an item and check that it renders at the end of the table', () => {
+    cy.visit('http://localhost:4200/');
+    clickButton('new-product-button');
     validateRow(
       0,
-      'Practical Concrete Cheese',
-      'Curo vomer stillicidium denique cruciamentum conicio suspendo decens. Cubicularis taceo auctor. Exercitationem exercitationem reiciendis ulciscor. Perferendis suppono commodi conturbo calco claudeo quos aliquam.',
-      '$434.29',
-      '43'
+      newProduct.name,
+      newProduct.description,
+      newProduct.price,
+      `${newProduct.quantity}`
     );
+  });
+});
+
+describe('Paginator Behavior: Navigate between pages and validate the expect items render', () => {
+  const visitAppAndNavigateToNextPage = (dataTestId: string) => {
+    cy.visit('http://localhost:4200/');
+    navigateToPaginationPage(dataTestId);
   };
 
   it('Navigate to page 2 and test that the first element on page the row exists and then navigate back to page one and test that the ', () => {
     cy.visit('http://localhost:4200/');
-    visitAppAndNavigateToNextPage('pagination-text');
+    visitAppAndNavigateToNextPage('pagination-next');
     validateRow(
       0,
       'Frozen Steel Chips',
@@ -55,8 +107,8 @@ describe('Paginator Behavior: Change items per page and validate table content',
       '$372.69',
       '3'
     );
-    visitAppAndNavigateToNextPage('pagination-prev');
-    testFirstElementOnFirstPage();
+    navigateToPaginationPage('pagination-prev');
+    validateElementOnFirstPage();
   });
   it('Navigate to the last page and test that the first element on page the row exists', () => {
     cy.visit('http://localhost:4200/');
@@ -68,8 +120,8 @@ describe('Paginator Behavior: Change items per page and validate table content',
       '$884.29',
       '8'
     );
-    visitAppAndNavigateToNextPage('pagination-first');
-    testFirstElementOnFirstPage();
+    navigateToPaginationPage('pagination-first');
+    validateElementOnFirstPage();
   });
 });
 
@@ -137,7 +189,7 @@ describe('Paginator Behavior: Change items per page and validate table content',
   });
 });
 
-describe.skip('Test landing page rendering and header', () => {
+describe('Test landing page rendering and header', () => {
   it('Visits the initial landing page and test that the header and description render', () => {
     cy.visit('http://localhost:4200/');
     cy.contains(APP_HEADER.trim()).should('exist');
