@@ -63,6 +63,33 @@ export class AllProductsComponent implements OnInit {
     this.refreshProductsFromDB();
   }
 
+  ngAfterViewInit(): void {
+    //set attributes for data-testid used during Cypress testing
+    const nextPageButton = document.querySelector(
+      'button.mat-paginator-navigation-next'
+    );
+    if (nextPageButton)
+      nextPageButton.setAttribute('data-testid', 'pagination-next');
+
+    const previousPageButton = document.querySelector(
+      'button.mat-paginator-navigation-previous'
+    );
+    if (previousPageButton)
+      previousPageButton.setAttribute('data-testid', 'pagination-prev');
+
+    const lastPageButton = document.querySelector(
+      'button.mat-paginator-navigation-last'
+    );
+    if (lastPageButton)
+      lastPageButton.setAttribute('data-testid', 'pagination-last');
+
+    const firstPageButton = document.querySelector(
+      'button.mat-paginator-navigation-first'
+    );
+    if (firstPageButton)
+      firstPageButton.setAttribute('data-testid', 'pagination-first');
+  }
+
   constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
 
   manuallyUpdateProductsFromDB() {

@@ -28,10 +28,10 @@ const validateRow = (
 };
 
 describe('Paginator Behavior: Change items per page and validate table content', () => {
-  const visitAppAndNavigateToNextPage = (pageNavigationLabel: string) => {
+  const visitAppAndNavigateToNextPage = (dataTestId: string) => {
     cy.visit('http://localhost:4200/');
     cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
-      .find(`[aria-label="${pageNavigationLabel}"]`)
+      .find(`[aria-label="${dataTestId}"]`)
       .click();
   };
 
@@ -47,7 +47,7 @@ describe('Paginator Behavior: Change items per page and validate table content',
 
   it('Navigate to page 2 and test that the first element on page the row exists and then navigate back to page one and test that the ', () => {
     cy.visit('http://localhost:4200/');
-    visitAppAndNavigateToNextPage('Next page');
+    visitAppAndNavigateToNextPage('pagination-text');
     validateRow(
       0,
       'Frozen Steel Chips',
@@ -55,12 +55,12 @@ describe('Paginator Behavior: Change items per page and validate table content',
       '$372.69',
       '3'
     );
-    visitAppAndNavigateToNextPage('Previous page');
+    visitAppAndNavigateToNextPage('pagination-prev');
     testFirstElementOnFirstPage();
   });
   it('Navigate to the last page and test that the first element on page the row exists', () => {
     cy.visit('http://localhost:4200/');
-    visitAppAndNavigateToNextPage('Last page');
+    visitAppAndNavigateToNextPage('pagination-last');
     validateRow(
       0,
       'Fantastic Ceramic Gloves',
@@ -68,7 +68,7 @@ describe('Paginator Behavior: Change items per page and validate table content',
       '$884.29',
       '8'
     );
-    visitAppAndNavigateToNextPage('First page');
+    visitAppAndNavigateToNextPage('pagination-first');
     testFirstElementOnFirstPage();
   });
 });
