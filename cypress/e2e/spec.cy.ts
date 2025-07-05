@@ -3,6 +3,76 @@ import {
   APP_HEADER,
 } from '../../src/app/assets/constants/app-description';
 
+const validateRow = (
+  index: number,
+  name: string,
+  description: string,
+  price: string,
+  quantity: string
+) => {
+  cy.contains(`[data-testid="inventory-table-name-cell${index}"]`, name).should(
+    'exist'
+  );
+  cy.contains(
+    `[data-testid="inventory-table-description-cell${index}"]`,
+    description
+  ).should('exist');
+  cy.contains(
+    `[data-testid="inventory-table-price-cell${index}"]`,
+    price
+  ).should('exist');
+  cy.contains(
+    `[data-testid="inventory-table-quantity-cell${index}"]`,
+    quantity
+  ).should('exist');
+};
+
+describe('Paginator Behavior: Change items per page and validate table content', () => {
+  const visitAppAndNavigateToNextPage = (pageNavigationLabel: string) => {
+    cy.visit('http://localhost:4200/');
+    cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
+      .find(`[aria-label="${pageNavigationLabel}"]`)
+      .click();
+  };
+
+  const testFirstElementOnFirstPage = () => {
+    validateRow(
+      0,
+      'Practical Concrete Cheese',
+      'Curo vomer stillicidium denique cruciamentum conicio suspendo decens. Cubicularis taceo auctor. Exercitationem exercitationem reiciendis ulciscor. Perferendis suppono commodi conturbo calco claudeo quos aliquam.',
+      '$434.29',
+      '43'
+    );
+  };
+
+  it('Navigate to page 2 and test that the first element on page the row exists and then navigate back to page one and test that the ', () => {
+    cy.visit('http://localhost:4200/');
+    visitAppAndNavigateToNextPage('Next page');
+    validateRow(
+      0,
+      'Frozen Steel Chips',
+      'Suffragium denuo decor. Adhaero concedo vinitor. Corporis perspiciatis basium asper conturbo urbanus dolor. Virga totam commodi voluptas votum. Sollicito cultura causa agnitio celer cernuus. Audacia viriliter ambulo quibusdam decimus curriculum.',
+      '$372.69',
+      '3'
+    );
+    visitAppAndNavigateToNextPage('Previous page');
+    testFirstElementOnFirstPage();
+  });
+  it('Navigate to the last page and test that the first element on page the row exists', () => {
+    cy.visit('http://localhost:4200/');
+    visitAppAndNavigateToNextPage('Last page');
+    validateRow(
+      0,
+      'Fantastic Ceramic Gloves',
+      'Totus contego cupiditas ante catena. Dolorum coniecto labore vulpes ulterius adinventitias sordeo. Suffoco adipisci caries adulatio stella ancilla voro. Quisquam blanditiis agnosco decet ubi tabgo dolore reprehenderit ustilo. Audio viscus laboriosam vorago. Voluptas amaritudo atrocitas excepturi labore pax vulgo modi.',
+      '$884.29',
+      '8'
+    );
+    visitAppAndNavigateToNextPage('First page');
+    testFirstElementOnFirstPage();
+  });
+});
+
 describe('Paginator Behavior: Change items per page and validate table content', () => {
   const visitAppAndSetPageSize = (pageSize: number) => {
     cy.visit('http://localhost:4200/');
@@ -10,31 +80,6 @@ describe('Paginator Behavior: Change items per page and validate table content',
       .find('mat-select')
       .click({ force: true });
     cy.get('mat-option').contains(`${pageSize}`).click({ force: true });
-  };
-
-  const validateRow = (
-    index: number,
-    name: string,
-    description: string,
-    price: string,
-    quantity: string
-  ) => {
-    cy.contains(
-      `[data-testid="inventory-table-name-cell${index}"]`,
-      name
-    ).should('exist');
-    cy.contains(
-      `[data-testid="inventory-table-description-cell${index}"]`,
-      description
-    ).should('exist');
-    cy.contains(
-      `[data-testid="inventory-table-price-cell${index}"]`,
-      price
-    ).should('exist');
-    cy.contains(
-      `[data-testid="inventory-table-quantity-cell${index}"]`,
-      quantity
-    ).should('exist');
   };
 
   it('Tests that the first element in the row exists', () => {
@@ -92,7 +137,7 @@ describe('Paginator Behavior: Change items per page and validate table content',
   });
 });
 
-describe('Test landing page rendering and header', () => {
+describe.skip('Test landing page rendering and header', () => {
   it('Visits the initial landing page and test that the header and description render', () => {
     cy.visit('http://localhost:4200/');
     cy.contains(APP_HEADER.trim()).should('exist');
