@@ -3,24 +3,91 @@ import {
   APP_HEADER,
 } from '../../src/app/assets/constants/app-description';
 
-describe('Test appearance of seeded inventory in the table with default items per page (10)', () => {
-  it('Visits the initial landing page and tests that the seeded value appears in the first row on the first page as expected', () => {
+describe('Paginator Behavior: Change items per page and validate table content', () => {
+  const visitAppAndSetPageSize = (pageSize: number) => {
     cy.visit('http://localhost:4200/');
-    // Check the contents of the first row
+    cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
+      .find('mat-select')
+      .click({ force: true });
+    cy.get('mat-option').contains(`${pageSize}`).click({ force: true });
+  };
+
+  const validateRow = (
+    index: number,
+    name: string,
+    description: string,
+    price: string,
+    quantity: string
+  ) => {
     cy.contains(
-      '[data-testid="inventory-table-name-cell0"]',
-      'Practical Concrete Cheese'
+      `[data-testid="inventory-table-name-cell${index}"]`,
+      name
     ).should('exist');
     cy.contains(
-      '[data-testid="inventory-table-description-cell0"]',
-      'Curo vomer stillicidium denique cruciamentum conicio suspendo decens. Cubicularis taceo auctor. Exercitationem exercitationem reiciendis ulciscor. Perferendis suppono commodi conturbo calco claudeo quos aliquam.'
+      `[data-testid="inventory-table-description-cell${index}"]`,
+      description
     ).should('exist');
     cy.contains(
-      '[data-testid="inventory-table-price-cell0"]',
-      '$434.29'
+      `[data-testid="inventory-table-price-cell${index}"]`,
+      price
     ).should('exist');
-    cy.contains('[data-testid="inventory-table-quantity-cell0"]', '43').should(
-      'exist'
+    cy.contains(
+      `[data-testid="inventory-table-quantity-cell${index}"]`,
+      quantity
+    ).should('exist');
+  };
+
+  it('Tests that the first element in the row exists', () => {
+    cy.visit('http://localhost:4200/');
+    validateRow(
+      0,
+      'Practical Concrete Cheese',
+      'Curo vomer stillicidium denique cruciamentum conicio suspendo decens. Cubicularis taceo auctor. Exercitationem exercitationem reiciendis ulciscor. Perferendis suppono commodi conturbo calco claudeo quos aliquam.',
+      '$434.29',
+      '43'
+    );
+  });
+  it('shows expected content when using default 10 items per page', () => {
+    cy.visit('http://localhost:4200/');
+    validateRow(
+      9,
+      'Fantastic Concrete Sausages',
+      'Illo suasoria verecundia nobis candidus. Tergiversatio averto tracto delego tergum capio concedo viriliter. Terebro sto bardus deludo tolero spero absconditus alias. Vinco deprecator centum contra bene.',
+      '$421.70',
+      '46'
+    );
+  });
+
+  it('shows expected content with 4 items per page', () => {
+    visitAppAndSetPageSize(4);
+    validateRow(
+      3,
+      'Frozen Granite Table',
+      'Magni timor cruentus suus arto. Uredo vorago ager cursus bardus defendo infit. Clibanus vestigium modi. Tardus talis administratio suggero tumultus asperiores. Cito cohibeo sono amoveo sono valens subito decerno debitis. Maxime ago nostrum tot conduco vestigium tandem natus tantillus.',
+      '$80.00',
+      '91'
+    );
+  });
+
+  it('shows expected content with 2 items per page', () => {
+    visitAppAndSetPageSize(2);
+    validateRow(
+      1,
+      'Generic Gold Table',
+      'Quia ancilla comes cuppedia usitas casso denuncio. Earum placeat animi trepide pax impedit conicio cognomen cur stabilis. Dolore sortitus occaecati quibusdam spero turbo agnosco tenax careo autem. Allatus vae quis supra acceptus paens iusto. Argumentum sub comis stultus. Creta vespillo turba contabesco adimpleo cogo cubicularis.',
+      '$705.29',
+      '77'
+    );
+  });
+
+  it('shows expected content with 6 items per page', () => {
+    visitAppAndSetPageSize(6);
+    validateRow(
+      5,
+      'Elegant Marble Ball',
+      'Tenus natus ambulo subseco solvo admiratio textor earum cursim tertius. Denique attonbitus commemoro tutis audentia cur. Capillus veritatis versus aliqua delectus desipio combibo adiuvo carbo allatus. Timor vehemens adimpleo cogito. Fugit quidem abscido deorsum voveo corrupti alo deinde vix congregatio.',
+      '$799.19',
+      '45'
     );
   });
 });

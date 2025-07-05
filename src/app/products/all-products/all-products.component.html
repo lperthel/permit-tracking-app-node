@@ -1,17 +1,40 @@
-<header>
+<header role="banner">
   <div class="px-4 mt-5 mb-3 text-center">
-    <h1 class="display-5 fw-bold text-body-emphasis">
+    <h1
+      class="display-5 fw-bold text-body-emphasis"
+      id="page-header"
+      aria-label="Main page header"
+    >
       {{ PAGE_HEADER }}
     </h1>
     <div class="col-lg-6 mx-auto">
-      <h2 class="display-5 mb-4">⚙️ About This App</h2>
-      <p class="lead" [innerHTML]="PAGE_DESC"></p>
+      <h2
+        class="display-5 mb-4"
+        id="about-header"
+        aria-label="About this app section"
+      >
+        ⚙️ About This App
+      </h2>
+      <p
+        class="lead"
+        [innerHTML]="PAGE_DESC"
+        aria-labelledby="about-header"
+      ></p>
     </div>
   </div>
 </header>
-<article>
+
+<article role="main" aria-labelledby="page-header">
   @if(restError()){
-  <ngb-alert [type]="'danger'" [dismissible]="false" class="mt-3">
+  <ngb-alert
+    [type]="'danger'"
+    [dismissible]="false"
+    class="mt-3"
+    role="alert"
+    aria-live="assertive"
+    aria-label="Error alert"
+    tabindex="0"
+  >
     {{ restError() }}
   </ngb-alert>
   } @if(manuallyUpdateProductsSuccessful()){
@@ -20,43 +43,71 @@
     [type]="'success'"
     [dismissible]="true"
     (closed)="alert.close(); manuallyUpdateProductsSuccessful.set('')"
+    role="alert"
+    aria-live="polite"
+    aria-label="Success alert"
+    tabindex="0"
   >
     {{ manuallyUpdateProductsSuccessful() }}
   </ngb-alert>
   }
+
   <div>
-    <router-outlet />
+    <router-outlet aria-label="Application Content"></router-outlet>
   </div>
-  <div class="flex-container">
-    <button type="button" class="btn btn-primary" [routerLink]="'/new-product'">
+
+  <div class="flex-container" aria-label="Inventory controls">
+    <button
+      type="button"
+      class="btn btn-primary"
+      [routerLink]="'/new-product'"
+      aria-label="Create new product"
+    >
       New Product
     </button>
-    <button class="btn btn-secondary" (click)="manuallyUpdateProductsFromDB()">
+    <button
+      class="btn btn-secondary"
+      (click)="manuallyUpdateProductsFromDB()"
+      aria-label="Refresh product list from database"
+    >
       Refresh Products from DB
     </button>
   </div>
-  <table mat-table [dataSource]="dataSource" data-testid="inventory-table">
+
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    data-testid="inventory-table"
+    aria-label="Inventory product table"
+    role="table"
+  >
     <ng-container matColumnDef="name">
       <th
         mat-header-cell
-        data-testid="inventory-table-name-header"
         *matHeaderCellDef
+        data-testid="inventory-table-name-header"
+        scope="col"
+        role="columnheader"
       >
         Name
       </th>
       <td
         mat-cell
-        [attr.data-testid]="'inventory-table-name-cell' + i"
         *matCellDef="let product; let i = index"
+        [attr.data-testid]="'inventory-table-name-cell' + i"
+        aria-label="Product name"
       >
         {{ product.name }}
       </td>
     </ng-container>
+
     <ng-container matColumnDef="description">
       <th
         mat-header-cell
         *matHeaderCellDef
         data-testid="inventory-table-description-header"
+        scope="col"
+        role="columnheader"
       >
         Description
       </th>
@@ -64,15 +115,19 @@
         mat-cell
         *matCellDef="let product; let i = index"
         [attr.data-testid]="'inventory-table-description-cell' + i"
+        aria-label="Product description"
       >
         {{ product.description }}
       </td>
     </ng-container>
+
     <ng-container matColumnDef="price">
       <th
         mat-header-cell
         *matHeaderCellDef
         data-testid="inventory-table-price-header"
+        scope="col"
+        role="columnheader"
       >
         Price
       </th>
@@ -80,15 +135,19 @@
         mat-cell
         *matCellDef="let product; let i = index"
         [attr.data-testid]="'inventory-table-price-cell' + i"
+        aria-label="Product price"
       >
         {{ product.price | currency }}
       </td>
     </ng-container>
+
     <ng-container matColumnDef="quantity">
       <th
         mat-header-cell
         *matHeaderCellDef
         data-testid="inventory-table-quantity-header"
+        scope="col"
+        role="columnheader"
       >
         Quantity
       </th>
@@ -96,6 +155,7 @@
         mat-cell
         *matCellDef="let product; let i = index"
         [attr.data-testid]="'inventory-table-quantity-cell' + i"
+        aria-label="Product quantity"
       >
         {{ product.quantity }}
       </td>
@@ -106,6 +166,8 @@
         mat-header-cell
         *matHeaderCellDef
         data-testid="inventory-table-update-header"
+        scope="col"
+        role="columnheader"
       >
         Update
       </th>
@@ -114,7 +176,11 @@
         *matCellDef="let product; let i = index"
         [attr.data-testid]="'inventory-table-update-cell' + i"
       >
-        <button class="btn btn-primary" [routerLink]="['/update', product.id]">
+        <button
+          class="btn btn-primary"
+          [routerLink]="['/update', product.id]"
+          [attr.aria-label]="'Update product ' + product.name"
+        >
           Update
         </button>
       </td>
@@ -125,6 +191,8 @@
         mat-header-cell
         *matHeaderCellDef
         data-testid="inventory-table-delete-header"
+        scope="col"
+        role="columnheader"
       >
         Delete
       </th>
@@ -133,20 +201,28 @@
         *matCellDef="let product; let i = index"
         [attr.data-testid]="'inventory-table-delete-cell' + i"
       >
-        <button class="btn btn-danger" (click)="onDelete(product.id)">
+        <button
+          class="btn btn-danger"
+          (click)="onDelete(product.id)"
+          [attr.aria-label]="'Delete product ' + product.name"
+        >
           Delete
         </button>
       </td>
     </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay"></tr>
   </table>
+
   <mat-paginator
     id="paginator"
     #paginator
     [pageSize]="pageSize"
     [pageSizeOptions]="[2, 4, 6, 10]"
     showFirstLastButtons
+    aria-label="Inventory table pagination controls"
+    role="navigation"
   >
   </mat-paginator>
 </article>
