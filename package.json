@@ -29,6 +29,7 @@
     "@popperjs/core": "^2.11.8",
     "angular2-uuid": "^1.1.1",
     "bootstrap": "^5.3.3",
+    "dompurify": "^3.2.6",
     "faker": "^5.5.3",
     "json-server": "^1.0.0-beta.3",
     "rxjs": "~7.8.0",
@@ -42,11 +43,17 @@
     "@angular/compiler-cli": "^20.0.5",
     "@angular/localize": "^20.0.5",
     "@cypress/schematic": "^3.0.0",
+    "@types/dompurify": "^3.0.5",
     "@types/jasmine": "~5.1.0",
+    "cypress": "latest",
     "jasmine-core": "~5.4.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
     "karma-edge-launcher": "^0.4.2",
     "karma-firefox-launcher": "^2.1.3",
-    "typescript": "~5.8.3",
-    "cypress": "latest"
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "typescript": "~5.8.3"
   }
 }

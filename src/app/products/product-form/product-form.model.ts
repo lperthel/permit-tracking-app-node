@@ -1,16 +1,8 @@
 import { inject } from '@angular/core';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
+import { PRODUCT_FORM_CONSTRAINTS } from './product-form-constants';
 
 export class ProductForm {
-  errorMessages = {
-    invalidName: 'Name is required and must be less than 256 characters',
-    invalidDescription:
-      'Description is required and must be less than 256 characters',
-    invalidPrice:
-      'Price is required, must be less than 256 characters, and follow the formatting of USD.',
-    invalidQuantity:
-      'Quantity is required, must be less than 256 characters, and must be numeric',
-  };
   private fb = inject(NonNullableFormBuilder);
 
   patterns = {
@@ -19,13 +11,25 @@ export class ProductForm {
   };
 
   form = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(255)]],
-    description: ['', [Validators.required, Validators.maxLength(1000)]],
+    name: [
+      '',
+      [
+        Validators.required,
+        Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.nameMaxLength),
+      ],
+    ],
+    description: [
+      '',
+      [
+        Validators.required,
+        Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.descMaxLengith),
+      ],
+    ],
     price: [
       '',
       [
         Validators.required,
-        Validators.maxLength(255),
+        Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.priceMaxLength),
         Validators.pattern(this.patterns.price),
       ],
     ],
@@ -33,7 +37,7 @@ export class ProductForm {
       '',
       [
         Validators.required,
-        Validators.maxLength(255),
+        Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.quantityMax),
         Validators.pattern(this.patterns.quantity),
       ],
     ],

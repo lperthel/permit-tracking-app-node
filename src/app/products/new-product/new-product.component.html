@@ -40,7 +40,7 @@
         @if(productForm.invalidName){
         <div data-testid="error-name">
           <p class="lp-control-error">
-            {{ productForm.errorMessages.invalidName }}
+            {{ errorMessages.invalidName }}
           </p>
         </div>
         }
@@ -57,7 +57,7 @@
         @if(productForm.invalidDescription){
         <div data-testid="error-description">
           <p class="lp-control-error">
-            {{ productForm.errorMessages.invalidDescription }}
+            {{ errorMessages.invalidDescription }}
           </p>
         </div>
         }
@@ -74,7 +74,7 @@
         @if(productForm.invalidPrice){
         <div data-testid="error-price">
           <p class="lp-control-error">
-            {{ productForm.errorMessages.invalidPrice }}
+            {{ errorMessages.invalidPrice }}
           </p>
         </div>
         }
@@ -91,7 +91,7 @@
         @if(productForm.invalidQuanity){
         <div data-testid="error-quantity">
           <p class="lp-control-error">
-            {{ productForm.errorMessages.invalidQuantity }}
+            {{ errorMessages.invalidQuantity }}
           </p>
         </div>
         }
