@@ -1,47 +1,57 @@
 import { inject } from '@angular/core';
-import { NonNullableFormBuilder, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  Validators,
+} from '@angular/forms';
 import { PRODUCT_FORM_CONSTRAINTS } from './product-form-constants';
 
 export class ProductForm {
-  private fb = inject(NonNullableFormBuilder);
-
+  public form: FormGroup<{
+    name: FormControl<string>;
+    description: FormControl<string>;
+    price: FormControl<string>;
+    quantity: FormControl<string>;
+  }>;
   patterns = {
     price: '^[0-9]{1,253}(\\.[0-9]{1,2})?$',
     quantity: '^[0-9]{1,255}$',
   };
-
-  form = this.fb.group({
-    name: [
-      '',
-      [
-        Validators.required,
-        Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.nameMaxLength),
+  constructor(private fb: NonNullableFormBuilder) {
+    this.form = this.fb.group({
+      name: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.nameMaxLength),
+        ],
       ],
-    ],
-    description: [
-      '',
-      [
-        Validators.required,
-        Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.descMaxLengith),
+      description: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.descMaxLengith),
+        ],
       ],
-    ],
-    price: [
-      '',
-      [
-        Validators.required,
-        Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.priceMaxLength),
-        Validators.pattern(this.patterns.price),
+      price: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.priceMaxLength),
+          Validators.pattern(this.patterns.price),
+        ],
       ],
-    ],
-    quantity: [
-      '',
-      [
-        Validators.required,
-        Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.quantityMax),
-        Validators.pattern(this.patterns.quantity),
+      quantity: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.quantityMax),
+          Validators.pattern(this.patterns.quantity),
+        ],
       ],
-    ],
-  });
+    });
+  }
 
   get invalidName() {
     return this.form.controls.name.touched && this.form.controls.name.invalid;

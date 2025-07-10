@@ -27,12 +27,12 @@ export class UpdateProductComponent implements OnInit {
   foundProduct: Product | undefined;
   restError = signal<string>('');
   modal = viewChild.required<TemplateRef<any>>('content');
-  productForm = new ProductForm();
 
   constructor(
     private productService: ProductService,
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private productForm: ProductForm
   ) {}
 
   ngOnInit() {

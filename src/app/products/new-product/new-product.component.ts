@@ -36,9 +36,9 @@ export class NewProductComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private productService: ProductService,
-    private router: Router
+    private router: Router,
+    private productForm: ProductForm
   ) {}
-  productForm = new ProductForm();
   modal = viewChild.required<TemplateRef<any>>('content');
   closeResult: WritableSignal<string> = signal('');
   restError = signal<string>('');
