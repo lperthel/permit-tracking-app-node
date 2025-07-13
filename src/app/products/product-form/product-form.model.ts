@@ -15,7 +15,7 @@ export class ProductForm {
     quantity: FormControl<string>;
   }>;
   patterns = {
-    price: '^[0-9]{1,253}(\\.[0-9]{1,2})?$',
+    price: '^[0-9]+(\\.[0-9]{1,2})?$',
     quantity: '^[0-9]{1,255}$',
   };
   constructor(private fb: NonNullableFormBuilder) {
@@ -31,7 +31,7 @@ export class ProductForm {
         '',
         [
           Validators.required,
-          Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.descMaxLengith),
+          Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.descMaxLength),
         ],
       ],
       price: [

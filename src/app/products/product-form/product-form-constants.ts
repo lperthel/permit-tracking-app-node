@@ -11,7 +11,7 @@ export const PRODUCT_FORM_ERRORS = {
 
 export const PRODUCT_FORM_CONSTRAINTS = {
   nameMaxLength: 50,
-  descMaxLengith: 1000,
+  descMaxLength: 1000,
   priceMaxLength: 255,
   quantityMax: 255,
 };

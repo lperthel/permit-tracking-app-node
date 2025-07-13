@@ -37,14 +37,14 @@ describe('ProductForm', () => {
       const nameControl = productForm.form.controls['name'];
       nameControl.markAsTouched();
       nameControl.setValue('');
-      expect(productForm.invalidName).toBeTruthy();
+      expect(productForm.invalidName).toBeTrue();
     });
 
     it('should validate a proper name', () => {
       const nameControl = productForm.form.controls['name'];
       nameControl.markAsTouched();
       nameControl.setValue('a'.repeat(PRODUCT_FORM_CONSTRAINTS.nameMaxLength));
-      // expect(productForm.invalidName).toBe;
+      expect(productForm.invalidName).toBeFalse();
     });
 
     it(`should show error for name longer than ${PRODUCT_FORM_CONSTRAINTS.nameMaxLength} characters`, () => {
@@ -53,21 +53,85 @@ describe('ProductForm', () => {
       nameControl.setValue(
         'a'.repeat(PRODUCT_FORM_CONSTRAINTS.nameMaxLength + 1)
       );
-      // expect(productForm.invalidName).false;
+      expect(productForm.invalidName).toBeTrue();
     });
   });
 
-  it('should fail validation if price has too many decimals', () => {
-    const priceControl = productForm.form.controls['price'];
-    priceControl.markAsTouched();
-    priceControl.setValue('99.999');
-    // expect(productForm.invalidPrice).true;
+  describe('Description Field Validation', () => {
+    it('should validate a correct description', () => {
+      const descControl = productForm.form.controls['description'];
+      descControl.markAsTouched();
+      descControl.setValue('a'.repeat(PRODUCT_FORM_CONSTRAINTS.descMaxLength));
+      expect(productForm.invalidName).toBeFalse();
+    });
+  });
+  describe('Price Field Validation', () => {
+    it('should fail validation if price has too many decimals', () => {
+      const priceControl = productForm.form.controls['price'];
+      priceControl.markAsTouched();
+      priceControl.setValue('99.999');
+      expect(productForm.invalidPrice).toBeTrue();
+    });
+
+    it('should validate a correct price', () => {
+      const priceControl = productForm.form.controls['price'];
+      priceControl.markAsTouched();
+      priceControl.setValue('99.99');
+      expect(productForm.invalidPrice).toBeFalse();
+      priceControl.setValue('99.9');
+      expect(productForm.invalidPrice).toBeFalse();
+      priceControl.setValue(
+        '1'.repeat(PRODUCT_FORM_CONSTRAINTS.priceMaxLength)
+      );
+      priceControl.setValue('1'.repeat(3));
+      expect(productForm.invalidPrice).toBeFalse();
+    });
+
+    it('should fail validation for a malformed price', () => {
+      const priceControl = productForm.form.controls['price'];
+      priceControl.markAsTouched();
+      priceControl.setValue('99.');
+      expect(productForm.invalidPrice).toBeTrue();
+      priceControl.setValue('a');
+      expect(productForm.invalidPrice).toBeTrue();
+    });
+    it('should fail validation for invalid price length', () => {
+      const priceControl = productForm.form.controls['price'];
+      priceControl.markAsTouched();
+      priceControl.setValue(
+        '1'.repeat(PRODUCT_FORM_CONSTRAINTS.priceMaxLength + 1)
+      );
+      expect(productForm.invalidPrice).toBeTrue();
+    });
   });
 
-  it('should validate a correct price', () => {
-    const priceControl = productForm.form.controls['price'];
-    priceControl.markAsTouched();
-    priceControl.setValue('99.99');
-    // expect(productForm.invalidPrice).false;
+  describe('Quantity Field Validation', () => {
+    it('should validate a correct quantity', () => {
+      const quantityControl = productForm.form.controls['quantity'];
+      quantityControl.markAsTouched();
+      quantityControl.setValue(
+        '1'.repeat(PRODUCT_FORM_CONSTRAINTS.quantityMax)
+      );
+      expect(productForm.invalidQuanity).toBeFalse();
+    });
+
+    it('should fail validation for a malformed quantity', () => {
+      const quantityControl = productForm.form.controls['quantity'];
+      quantityControl.markAsTouched();
+      quantityControl.setValue('99.');
+      expect(productForm.invalidQuanity).toBeTrue();
+      quantityControl.setValue('a');
+      expect(productForm.invalidQuanity).toBeTrue();
+      quantityControl.setValue('-1');
+      expect(productForm.invalidQuanity).toBeTrue();
+    });
+    it('should fail validation for invalid quantity length', () => {
+      const quantityControl = productForm.form.controls['quantity'];
+      quantityControl.markAsTouched();
+      quantityControl.setValue(
+        '1'.repeat(PRODUCT_FORM_CONSTRAINTS.quantityMax + 1)
+      );
+      expect(productForm.invalidQuanity).toBeTrue();
+    });
   });
 });
