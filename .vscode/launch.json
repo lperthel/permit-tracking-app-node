@@ -48,6 +48,13 @@
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "preLaunchTask": "cy:build"
+    },
+    {
+      "name": "Debug Angular App",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}"
     }
   ]
 }

@@ -32,7 +32,7 @@ export class UpdateProductComponent implements OnInit {
     private productService: ProductService,
     private router: Router,
     private modalService: NgbModal,
-    private productForm: ProductForm
+    public productForm: ProductForm
   ) {}
 
   ngOnInit() {
