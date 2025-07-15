@@ -96,6 +96,7 @@
         mat-cell
         *matCellDef="let product; let i = index"
         [attr.data-testid]="'inventory-table-name-cell' + i"
+        [attr.data-id]="product.id"
         aria-label="Product name"
       >
         {{ product.name }}

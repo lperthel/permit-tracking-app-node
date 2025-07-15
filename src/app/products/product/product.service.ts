@@ -56,7 +56,7 @@ export class ProductService {
       );
   }
 
-  deletProduct(productId: string): Observable<string> {
+  deleteProduct(productId: string): Observable<string> {
     const backupProducts = this.products();
 
     this.products.update((oldProducts) =>

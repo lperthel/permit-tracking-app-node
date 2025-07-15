@@ -116,7 +116,7 @@ export class AllProductsComponent implements OnInit {
   }
 
   onDelete(productId: string) {
-    const sub = this.productService.deletProduct(productId).subscribe({
+    const sub = this.productService.deleteProduct(productId).subscribe({
       next: (val) => this.restError.set(''),
       error: (err: Error) => this.restError.set(err.message),
     });
