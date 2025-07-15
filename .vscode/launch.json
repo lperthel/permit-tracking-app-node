@@ -3,6 +3,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "Attach",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": "<debug port of the debuggee>"
+    },
+    {
       "name": "ng serve",
       "type": "chrome",
       "request": "launch",
@@ -28,6 +35,25 @@
       "request": "attach",
       "name": "Attach to Edge",
       "port": 9222,
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Cypress: Debug",
+      "program": "${workspaceFolder}/node_modules/cypress/bin/cypress",
+      "args": ["open"],
+      "cwd": "${workspaceFolder}",
+      "outFiles": ["${workspaceFolder}/cypress-dist/**/*.js"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "preLaunchTask": "cy:build"
+    },
+    {
+      "name": "Debug Angular App",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}"
     }
   ]

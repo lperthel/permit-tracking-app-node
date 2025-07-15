@@ -11,7 +11,8 @@ import { ProductService } from '../product/product.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProductForm } from '../product-form.model';
+import { ProductForm } from '../product-form/product-form.model';
+import { PRODUCT_FORM_ERRORS } from '../product-form/product-form-constants';
 
 @Component({
   selector: 'app-update-product',
@@ -20,17 +21,18 @@ import { ProductForm } from '../product-form.model';
   styleUrl: './update-product.component.css',
 })
 export class UpdateProductComponent implements OnInit {
+  errorMessages = PRODUCT_FORM_ERRORS;
   productId = input.required<string>();
   private product!: Product;
   foundProduct: Product | undefined;
   restError = signal<string>('');
   modal = viewChild.required<TemplateRef<any>>('content');
-  productForm = new ProductForm();
 
   constructor(
     private productService: ProductService,
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public productForm: ProductForm
   ) {}
 
   ngOnInit() {

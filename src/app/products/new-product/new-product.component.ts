@@ -21,7 +21,9 @@ import {
 } from '@angular/core';
 
 import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProductForm } from '../product-form.model';
+import { ProductForm } from '../product-form/product-form.model';
+import DOMPurify from 'dompurify';
+import { PRODUCT_FORM_ERRORS } from '../product-form/product-form-constants';
 
 @Component({
   selector: 'app-new-product',
@@ -30,12 +32,13 @@ import { ProductForm } from '../product-form.model';
   styleUrl: './new-product.component.css',
 })
 export class NewProductComponent implements OnInit {
+  errorMessages = PRODUCT_FORM_ERRORS;
   constructor(
     private modalService: NgbModal,
     private productService: ProductService,
-    private router: Router
+    private router: Router,
+    public productForm: ProductForm
   ) {}
-  productForm = new ProductForm();
   modal = viewChild.required<TemplateRef<any>>('content');
   closeResult: WritableSignal<string> = signal('');
   restError = signal<string>('');
@@ -63,8 +66,17 @@ export class NewProductComponent implements OnInit {
     console.log('form submitted');
     this.productForm.form.markAllAsTouched();
 
+    const rawName = this.productForm.form.value.name!;
+    DOMPurify.sanitize(rawName);
+    const rawDescription = this.productForm.form.value.description ?? '';
+    DOMPurify.sanitize(rawDescription);
+
     if (this.productForm.form.invalid) {
       return;
+    }
+
+    if (this.productForm.form.value.price?.indexOf('.') == -1) {
+      this.productForm.form.value.price.concat('.00');
     }
 
     const product: Product = {

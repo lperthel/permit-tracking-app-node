@@ -10,13 +10,13 @@ The mock database server is built using [Faker](https://fakerjs.dev/) and stores
 ./server/database.json
 ```
 
-To generate you own data for the server, run:
+To generate you own data for the server, cd into server/ and run:
 
 ```bash
 npm run generate
 ```
 
-To start the server, run:
+To start the server, cd into server and run:
 
 ```bash
 npm run server
@@ -43,6 +43,22 @@ http://localhost:4200/
 ```
 
 The application will automatically reload whenever you modify any of the source files.
+
+## Tests
+
+To run karma unit tests, run
+
+```
+ng test
+```
+
+to run Cypress integration tests, make sure you server is running and run
+
+```
+ng e2e
+```
+
+and follow the Cypress GUI.
 
 ## Usage
 

@@ -1,82 +1,111 @@
 <ng-template #content let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+  <div class="modal-header" data-testid="modal-header">
+    <h4 class="modal-title" id="modal-basic-title" data-testid="modal-title">
+      Profile update
+    </h4>
     <button
       type="button"
       class="btn-close"
       aria-label="Close"
       (click)="modal.dismiss('Cross click')"
+      data-testid="modal-close-button"
     ></button>
   </div>
   <form
     [formGroup]="productForm.form"
     class="needs-validation"
     (ngSubmit)="createProduct()"
+    data-testid="product-form"
   >
-    <div class="modal-body">
+    <div class="modal-body" data-testid="modal-body">
       @if(restError()){
-      <ngb-alert [type]="'danger'" [dismissible]="false">
+      <ngb-alert
+        data-testid="rest-error"
+        [type]="'danger'"
+        [dismissible]="false"
+      >
         {{ restError() }}
       </ngb-alert>
       }
-      <div class="form-group">
+      <div class="form-group" data-testid="form-group">
         <label for="name">Name*</label>
         <div class="input-group has-validation">
-          <input id="name" class="form-control" formControlName="name" />
+          <input
+            id="name"
+            class="form-control"
+            formControlName="name"
+            data-testid="input-name"
+          />
         </div>
         @if(productForm.invalidName){
-        <div>
+        <div data-testid="error-name">
           <p class="lp-control-error">
-            {{ productForm.errorMessages.invalidName }}
+            {{ errorMessages.invalidName }}
           </p>
         </div>
         }
+
         <label for="description">Description*</label>
         <div class="input-group has-validation">
           <input
             id="description"
             class="form-control"
             formControlName="description"
+            data-testid="input-description"
           />
         </div>
         @if(productForm.invalidDescription){
-        <div>
+        <div data-testid="error-description">
           <p class="lp-control-error">
-            {{ productForm.errorMessages.invalidDescription }}
+            {{ errorMessages.invalidDescription }}
           </p>
         </div>
         }
+
         <label for="price">Price*</label>
         <div class="input-group has-validation">
-          <input id="price" class="form-control" formControlName="price" />
+          <input
+            id="price"
+            class="form-control"
+            formControlName="price"
+            data-testid="input-price"
+          />
         </div>
         @if(productForm.invalidPrice){
-        <div>
+        <div data-testid="error-price">
           <p class="lp-control-error">
-            {{ productForm.errorMessages.invalidPrice }}
+            {{ errorMessages.invalidPrice }}
           </p>
         </div>
         }
+
         <label for="quantity">Quantity*</label>
         <div class="input-group has-validation">
           <input
             id="quantity"
             class="form-control"
             formControlName="quantity"
+            data-testid="input-quantity"
           />
         </div>
         @if(productForm.invalidQuanity){
-        <div>
+        <div data-testid="error-quantity">
           <p class="lp-control-error">
-            {{ productForm.errorMessages.invalidQuantity }}
+            {{ errorMessages.invalidQuantity }}
           </p>
         </div>
         }
       </div>
     </div>
 
-    <div class="modal-footer">
-      <button type="submit" class="btn btn-outline-secondary">Submit</button>
+    <div class="modal-footer" data-testid="modal-footer">
+      <button
+        type="submit"
+        class="btn btn-outline-secondary"
+        data-testid="submit-button"
+      >
+        Submit
+      </button>
     </div>
   </form>
 </ng-template>

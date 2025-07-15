@@ -13,6 +13,10 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { CurrencyPipe } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  APP_DESCRIPTION,
+  APP_HEADER,
+} from '../../assets/constants/app-description';
 
 @Component({
   selector: 'app-all-products',
@@ -28,6 +32,9 @@ import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './all-products.component.css',
 })
 export class AllProductsComponent implements OnInit {
+  PAGE_HEADER = APP_HEADER;
+  PAGE_DESC = APP_DESCRIPTION;
+
   private writeFailed = false;
   columnsToDisplay = [
     'name',
@@ -56,6 +63,34 @@ export class AllProductsComponent implements OnInit {
     this.refreshProductsFromDB();
   }
 
+  ngAfterViewInit(): void {
+    //set attributes for data-testid used during Cypress testing
+    const nextPageButton = document.querySelector(
+      'button.mat-mdc-paginator-navigation-next'
+    );
+    if (nextPageButton)
+      nextPageButton.setAttribute('data-testid', 'pagination-next');
+
+    const previousPageButton = document.querySelector(
+      'button.mat-mdc-paginator-navigation-previous'
+    );
+    if (previousPageButton)
+      previousPageButton.setAttribute('data-testid', 'pagination-prev');
+
+    const lastPageButton = document.querySelector(
+      'button.mat-mdc-paginator-navigation-last'
+    );
+    console.log(`last page button = ${lastPageButton}`);
+    if (lastPageButton)
+      lastPageButton.setAttribute('data-testid', 'pagination-last');
+
+    const firstPageButton = document.querySelector(
+      'button.mat-mdc-paginator-navigation-first'
+    );
+    if (firstPageButton)
+      firstPageButton.setAttribute('data-testid', 'pagination-first');
+  }
+
   constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
 
   manuallyUpdateProductsFromDB() {
@@ -81,7 +116,7 @@ export class AllProductsComponent implements OnInit {
   }
 
   onDelete(productId: string) {
-    const sub = this.productService.deletProduct(productId).subscribe({
+    const sub = this.productService.deleteProduct(productId).subscribe({
       next: (val) => this.restError.set(''),
       error: (err: Error) => this.restError.set(err.message),
     });
