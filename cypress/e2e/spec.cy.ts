@@ -3,55 +3,21 @@ import {
   APP_HEADER,
 } from '../../src/app/assets/constants/app-description';
 import { Product } from '../../src/app/products/product/product.model';
-import { ProductForm } from '../../src/app/products/product-form/product-form.model';
 import {
   PRODUCT_FORM_CONSTRAINTS,
   PRODUCT_FORM_ERRORS,
 } from '../../src/app/products/product-form/product-form-constants';
-
-const paginationPage = {
-  first: 'pagination-first',
-  prev: 'pagination-prev',
-  next: 'pagination-next',
-  last: 'pagination-last',
-};
-
-const DATA_TESTIDS = {
-  inputName: '[data-testid="input-name"]',
-  inputDesc: '[data-testid="input-description"]',
-  inputPrice: '[data-testid="input-price"]',
-  inputQuantity: '[data-testid="input-quantity"]',
-};
-
-const ERROR_TESTIDS = {
-  errorName: '[data-testid="error-name"]',
-  errorDesc: '[data-testid="error-description"]',
-  errorPrice: '[data-testid="error-price"]',
-  errorQuantity: '[data-testid="error-quantity"]',
-};
+import { paginationPage, selectors } from './util/selectors';
+import {
+  clickButton,
+  clickNewProductButton,
+  clickSubmitButton,
+  fillProductForm,
+} from './util/form-actions';
 
 const apiServer = 'http://localhost:3000';
 const uiServer = 'http://localhost:4200/';
-
-const clickButton = (dataTestId: string) => {
-  cy.get(`[data-testid="${dataTestId}"]`).click();
-};
-
-const validateElementOnFirstPage = () => {
-  validateRow(
-    0,
-    'Practical Concrete Cheese',
-    'Curo vomer stillicidium denique cruciamentum conicio suspendo decens. Cubicularis taceo auctor. Exercitationem exercitationem reiciendis ulciscor. Perferendis suppono commodi conturbo calco claudeo quos aliquam.',
-    '$434.29',
-    '43'
-  );
-};
-
-const navigateToPaginationPage = (dataTestId: string) => {
-  cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
-    .find(`[data-testid="${dataTestId}"]`)
-    .click({ force: true });
-};
+const submitButtonSelector = '[data-testid="submit-button"]';
 
 const newProduct: Product = {
   id: '223423',
@@ -61,46 +27,22 @@ const newProduct: Product = {
   quantity: 4,
 };
 
-const validateRow = (
-  index: number,
-  name: string,
-  description: string,
-  price: string,
-  quantity: string
-) => {
-  cy.contains(`[data-testid="inventory-table-name-cell${index}"]`, name).should(
-    'exist'
-  );
-  cy.contains(
-    `[data-testid="inventory-table-description-cell${index}"]`,
-    description
-  ).should('exist');
-  cy.contains(
-    `[data-testid="inventory-table-price-cell${index}"]`,
-    price
-  ).should('exist');
-  cy.contains(
-    `[data-testid="inventory-table-quantity-cell${index}"]`,
-    quantity
-  ).should('exist');
-};
-const au = DATA_TESTIDS.inputName;
-const newLocal = DATA_TESTIDS.inputName;
 describe('CRUD Behavior: Test Adding a new Item', () => {
   beforeEach(() => {
     cy.visit(uiServer);
-    clickButton('new-product-button');
+    clickNewProductButton();
   });
 
   it('Add an item and check that it renders at the end of the table', () => {
     let productId;
-    DATA_TESTIDS.inputDesc;
-    cy.get(newLocal).type(newProduct.name);
-    cy.get(DATA_TESTIDS.inputDesc).type(newProduct.description);
-    cy.get(DATA_TESTIDS.inputPrice).type(newProduct.price);
-    cy.get(DATA_TESTIDS.inputQuantity).type(`${newProduct.quantity}`);
 
-    clickButton('submit-button');
+    fillProductForm(
+      newProduct.name,
+      newProduct.description,
+      newProduct.price,
+      `${newProduct.quantity}`
+    );
+    clickSubmitButton();
 
     navigateToPaginationPage(paginationPage.last);
 
@@ -115,7 +57,6 @@ describe('CRUD Behavior: Test Adding a new Item', () => {
     cy.contains('td', newProduct.name)
       .invoke('attr', 'data-id') //invoke tells cypress to call element.getAttribute('data-id')
       .then((id) => {
-        console.log(`productId = ${id}`);
         productId = id;
         cy.request('DELETE', `${apiServer}/products/${productId}`).then(
           (res) => {
@@ -129,7 +70,7 @@ describe('CRUD Behavior: Test Adding a new Item', () => {
 describe('Product Modal', () => {
   beforeEach(() => {
     cy.visit(uiServer);
-    clickButton('new-product-button');
+    clickNewProductButton();
     cy.get('[data-testid="modal-header"]').should('exist'); // ensure modal is open
   });
 
@@ -140,106 +81,106 @@ describe('Product Modal', () => {
     );
     cy.get('[data-testid="modal-close-button"]').should('exist');
     cy.get('[data-testid="product-form"]').should('exist');
-    cy.get(DATA_TESTIDS.inputName).should('exist');
-    cy.get(DATA_TESTIDS.inputDesc).should('exist');
-    cy.get(DATA_TESTIDS.inputPrice).should('exist');
-    cy.get(DATA_TESTIDS.inputQuantity).should('exist');
-    cy.get('[data-testid="submit-button"]').should('exist');
+    cy.get(selectors.productForm.inputName).should('exist');
+    cy.get(selectors.productForm.inputDesc).should('exist');
+    cy.get(selectors.productForm.inputPrice).should('exist');
+    cy.get(selectors.productForm.inputQuantity).should('exist');
+    cy.get(submitButtonSelector).should('exist');
   });
 
   it('should show error messages when fields are invalid', () => {
-    cy.get('[data-testid="submit-button"]').click();
-    cy.get(ERROR_TESTIDS.errorName).should('exist');
-    cy.get(ERROR_TESTIDS.errorDesc).should('exist');
-    cy.get(ERROR_TESTIDS.errorPrice).should('exist');
-    cy.get(ERROR_TESTIDS.errorQuantity).should('exist');
+    clickSubmitButton();
+    cy.get(selectors.productForm.errorName).should('exist');
+    cy.get(selectors.productForm.errorDesc).should('exist');
+    cy.get(selectors.productForm.errorPrice).should('exist');
+    cy.get(selectors.productForm.errorQuantity).should('exist');
   });
 });
 
 describe('New Item Form Validation', () => {
   beforeEach(() => {
     cy.visit(uiServer);
-    clickButton('new-product-button');
+    clickNewProductButton();
   });
 
   describe('Name Field Validation', () => {
     it('should show required error when left empty', () => {
-      clickButton('submit-button');
-      cy.get(ERROR_TESTIDS.errorName).should(
+      clickSubmitButton();
+      cy.get(selectors.productForm.errorName).should(
         'contain',
         PRODUCT_FORM_ERRORS.invalidName
       );
     });
 
     it('should clear error when a valid name is entered', () => {
-      cy.get(DATA_TESTIDS.inputName).type(newProduct.name);
-      cy.get(ERROR_TESTIDS.errorName).should('not.exist');
+      cy.get(selectors.productForm.inputName).type(newProduct.name);
+      cy.get(selectors.productForm.errorName).should('not.exist');
     });
 
     it('should show error for name longer than 50 characters', () => {
-      cy.get(DATA_TESTIDS.inputName).type('a'.repeat(51));
-      clickButton('submit-button');
-      cy.get(ERROR_TESTIDS.errorName).should(
+      cy.get(selectors.productForm.inputName).type('a'.repeat(51));
+      clickSubmitButton();
+      cy.get(selectors.productForm.errorName).should(
         'contain',
         PRODUCT_FORM_ERRORS.invalidName
       );
-      cy.get(DATA_TESTIDS.inputName).type('{backspace}');
-      clickButton('submit-button');
-      cy.get(ERROR_TESTIDS.errorName).should('not.exist');
+      cy.get(selectors.productForm.inputName).type('{backspace}');
+      clickSubmitButton();
+      cy.get(selectors.productForm.errorName).should('not.exist');
     });
   });
 
   describe('Description Field Validation', () => {
     it('should show required error when left empty', () => {
-      clickButton('submit-button');
-      cy.get(ERROR_TESTIDS.errorDesc).should(
+      clickSubmitButton();
+      cy.get(selectors.productForm.errorDesc).should(
         'contain',
         PRODUCT_FORM_ERRORS.invalidDescription
       );
     });
 
     it('should clear error when a valid name is entered', () => {
-      cy.get(DATA_TESTIDS.inputDesc).type(newProduct.description);
-      cy.get(ERROR_TESTIDS.errorDesc).should('not.exist');
+      cy.get(selectors.productForm.inputDesc).type(newProduct.description);
+      cy.get(selectors.productForm.errorDesc).should('not.exist');
     });
 
     it('should show error for a description longer than the defined max length', () => {
-      cy.get(DATA_TESTIDS.inputDesc).type(
+      cy.get(selectors.productForm.inputDesc).type(
         'a'.repeat(PRODUCT_FORM_CONSTRAINTS.descMaxLength + 1)
       );
-      clickButton('submit-button');
-      cy.get(ERROR_TESTIDS.errorDesc).should(
+      clickSubmitButton();
+      cy.get(selectors.productForm.errorDesc).should(
         'contain',
         PRODUCT_FORM_ERRORS.invalidDescription
       );
-      cy.get(DATA_TESTIDS.inputDesc).type('{backspace}');
-      clickButton('submit-button');
-      cy.get(ERROR_TESTIDS.errorDesc).should('not.exist');
+      cy.get(selectors.productForm.inputDesc).type('{backspace}');
+      clickSubmitButton();
+      cy.get(selectors.productForm.errorDesc).should('not.exist');
     });
   });
 
   describe('Price Field Validation', () => {
     it('should show required error when left empty', () => {
-      clickButton('submit-button');
-      cy.get(ERROR_TESTIDS.errorPrice).should(
+      clickSubmitButton();
+      cy.get(selectors.productForm.errorPrice).should(
         'contain',
         PRODUCT_FORM_ERRORS.invalidPrice
       );
     });
 
     it('should show error when price is not a number', () => {
-      cy.get(DATA_TESTIDS.inputPrice).type('abc');
-      clickButton('submit-button');
-      cy.get(ERROR_TESTIDS.errorPrice).should(
+      cy.get(selectors.productForm.inputPrice).type('abc');
+      clickSubmitButton();
+      cy.get(selectors.productForm.errorPrice).should(
         'contain',
         PRODUCT_FORM_ERRORS.invalidPrice
       );
     });
 
     it('should accept a valid price', () => {
-      cy.get(DATA_TESTIDS.inputPrice).type(newProduct.price);
-      clickButton('submit-button');
-      cy.get(ERROR_TESTIDS.errorPrice).should('not.exist');
+      cy.get(selectors.productForm.inputPrice).type(newProduct.price);
+      clickSubmitButton();
+      cy.get(selectors.productForm.errorPrice).should('not.exist');
     });
   });
 });
@@ -247,24 +188,24 @@ describe('New Item Form Validation', () => {
 describe('New Item Validation: Test form eror validation when creating a new item', () => {
   beforeEach(() => {
     cy.visit(uiServer);
-    clickButton('new-product-button');
+    clickNewProductButton();
     //Submit an empty form and validate errors
-    cy.get('[data-testid="submit-button"]').click();
-    cy.get(ERROR_TESTIDS.errorName).should('exist');
-    cy.get(ERROR_TESTIDS.errorDesc).should('exist');
-    cy.get(ERROR_TESTIDS.errorPrice).should('exist');
-    cy.get(ERROR_TESTIDS.errorQuantity).should('exist');
+    cy.get(submitButtonSelector).click();
+    cy.get(selectors.productForm.errorName).should('exist');
+    cy.get(selectors.productForm.errorDesc).should('exist');
+    cy.get(selectors.productForm.errorPrice).should('exist');
+    cy.get(selectors.productForm.errorQuantity).should('exist');
   });
 
   it('Correct the name and make sure the error is fixed', () => {
-    cy.get(ERROR_TESTIDS.errorName).should('exist');
-    cy.get(DATA_TESTIDS.inputName).type('hello');
-    cy.get(ERROR_TESTIDS.errorName).should('not.exist');
+    cy.get(selectors.productForm.errorName).should('exist');
+    cy.get(selectors.productForm.inputName).type('hello');
+    cy.get(selectors.productForm.errorName).should('not.exist');
   });
   it('Correct the name and make sure the error is fixed', () => {
-    cy.get(ERROR_TESTIDS.errorName).should('exist');
-    cy.get(DATA_TESTIDS.inputName).type('hello');
-    cy.get(ERROR_TESTIDS.errorName).should('not.exist');
+    cy.get(selectors.productForm.errorName).should('exist');
+    cy.get(selectors.productForm.inputName).type('hello');
+    cy.get(selectors.productForm.errorName).should('not.exist');
   });
 });
 
@@ -395,7 +336,7 @@ describe('Test mat table columns and features', () => {
     cy.get('[data-testid="inventory-table"] th[mat-header-cell]').should(
       'have.length',
       6
-    ); // based on your page size
+    );
 
     cy.get('[data-testid="inventory-table"] th')
       .should('contain.text', 'Name')
@@ -405,3 +346,31 @@ describe('Test mat table columns and features', () => {
       .and('contain.text', 'Delete');
   });
 });
+export const validateRow = (
+  index: number,
+  name: string,
+  description: string,
+  price: string,
+  quantity: string
+) => {
+  cy.contains(selectors.productRowName(index), name).should('exist');
+  cy.contains(selectors.productRowDesc(index), description).should('exist');
+  cy.contains(selectors.productRowPrice(index), price).should('exist');
+  cy.contains(selectors.productRowQuantity(index), quantity).should('exist');
+};
+
+const validateElementOnFirstPage = () => {
+  validateRow(
+    0,
+    'Practical Concrete Cheese',
+    'Curo vomer stillicidium denique cruciamentum conicio suspendo decens. Cubicularis taceo auctor. Exercitationem exercitationem reiciendis ulciscor. Perferendis suppono commodi conturbo calco claudeo quos aliquam.',
+    '$434.29',
+    '43'
+  );
+};
+
+const navigateToPaginationPage = (dataTestId: string) => {
+  cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
+    .find(`[data-testid="${dataTestId}"]`)
+    .click({ force: true });
+};

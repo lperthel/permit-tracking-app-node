@@ -101,10 +101,11 @@ export class AllProductsComponent implements OnInit {
   }
 
   refreshProductsFromDB() {
+    const noError = '';
     const sub = this.productService.requestAllProducts.subscribe({
       next: (resp) => {
         this.productService.products.set(resp);
-        this.restError.set('');
+        this.restError.set(noError);
       },
       error: (err: Error) => this.restError.set(err.message),
     });
@@ -112,12 +113,14 @@ export class AllProductsComponent implements OnInit {
   }
 
   onUpdate(productId: string) {
-    this.router.navigate(['/update', productId]);
+    const updatePage = '/update';
+    this.router.navigate([updatePage, productId]);
   }
 
   onDelete(productId: string) {
+    const noError = '';
     const sub = this.productService.deleteProduct(productId).subscribe({
-      next: (val) => this.restError.set(''),
+      next: (val) => this.restError.set(noError),
       error: (err: Error) => this.restError.set(err.message),
     });
 
