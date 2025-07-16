@@ -1,5 +1,6 @@
 export const selectors = {
   createButton: '[data-testid="create-button"]',
+  refreshProductsFromDbButton: 'refresh-products-from-db',
   productForm: {
     inputName: '[data-testid="input-name"]',
     inputDesc: '[data-testid="input-description"]',
@@ -18,6 +19,10 @@ export const selectors = {
     `[data-testid="inventory-table-price-cell${index}"]`,
   productRowQuantity: (index: number) =>
     `[data-testid="inventory-table-quantity-cell${index}"]`,
+  productRowDelete: (index: number) =>
+    `[data-testid="inventory-table-delete-cell${index}"]`,
+  productRowUpdate: (index: number) =>
+    `[data-testid="inventory-table-update-cell${index}"]`,
 };
 
 export const paginationPage = {

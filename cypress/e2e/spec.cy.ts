@@ -6,41 +6,60 @@ import { Product } from '../../src/app/products/product/product.model';
 import {
   PRODUCT_FORM_CONSTRAINTS,
   PRODUCT_FORM_ERRORS,
-} from '../../src/app/products/product-form/product-form-constants';
+} from '../../src/app/products/product-form-model/product-form-constants';
 import { paginationPage, selectors } from './util/selectors';
 import {
   clickButton,
   clickNewProductButton,
   clickSubmitButton,
   fillProductForm,
+  navigateToPaginationPage,
 } from './util/form-actions';
 
-const apiServer = 'http://localhost:3000';
+const dbServer = 'http://localhost:3000';
 const uiServer = 'http://localhost:4200/';
 const submitButtonSelector = '[data-testid="submit-button"]';
 
-const newProduct: Product = {
+const createThisProduct: Product = {
   id: '223423',
   name: 'New Product',
-  description: 'This is an Product added by a cypress integration Test',
+  description: 'This is an Product created by a cypress integration Test',
   price: '799.19',
   quantity: 4,
 };
 
-describe('CRUD Behavior: Test Adding a new Item', () => {
-  beforeEach(() => {
-    cy.visit(uiServer);
-    clickNewProductButton();
+const updatedProduct: Product = {
+  id: '223421',
+  name: 'Updated Product',
+  description:
+    'This is an Product added by a cypress integration Test that has been updated',
+  price: '791.19',
+  quantity: 3,
+};
+
+const deleteThisProduct: Product = {
+  id: '223422',
+  name: 'New Product',
+  description:
+    'This is an Product added by a cypress integration Test that needs to be deleted',
+  price: '749.19',
+  quantity: 2,
+};
+
+describe('CRUD Behavior', () => {
+  afterEach(() => {
+    clickButton(selectors.refreshProductsFromDbButton);
   });
 
-  it('Add an item and check that it renders at the end of the table', () => {
+  it('app should allow a user to create a product and app should display the product in the table', () => {
     let productId;
-
+    cy.visit(uiServer);
+    clickNewProductButton();
     fillProductForm(
-      newProduct.name,
-      newProduct.description,
-      newProduct.price,
-      `${newProduct.quantity}`
+      createThisProduct.name,
+      createThisProduct.description,
+      createThisProduct.price,
+      `${createThisProduct.quantity}`
     );
     clickSubmitButton();
 
@@ -48,17 +67,114 @@ describe('CRUD Behavior: Test Adding a new Item', () => {
 
     validateRow(
       0,
-      newProduct.name,
-      newProduct.description,
-      `\$${newProduct.price}`,
-      `${newProduct.quantity}`
+      createThisProduct.name,
+      createThisProduct.description,
+      `\$${createThisProduct.price}`,
+      `${createThisProduct.quantity}`
     );
 
-    cy.contains('td', newProduct.name)
+    cy.contains('td', createThisProduct.name)
       .invoke('attr', 'data-id') //invoke tells cypress to call element.getAttribute('data-id')
       .then((id) => {
-        productId = id;
-        cy.request('DELETE', `${apiServer}/products/${productId}`).then(
+        cy.request('DELETE', `${dbServer}/products/${id}`).then((res) => {
+          expect(res.status).to.eq(200);
+        });
+      });
+  });
+
+  it('App should allow a user to delete a product', () => {
+    cy.request(
+      'POST',
+      `${dbServer}/products/`,
+      JSON.stringify(deleteThisProduct)
+    ).then((res) => {
+      expect(res.status).to.eq(201);
+    });
+
+    cy.visit(uiServer);
+    cy.wait(50);
+    navigateToPaginationPage(paginationPage.last);
+
+    validateNewItemExists();
+
+    cy.get(selectors.productRowDelete(0))
+      .find('button')
+      .should('exist')
+      .click();
+
+    //This call checks that the item was correctly deleted
+    cy.wait(50);
+    validateItemOnLastPage();
+  });
+
+  it.only('app should allow a user to update a product and app should display the product in the table', () => {
+    cy.visit(uiServer);
+
+    cy.request(
+      'POST',
+      `${dbServer}/products/`,
+      JSON.stringify(createThisProduct)
+    ).then((res) => {
+      expect(res.status).to.eq(201);
+    });
+
+    cy.wait(50);
+
+    navigateToPaginationPage(paginationPage.last);
+
+    validateRow(
+      0,
+      createThisProduct.name,
+      createThisProduct.description,
+      `\$${createThisProduct.price}`,
+      `${createThisProduct.quantity}`
+    );
+
+    cy.get(selectors.productRowUpdate(0))
+      .find('button')
+      .should('exist')
+      .click();
+
+    cy.get(selectors.productForm.inputName).contains(
+      createThisProduct.name,
+      'exists'
+    );
+    cy.get(selectors.productForm.inputDesc).contains(
+      createThisProduct.description,
+      'exists'
+    );
+    cy.get(selectors.productForm.inputPrice).contains(
+      createThisProduct.price,
+      'exists'
+    );
+    cy.get(selectors.productForm.inputQuantity).contains(
+      `$${createThisProduct.quantity}`,
+      'exists'
+    );
+
+    fillProductForm(
+      updatedProduct.name,
+      updatedProduct.description,
+      updatedProduct.price,
+      `${updatedProduct.quantity}`
+    );
+
+    clickSubmitButton();
+
+    navigateToPaginationPage(paginationPage.last);
+
+    validateRow(
+      0,
+      updatedProduct.name,
+      updatedProduct.description,
+      `\$${updatedProduct.price}`,
+      `${updatedProduct.quantity}`
+    );
+
+    cy.contains('td', createThisProduct.name)
+      .invoke('attr', 'data-id') //invoke tells cypress to call element.getAttribute('data-id')
+      .then((productId) => {
+        cy.request('DELETE', `${dbServer}/products/${productId}`).then(
           (res) => {
             expect(res.status).to.eq(200);
           }
@@ -66,7 +182,6 @@ describe('CRUD Behavior: Test Adding a new Item', () => {
       });
   });
 });
-
 describe('Product Modal', () => {
   beforeEach(() => {
     cy.visit(uiServer);
@@ -113,7 +228,7 @@ describe('New Item Form Validation', () => {
     });
 
     it('should clear error when a valid name is entered', () => {
-      cy.get(selectors.productForm.inputName).type(newProduct.name);
+      cy.get(selectors.productForm.inputName).type(createThisProduct.name);
       cy.get(selectors.productForm.errorName).should('not.exist');
     });
 
@@ -140,7 +255,9 @@ describe('New Item Form Validation', () => {
     });
 
     it('should clear error when a valid name is entered', () => {
-      cy.get(selectors.productForm.inputDesc).type(newProduct.description);
+      cy.get(selectors.productForm.inputDesc).type(
+        createThisProduct.description
+      );
       cy.get(selectors.productForm.errorDesc).should('not.exist');
     });
 
@@ -178,7 +295,7 @@ describe('New Item Form Validation', () => {
     });
 
     it('should accept a valid price', () => {
-      cy.get(selectors.productForm.inputPrice).type(newProduct.price);
+      cy.get(selectors.productForm.inputPrice).type(createThisProduct.price);
       clickSubmitButton();
       cy.get(selectors.productForm.errorPrice).should('not.exist');
     });
@@ -237,13 +354,7 @@ describe('Paginator Behavior: Navigate between pages and validate the expect ite
     validateElementOnFirstPage();
 
     navigateToPaginationPage(paginationPage.last);
-    validateRow(
-      0,
-      'Fantastic Ceramic Gloves',
-      'Totus contego cupiditas ante catena. Dolorum coniecto labore vulpes ulterius adinventitias sordeo. Suffoco adipisci caries adulatio stella ancilla voro. Quisquam blanditiis agnosco decet ubi tabgo dolore reprehenderit ustilo. Audio viscus laboriosam vorago. Voluptas amaritudo atrocitas excepturi labore pax vulgo modi.',
-      '$884.29',
-      '8'
-    );
+    validateItemOnLastPage();
     navigateToPaginationPage(paginationPage.first);
     validateElementOnFirstPage();
   });
@@ -359,6 +470,16 @@ export const validateRow = (
   cy.contains(selectors.productRowQuantity(index), quantity).should('exist');
 };
 
+const validateItemOnLastPage = () => {
+  validateRow(
+    0,
+    'Fantastic Ceramic Gloves',
+    'Totus contego cupiditas ante catena. Dolorum coniecto labore vulpes ulterius adinventitias sordeo. Suffoco adipisci caries adulatio stella ancilla voro. Quisquam blanditiis agnosco decet ubi tabgo dolore reprehenderit ustilo. Audio viscus laboriosam vorago. Voluptas amaritudo atrocitas excepturi labore pax vulgo modi.',
+    '$884.29',
+    '8'
+  );
+};
+
 const validateElementOnFirstPage = () => {
   validateRow(
     0,
@@ -369,8 +490,12 @@ const validateElementOnFirstPage = () => {
   );
 };
 
-const navigateToPaginationPage = (dataTestId: string) => {
-  cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
-    .find(`[data-testid="${dataTestId}"]`)
-    .click({ force: true });
+const validateNewItemExists = () => {
+  validateRow(
+    0,
+    createThisProduct.name,
+    createThisProduct.description,
+    `\$${createThisProduct.price}`,
+    `${createThisProduct.quantity}`
+  );
 };

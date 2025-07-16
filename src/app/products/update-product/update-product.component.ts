@@ -11,8 +11,8 @@ import { ProductService } from '../product/product.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProductForm } from '../product-form/product-form.model';
-import { PRODUCT_FORM_ERRORS } from '../product-form/product-form-constants';
+import { ProductForm } from '../product-form-model/product-form.model';
+import { PRODUCT_FORM_ERRORS } from '../product-form-model/product-form-constants';
 
 @Component({
   selector: 'app-update-product',
@@ -61,7 +61,6 @@ export class UpdateProductComponent implements OnInit {
       .open(content, { ariaLabelledBy: 'modal-basic-title' })
       .result.then(
         (result) => {
-          this.updateProduct();
           this.router.navigateByUrl('/');
         },
         (reason) => {
