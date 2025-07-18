@@ -381,7 +381,6 @@ describe('New Item Validation: Test form eror validation when creating a new ite
   beforeEach(() => {
     cy.visit(uiServer);
     clickNewProductButton();
-    //Submit an empty form and validate errors
     cy.get(submitButtonSelector).click();
     cy.get(selectors.productForm.errorName).should('exist');
     cy.get(selectors.productForm.errorDesc).should('exist');

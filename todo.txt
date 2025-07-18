@@ -1,5 +1,11 @@
-Angular Tests:
-  
+Front End:
+  1. errors aren't red
+
+Middleware:
+  1. setup java with lambda
+
+
 Backend:
-    1. setup and java and ddb locally
+    1. setup ddb locally with docker
     2. 
+
