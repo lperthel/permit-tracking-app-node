@@ -26,7 +26,7 @@ var database = { products: [] };
 
 for (var i = 1; i <= 300; i++) {
   database.products.push({
-    id: uuidv4(),
+    id:  uuidv4(),
     name: faker.commerce.productName(),
     description: faker.lorem.sentences(),
     price: faker.commerce.price(),

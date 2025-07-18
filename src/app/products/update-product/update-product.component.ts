@@ -11,27 +11,32 @@ import { ProductService } from '../product/product.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProductForm } from '../product-form/product-form.model';
-import { PRODUCT_FORM_ERRORS } from '../product-form/product-form-constants';
+import { ProductForm } from '../product-form-model/product-form.model';
+import {
+  PRODUCT_FORM_ERRORS,
+  PRODUCT_FORM_HEADERS,
+} from '../product-form-model/product-form-constants';
+import { ProductFormComponent } from '../product-form/product-form.component';
 
 @Component({
   selector: 'app-update-product',
-  imports: [ReactiveFormsModule, NgbAlertModule],
+  imports: [ReactiveFormsModule, NgbAlertModule, ProductFormComponent],
   templateUrl: './update-product.component.html',
   styleUrl: './update-product.component.css',
 })
 export class UpdateProductComponent implements OnInit {
   errorMessages = PRODUCT_FORM_ERRORS;
+  modalHeader = PRODUCT_FORM_HEADERS.updateProduct;
   productId = input.required<string>();
   private product!: Product;
   foundProduct: Product | undefined;
-  restError = signal<string>('');
-  modal = viewChild.required<TemplateRef<any>>('content');
+
+  productFormComponent =
+    viewChild.required<ProductFormComponent>('productFormElement');
 
   constructor(
     private productService: ProductService,
     private router: Router,
-    private modalService: NgbModal,
     public productForm: ProductForm
   ) {}
 
@@ -53,21 +58,7 @@ export class UpdateProductComponent implements OnInit {
         quantity: this.product.quantity.toString(),
       });
     }
-    this.open(this.modal());
-  }
-
-  open(content: TemplateRef<any>) {
-    this.modalService
-      .open(content, { ariaLabelledBy: 'modal-basic-title' })
-      .result.then(
-        (result) => {
-          this.updateProduct();
-          this.router.navigateByUrl('/');
-        },
-        (reason) => {
-          this.router.navigateByUrl('/');
-        }
-      );
+    this.productFormComponent().openModal();
   }
 
   updateProduct() {
@@ -86,14 +77,22 @@ export class UpdateProductComponent implements OnInit {
       .updateProduct(newProduct)
       .subscribe({
         next: (resp) => {
-          this.restError.set('');
-          this.modalService.dismissAll('save-click');
+          this.productFormComponent().restError.set('');
+          this.productFormComponent().dismissModal('save-click');
 
           this.router.navigateByUrl('/');
         },
-        error: (err: Error) => this.restError.set(err.message),
+        error: (err: Error) =>
+          this.productFormComponent().restError.set(err.message),
       });
 
     this.productService.closeConnection(subscription);
+  }
+
+  handleFormSubmission() {
+    this.updateProduct();
+  }
+  handleCloseModal() {
+    this.router.navigateByUrl('/');
   }
 }

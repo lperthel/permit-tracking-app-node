@@ -9,6 +9,11 @@ export const PRODUCT_FORM_ERRORS = {
     'Quantity is required, must be less than 256 characters, and must be numeric',
 };
 
+export const PRODUCT_FORM_HEADERS = {
+  newProduct: 'New Product',
+  updateProduct: 'Update Product',
+};
+
 export const PRODUCT_FORM_CONSTRAINTS = {
   nameMaxLength: 50,
   descMaxLength: 1000,

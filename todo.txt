@@ -1,0 +1,5 @@
+Angular Tests:
+  
+Backend:
+    1. setup and java and ddb locally
+    2. 

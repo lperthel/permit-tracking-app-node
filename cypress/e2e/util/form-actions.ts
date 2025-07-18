@@ -11,8 +11,23 @@ export const fillProductForm = (
   cy.get(selectors.productForm.inputPrice).clear().type(price);
   cy.get(selectors.productForm.inputQuantity).clear().type(quantity);
 };
+
+export const clearProductForm = () => {
+  cy.get(selectors.productForm.inputName).clear();
+  cy.get(selectors.productForm.inputDesc).clear();
+  cy.get(selectors.productForm.inputPrice).clear();
+  cy.get(selectors.productForm.inputQuantity).clear();
+};
+
 export const clickSubmitButton = () => clickButton('submit-button');
 export const clickNewProductButton = () => clickButton('new-product-button');
+export const clickModalCloseButton = () => clickButton('modal-close-button');
+
 export const clickButton = (dataTestId: string) => {
-  cy.get(`[data-testid="${dataTestId}"]`).click();
+  cy.get(`[data-testid="${dataTestId}"]`).click({ force: true });
+};
+export const navigateToPaginationPage = (dataTestId: string) => {
+  cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
+    .find(`[data-testid="${dataTestId}"]`)
+    .click({ force: true });
 };
