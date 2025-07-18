@@ -21,45 +21,38 @@ import {
 } from '@angular/core';
 
 import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProductForm } from '../product-form/product-form.model';
 import DOMPurify from 'dompurify';
-import { PRODUCT_FORM_ERRORS } from '../product-form/product-form-constants';
+import { ProductFormComponent } from '../product-form/product-form.component';
+import {
+  PRODUCT_FORM_ERRORS,
+  PRODUCT_FORM_HEADERS,
+} from '../product-form-model/product-form-constants';
+import { ProductForm } from '../product-form-model/product-form.model';
 
 @Component({
   selector: 'app-new-product',
-  imports: [ReactiveFormsModule, NgbAlertModule],
+  imports: [ReactiveFormsModule, NgbAlertModule, ProductFormComponent],
   templateUrl: './new-product.component.html',
   styleUrl: './new-product.component.css',
 })
 export class NewProductComponent implements OnInit {
   errorMessages = PRODUCT_FORM_ERRORS;
+  modalHeader = PRODUCT_FORM_HEADERS.newProduct;
+
   constructor(
-    private modalService: NgbModal,
     private productService: ProductService,
     private router: Router,
     public productForm: ProductForm
-  ) {}
-  modal = viewChild.required<TemplateRef<any>>('content');
-  closeResult: WritableSignal<string> = signal('');
-  restError = signal<string>('');
-
-  ngOnInit(): void {
-    this.open(this.modal());
+  ) {
+    console.log('constructor ran');
   }
 
-  open(content: TemplateRef<any>) {
-    this.modalService
-      .open(content, { ariaLabelledBy: 'modal-basic-title' })
-      .result.then(
-        (result) => {
-          this.closeResult.set(`Closed with: ${result}`);
-          this.createProduct();
-          this.router.navigateByUrl('/');
-        },
-        (reason) => {
-          this.router.navigateByUrl('/');
-        }
-      );
+  productFormComponent =
+    viewChild.required<ProductFormComponent>('productFormElement');
+  closeResult: WritableSignal<string> = signal('');
+
+  ngOnInit(): void {
+    this.productFormComponent().openModal();
   }
 
   createProduct() {
@@ -89,17 +82,24 @@ export class NewProductComponent implements OnInit {
 
     const sub = this.productService.createProduct(product).subscribe({
       next: (val) => {
-        this.restError.set('');
-        this.modalService.dismissAll('save-click');
+        this.productFormComponent().restError.set('');
+        this.productFormComponent().dismissModal('save-click');
       },
       error: (err: Error) => {
-        this.restError.set(err.message);
+        this.productFormComponent().restError.set(err.message);
       },
     });
     this.productService.closeConnection(sub);
   }
 
   onCancel() {
+    this.router.navigateByUrl('/');
+  }
+
+  handleFormSubmission() {
+    this.createProduct();
+  }
+  handleCloseModal() {
     this.router.navigateByUrl('/');
   }
 }

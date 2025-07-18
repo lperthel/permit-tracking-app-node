@@ -22,16 +22,42 @@ import { ReactiveFormsModule } from '@angular/forms';
   styleUrl: './product-form.component.css',
 })
 export class ProductFormComponent {
-  public formHeader = input.required<string>();
   errorMessages = PRODUCT_FORM_ERRORS;
-  public productForm = inject(ProductForm);
+  productForm = input.required<ProductForm>();
+  formHeader = input.required<string>();
   // public formSubmission = output<ProductForm>();
-  @Output() public formSubmission = new EventEmitter<ProductForm>();
+  public closeModalEvent = output<void>();
+  @Output() public formSubmission = new EventEmitter<void>();
   restError = signal<string>('');
 
-  consturctor() {}
+  modal = viewChild.required<TemplateRef<any>>('content');
+  closeResult: WritableSignal<string> = signal('');
+
+  constructor(private modalService: NgbModal) {}
+
+  openModal() {
+    this.open(this.modal());
+  }
+
+  open(content: TemplateRef<any>) {
+    this.modalService
+      .open(content, { ariaLabelledBy: 'modal-basic-title' })
+      .result.then(
+        (result) => {
+          this.closeResult.set(`Closed with: ${result}`);
+          this.closeModalEvent.emit();
+        },
+        (reason) => {
+          this.closeModalEvent.emit();
+        }
+      );
+  }
+
+  dismissModal(reason: string) {
+    this.modalService.dismissAll(reason);
+  }
 
   onSubmit() {
-    this.formSubmission.emit(this.productForm);
+    this.formSubmission.emit();
   }
 }
