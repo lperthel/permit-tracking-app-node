@@ -1,11 +1,12 @@
 package com.permittrack.permitapi.controller;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-// get, post, put, delete, etc.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,13 +24,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.permittrack.permitapi.model.Permit;
+import com.permittrack.permitapi.model.PermitEntity;
 import com.permittrack.permitapi.repository.PermitRepository;
 import com.permittrack.permitapi.support.PermitJsonPath;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test") // Use H2
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // optional, helps with setup reuse
 public class PermitControllerIT {
 
     /*
@@ -53,34 +56,42 @@ public class PermitControllerIT {
         permitRepository.deleteAll();
     }
 
-    private Permit createAndPostSamplePermit(String name) throws Exception {
-        Permit permit = new Permit();
+    private PermitEntity createAndPostSamplePermit(String name) throws Exception {
+        PermitEntity permit = new PermitEntity();
         permit.setPermitName(name);
+        permit.setApplicantName("John Doe");
+        permit.setPermitType("Electrical");
         permit.setStatus("PENDING");
 
         String json = objectMapper.writeValueAsString(permit);
         ResultActions response = mockMvc.perform(post("/permits")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json));
-        System.out.println(response.toString());
         response.andExpect(status().isOk());
-        response.andReturn().getResponse().getContentAsString();
 
-        return objectMapper.readValue(response.andReturn().getResponse().getContentAsString(), Permit.class);
+        var responseraw = response.andReturn().getResponse();
+        System.out.println("Response Debug: " + responseraw);
+        var responseString = responseraw.getContentAsString();
+        System.out.println("Response: " + responseString);
+
+        return objectMapper.readValue(response.andReturn().getResponse().getContentAsString(), PermitEntity.class);
     }
 
     @Test
     public void testCreateAndGetPermit() throws Exception {
-        Permit created = createAndPostSamplePermit("Test Permit");
+        final String testPermitName = "Test Permit";
+        PermitEntity created = createAndPostSamplePermit(testPermitName);
         mockMvc.perform(get("/permits/" + created.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath(PermitJsonPath.PERMIT_NAME).value("Test Permit"));
+                .andExpect(jsonPath(PermitJsonPath.PERMIT_NAME).value(testPermitName));
     }
 
     @Test
     public void testListPermits() throws Exception {
-        createAndPostSamplePermit("Permit A");
-        createAndPostSamplePermit("Permit B");
+        String testPermitNameA = "Permit A";
+        createAndPostSamplePermit(testPermitNameA);
+        String testPermitNameB = "Permit B";
+        createAndPostSamplePermit(testPermitNameB);
 
         mockMvc.perform(get("/permits"))
                 .andExpect(status().isOk())
@@ -89,19 +100,22 @@ public class PermitControllerIT {
 
     @Test
     public void testUpdatePermit() throws Exception {
-        Permit created = createAndPostSamplePermit("Old Name");
-        created.setPermitName("Updated Name");
+        final String testPermitOldName = "Old Name";
+        final String testPermitNewName = "Updated Name";
+
+        PermitEntity created = createAndPostSamplePermit(testPermitOldName);
+        created.setPermitName(testPermitNewName);
 
         mockMvc.perform(put("/permits/" + created.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(created)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath(PermitJsonPath.PERMIT_NAME).value("Updated Name"));
+                .andExpect(jsonPath(PermitJsonPath.PERMIT_NAME).value(testPermitNewName));
     }
 
     @Test
     public void testDeletePermit() throws Exception {
-        Permit created = createAndPostSamplePermit("To Be Deleted");
+        PermitEntity created = createAndPostSamplePermit("To Be Deleted");
 
         mockMvc.perform(delete("/permits/" + created.getId()))
                 .andExpect(status().isNoContent());
@@ -114,6 +128,15 @@ public class PermitControllerIT {
     public void testGetNotFound() throws Exception {
         mockMvc.perform(get("/permits/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getPermit_returns404_whenPermitMissing() throws Exception {
+        UUID missingId = UUID.randomUUID();
+
+        mockMvc.perform(get("/permits/" + missingId))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("Permit with ID")));
     }
 
 }

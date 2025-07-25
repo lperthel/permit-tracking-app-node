@@ -1,19 +1,25 @@
 package com.permittrack.permitapi.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.permittrack.permitapi.model.Permit;
+import com.permittrack.permitapi.model.PermitEntity;
+import com.permittrack.permitapi.model.PermitRequestDTO;
+import com.permittrack.permitapi.model.PermitResponseDTO;
+import com.permittrack.permitapi.model.ResourceNotFoundException;
 import com.permittrack.permitapi.repository.PermitRepository;
+import com.permittrack.permitapi.support.PermitMapper;
 
 /**
  * Service layer for handling business logic related to Permits.
- * 
- * Provides methods for creating, retrieving, updating, and deleting permits.
- * Acts as a bridge between the controller layer and the data access layer.
+ *
+ * Uses DTOs to enforce input/output boundaries and prevent over-posting
+ * attacks.
+ * All mapping logic is delegated to the PermitMapper to keep domain logic
+ * clean.
  */
 @Service
 public class PermitService {
@@ -24,34 +30,54 @@ public class PermitService {
         this.permitRepository = permitRepository;
     }
 
-    public Permit createPermit(Permit permit) {
-        return permitRepository.save(permit);
+    /**
+     * Creates a new permit based on a validated DTO.
+     */
+    public PermitResponseDTO createPermit(PermitRequestDTO request) {
+        PermitEntity entity = PermitMapper.toEntity(request);
+        PermitEntity saved = permitRepository.save(entity);
+        return new PermitResponseDTO(saved);
     }
 
-    public Optional<Permit> getPermit(UUID id) {
-        return permitRepository.findById(id);
+    /**
+     * Retrieves a permit by ID and converts it to a response DTO.
+     */
+    public PermitResponseDTO getPermit(UUID id) {
+        PermitEntity existing = permitRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Permit with ID " + id + " not found"));
+        return new PermitResponseDTO(existing);
     }
 
-    public List<Permit> listPermits() {
-        return permitRepository.findAll();
+    /**
+     * Lists all permits, converting each to a response DTO.
+     */
+    public List<PermitResponseDTO> listPermits() {
+        return permitRepository.findAll()
+                .stream()
+                .map(PermitResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Permit> updatePermit(UUID id, Permit updatedPermit) {
-        return permitRepository.findById(id).map(existing -> {
-            // Update fields here; modify based on your Permit fields
-            existing.setPermitType(updatedPermit.getPermitType());
-            existing.setStatus(updatedPermit.getStatus());
-            existing.setPermitName(updatedPermit.getPermitName());
-            return permitRepository.save(existing);
-        });
+    /**
+     * Updates an existing permit using a validated DTO.
+     */
+    public PermitResponseDTO updatePermit(UUID id, PermitRequestDTO request) {
+        PermitEntity existing = permitRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Permit with ID " + id + " not found"));
+
+        PermitMapper.updateEntityFromDto(existing, request);
+        PermitEntity saved = permitRepository.save(existing);
+        return new PermitResponseDTO(saved);
     }
 
+    /**
+     * Deletes a permit by ID.
+     */
     public boolean deletePermit(UUID id) {
-        if (permitRepository.existsById(id)) {
-            permitRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
+        if (!permitRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Permit with ID " + id + " not found");
         }
+        permitRepository.deleteById(id);
+        return true;
     }
 }
