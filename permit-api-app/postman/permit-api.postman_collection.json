@@ -1,0 +1,128 @@
+{
+    "info": {
+        "_postman_id": "c623b402-36a3-4f68-8d67-983dbbd23e92",
+        "name": "Permit API",
+        "description": "CRUD test collection for the Spring Boot-based Permit API.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Create Permit",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"type\": \"Electrical\",\n  \"status\": \"Pending\",\n  \"applicantName\": \"Jane Doe\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8080/permits",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "permits"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Permit by ID",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/permits/1",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "permits",
+                        "1"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "List Permits",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/permits",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "permits"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Update Permit",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"type\": \"Electrical\",\n  \"status\": \"Approved\",\n  \"applicantName\": \"Jane Doe\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8080/permits/1",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "permits",
+                        "1"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Permit",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/permits/1",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "permits",
+                        "1"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}
