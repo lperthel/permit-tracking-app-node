@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.permittrack.permitapi.model.Permit;
+import com.permittrack.permitapi.model.PermitRequestDTO;
+import com.permittrack.permitapi.model.PermitResponseDTO;
 import com.permittrack.permitapi.service.PermitService;
+
+import jakarta.validation.Valid;
 
 /**
  * REST controller for managing Permit resources.
@@ -33,33 +36,31 @@ public class PermitController {
     }
 
     @PostMapping
-    public ResponseEntity<Permit> createPermit(@RequestBody Permit permit) {
-        Permit created = permitService.createPermit(permit);
+    public ResponseEntity<PermitResponseDTO> createPermit(@Valid @RequestBody PermitRequestDTO permit) {
+        PermitResponseDTO created = permitService.createPermit(permit);
         return ResponseEntity.ok(created);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Permit> getPermit(@PathVariable UUID id) {
-        return permitService.getPermit(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PermitResponseDTO> getPermit(@PathVariable UUID id) {
+        return ResponseEntity.ok(permitService.getPermit(id));
     }
 
     @GetMapping
-    public List<Permit> listPermits() {
+    public List<PermitResponseDTO> listPermits() {
         return permitService.listPermits();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Permit> updatePermit(@PathVariable UUID id, @RequestBody Permit permit) {
-        return permitService.updatePermit(id, permit)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PermitResponseDTO> updatePermit(@PathVariable UUID id,
+            @Valid @RequestBody PermitRequestDTO permit) {
+        PermitResponseDTO updated = permitService.updatePermit(id, permit);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePermit(@PathVariable UUID id) {
-        boolean deleted = permitService.deletePermit(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        permitService.deletePermit(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -9,7 +9,6 @@ import org.hibernate.type.SqlTypes;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(name = "permits") // plural is the default JPA style; match it to what you want
-public class Permit {
+public class PermitEntity {
 
     @Id
     @GeneratedValue
@@ -30,20 +29,9 @@ public class Permit {
     private UUID id;
 
     private String permitName;
+    private String applicantName;
     private String permitType;
     private String status;
     private LocalDateTime submittedDate;
-
-    public Permit(String applicantName, String type, String status, LocalDateTime submittedDate) {
-        this.permitName = applicantName;
-        this.permitType = type;
-        this.status = status;
-        this.submittedDate = submittedDate;
-    }
-
-    @PrePersist
-    public void onCreate() {
-        this.submittedDate = LocalDateTime.now();
-    }
 
 }

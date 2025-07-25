@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.permittrack.permitapi.model.Permit;
+import com.permittrack.permitapi.model.PermitEntity;
 
 /**
  * Repository interface for performing CRUD operations on Permit entities.
@@ -16,6 +16,6 @@ import com.permittrack.permitapi.model.Permit;
  */
 
 @Repository
-public interface PermitRepository extends JpaRepository<Permit, UUID> {
+public interface PermitRepository extends JpaRepository<PermitEntity, UUID> {
 
 }

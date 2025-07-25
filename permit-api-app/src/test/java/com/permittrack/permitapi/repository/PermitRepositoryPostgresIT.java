@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
-import com.permittrack.permitapi.model.Permit;
+import com.permittrack.permitapi.model.PermitEntity;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -24,18 +24,18 @@ public class PermitRepositoryPostgresIT {
     @Test
     void testCreateAndFindPermit() {
         // Arrange
-        Permit permit = new Permit();
-        permit.setPermitName("Jane Doe");
+        PermitEntity permit = new PermitEntity();
+        permit.setApplicantName("Jane Doe");
         permit.setPermitType("Electrical");
         permit.setStatus("SUBMITTED");
         permit.setSubmittedDate(LocalDateTime.now());
 
         // Act
-        Permit saved = permitRepository.save(permit);
-        Permit found = permitRepository.findById(saved.getId()).orElseThrow();
+        PermitEntity saved = permitRepository.save(permit);
+        PermitEntity found = permitRepository.findById(saved.getId()).orElseThrow();
 
         // Assert
-        assertThat(found.getPermitName()).isEqualTo("Jane Doe");
+        assertThat(found.getApplicantName()).isEqualTo("Jane Doe");
         assertThat(found.getPermitType()).isEqualTo("Electrical");
     }
 }
