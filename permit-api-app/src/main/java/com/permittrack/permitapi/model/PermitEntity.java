@@ -31,7 +31,7 @@ public class PermitEntity {
     private String permitName;
     private String applicantName;
     private String permitType;
-    private String status;
+    private PermitStatus status;
     private LocalDateTime submittedDate;
 
 }

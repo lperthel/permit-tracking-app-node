@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.permittrack.permitapi.model.PermitEntity;
 import com.permittrack.permitapi.model.PermitRequestDTO;
 import com.permittrack.permitapi.model.PermitResponseDTO;
+import com.permittrack.permitapi.model.PermitStatus;
 
 public class PermitMapper {
 
@@ -19,7 +20,7 @@ public class PermitMapper {
         permit.setApplicantName(dto.getApplicantName());
         permit.setPermitType(dto.getPermitType());
         permit.setSubmittedDate(LocalDateTime.now());
-        permit.setStatus("SUBMITTED"); // default status
+        permit.setStatus(PermitStatus.SUBMITTED); // default status
 
         return permit;
     }

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import com.permittrack.permitapi.model.PermitEntity;
 import com.permittrack.permitapi.model.PermitRequestDTO;
 import com.permittrack.permitapi.model.PermitResponseDTO;
+import com.permittrack.permitapi.model.PermitStatus;
 import com.permittrack.permitapi.model.ResourceNotFoundException;
 import com.permittrack.permitapi.repository.PermitRepository;
 
@@ -40,7 +41,7 @@ class PermitServiceTest {
                 .permitName("Demo Permit")
                 .applicantName("Jane Doe")
                 .permitType("Electrical")
-                .status("SUBMITTED")
+                .status(PermitStatus.SUBMITTED)
                 .build();
 
         PermitEntity saved = PermitEntity.builder()
@@ -48,7 +49,7 @@ class PermitServiceTest {
                 .permitName("Demo Permit")
                 .applicantName("Jane Doe")
                 .permitType("Electrical")
-                .status("SUBMITTED")
+                .status(PermitStatus.SUBMITTED)
                 .submittedDate(LocalDateTime.now())
                 .build();
 
@@ -67,7 +68,7 @@ class PermitServiceTest {
                 .permitName("Test")
                 .applicantName("Alice")
                 .permitType("Fire")
-                .status("SUBMITTED")
+                .status(PermitStatus.SUBMITTED)
                 .submittedDate(LocalDateTime.now())
                 .build();
 
@@ -87,7 +88,7 @@ class PermitServiceTest {
                         .permitName("One")
                         .applicantName("A")
                         .permitType("Electrical")
-                        .status("SUBMITTED")
+                        .status(PermitStatus.SUBMITTED)
                         .submittedDate(LocalDateTime.now())
                         .build(),
                 PermitEntity.builder()
@@ -95,7 +96,7 @@ class PermitServiceTest {
                         .permitName("Two")
                         .applicantName("B")
                         .permitType("Plumbing")
-                        .status("APPROVED")
+                        .status(PermitStatus.APPROVED)
                         .submittedDate(LocalDateTime.now())
                         .build());
 
@@ -113,7 +114,7 @@ class PermitServiceTest {
                 .permitName("Updated")
                 .applicantName("New Name")
                 .permitType("Mechanical")
-                .status("REVIEW")
+                .status(PermitStatus.REVIEW)
                 .build();
 
         PermitEntity existing = PermitEntity.builder()
@@ -121,7 +122,7 @@ class PermitServiceTest {
                 .permitName("Old")
                 .applicantName("Old Name")
                 .permitType("Electrical")
-                .status("SUBMITTED")
+                .status(PermitStatus.SUBMITTED)
                 .submittedDate(LocalDateTime.now())
                 .build();
 
@@ -130,7 +131,7 @@ class PermitServiceTest {
                 .permitName("Updated")
                 .applicantName("New Name")
                 .permitType("Mechanical")
-                .status("REVIEW")
+                .status(PermitStatus.REVIEW)
                 .submittedDate(LocalDateTime.now())
                 .build();
 
@@ -140,7 +141,7 @@ class PermitServiceTest {
         PermitResponseDTO result = permitService.updatePermit(id, update);
 
         assertThat(result.getPermitType()).isEqualTo("Mechanical");
-        assertThat(result.getStatus()).isEqualTo("REVIEW");
+        assertThat(result.getStatus()).isEqualTo(PermitStatus.REVIEW);
     }
 
     @Test

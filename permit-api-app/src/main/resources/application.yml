@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-request-size: 2MB
+      max-file-size: 2MB
   datasource:
     url: jdbc:postgresql://localhost:5432/permitdb
     username: ${DB_USERNAME}
@@ -17,6 +21,7 @@ spring:
 
 server:
   port: 8080
+  max-http-request-header-size: 8KB
 
 app:
   test: hello-world

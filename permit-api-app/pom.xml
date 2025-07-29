@@ -35,10 +35,15 @@
         <maven.failsafe.plugin.version>3.5.3</maven.failsafe.plugin.version>
         <jacoco.maven.plugin>0.8.13</jacoco.maven.plugin>
         <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
+        <slf4j.version>2.0.17</slf4j.version>
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
