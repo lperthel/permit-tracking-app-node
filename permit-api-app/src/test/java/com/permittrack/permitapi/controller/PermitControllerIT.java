@@ -61,7 +61,7 @@ public class PermitControllerIT {
         permit.setPermitName(name);
         permit.setApplicantName("John Doe");
         permit.setPermitType("Electrical");
-        permit.setStatus("PENDING");
+        permit.setStatus("SUBMITTED");
 
         String json = objectMapper.writeValueAsString(permit);
         ResultActions response = mockMvc.perform(post("/permits")
@@ -72,7 +72,7 @@ public class PermitControllerIT {
         var responseraw = response.andReturn().getResponse();
         System.out.println("Response Debug: " + responseraw);
         var responseString = responseraw.getContentAsString();
-        System.out.println("Response: " + responseString);
+        System.out.println("Response Contents: " + responseString);
 
         return objectMapper.readValue(response.andReturn().getResponse().getContentAsString(), PermitEntity.class);
     }

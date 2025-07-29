@@ -28,6 +28,7 @@ public class PermitMapper {
         permit.setPermitName(dto.getPermitName());
         permit.setApplicantName(dto.getApplicantName());
         permit.setPermitType(dto.getPermitType());
+        permit.setStatus(dto.getStatus());
     }
 
     /**
