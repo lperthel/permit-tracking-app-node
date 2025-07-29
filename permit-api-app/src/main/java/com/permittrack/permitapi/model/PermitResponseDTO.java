@@ -18,7 +18,7 @@ public class PermitResponseDTO {
     private String applicantName;
     private String permitType;
     private LocalDateTime submittedDate;
-    private String status;
+    private PermitStatus status;
 
     public PermitResponseDTO(PermitEntity permit) {
         this.id = permit.getId();

@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
 import com.permittrack.permitapi.model.PermitEntity;
+import com.permittrack.permitapi.model.PermitStatus;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -27,7 +28,7 @@ public class PermitRepositoryPostgresIT {
         PermitEntity permit = new PermitEntity();
         permit.setApplicantName("Jane Doe");
         permit.setPermitType("Electrical");
-        permit.setStatus("SUBMITTED");
+        permit.setStatus(PermitStatus.SUBMITTED);
         permit.setSubmittedDate(LocalDateTime.now());
 
         // Act

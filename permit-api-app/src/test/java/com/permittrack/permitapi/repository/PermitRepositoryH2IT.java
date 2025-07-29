@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.permittrack.permitapi.model.PermitEntity;
+import com.permittrack.permitapi.model.PermitStatus;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -24,7 +25,7 @@ public class PermitRepositoryH2IT {
         PermitEntity permit = new PermitEntity();
         permit.setApplicantName("Jane Doe");
         permit.setPermitType("Electrical");
-        permit.setStatus("SUBMITTED");
+        permit.setStatus(PermitStatus.SUBMITTED);
         permit.setSubmittedDate(LocalDateTime.now());
 
         // Act

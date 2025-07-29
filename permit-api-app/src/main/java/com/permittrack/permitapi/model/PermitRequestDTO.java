@@ -1,6 +1,7 @@
 package com.permittrack.permitapi.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,6 @@ public class PermitRequestDTO {
     @Pattern(regexp = "^[a-zA-Z0-9 \\-\\.']+$", message = "Permit type: only letters, numbers, spaces, dashes, apostrophes allowed")
     private String permitType;
 
-    @Pattern(regexp = "^(SUBMITTED|REVIEW|APPROVED|REJECTED)$", message = "Status must be one of: SUBMITTED, REVIEW, APPROVED, REJECTED")
-    private String status;
+    @NotNull(message = "status is required")
+    private PermitStatus status;
 }
