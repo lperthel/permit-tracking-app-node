@@ -2,6 +2,7 @@ package com.permittrack.permitapi.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,7 +75,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid UUID");
+        if (ex.getRequiredType() == UUID.class) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid UUID");
+        }
+        return ResponseEntity.badRequest().body("Invalid parameter: " + ex.getName());
+
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

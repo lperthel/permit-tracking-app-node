@@ -164,11 +164,20 @@ class PermitServiceTest {
     }
 
     @Test
-    void getThrows404_whenPermitDoesNotExist() {
+    void getThrows404_whenGetPermitDoesNotExist() {
         UUID nonexistentId = UUID.randomUUID();
 
         assertThrows(ResourceNotFoundException.class, () -> {
             permitService.getPermit(nonexistentId);
+        });
+    }
+
+    @Test
+    void getThrows404_whenDeletePermitDoesNotExist() {
+        UUID nonexistentId = UUID.randomUUID();
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            permitService.deletePermit(nonexistentId);
         });
     }
 
