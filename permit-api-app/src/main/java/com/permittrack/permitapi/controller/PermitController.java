@@ -3,6 +3,7 @@ package com.permittrack.permitapi.controller;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,11 +27,14 @@ import jakarta.validation.Valid;
  * Exposes endpoints to create, retrieve, update, and delete permits.
  * Communicates with the PermitService layer to perform business logic.
  */
+@Profile("!filter-test")
 @RestController
 @RequestMapping("/permits")
 public class PermitController {
 
     private final PermitService permitService;
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PermitController.class);
 
     public PermitController(PermitService permitService) {
         this.permitService = permitService;
@@ -38,6 +42,8 @@ public class PermitController {
 
     @PostMapping
     public ResponseEntity<PermitResponseDTO> createPermit(@Valid @RequestBody PermitRequestDTO permit) {
+        log.info(">>> REAL PermitController#createPermit invoked <<<"); // ✅ Debug log
+
         PermitResponseDTO created = permitService.createPermit(permit);
         return ResponseEntity.ok(created);
     }
