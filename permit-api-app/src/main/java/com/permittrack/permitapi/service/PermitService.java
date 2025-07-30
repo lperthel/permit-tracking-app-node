@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.permittrack.permitapi.model.PermitEntity;
@@ -24,6 +26,8 @@ import com.permittrack.permitapi.support.PermitMapper;
 @Service
 public class PermitService {
 
+    private static final Logger log = LoggerFactory.getLogger(PermitService.class);
+
     private final PermitRepository permitRepository;
 
     public PermitService(PermitRepository permitRepository) {
@@ -34,8 +38,24 @@ public class PermitService {
      * Creates a new permit based on a validated DTO.
      */
     public PermitResponseDTO createPermit(PermitRequestDTO request) {
+        log.info(
+                "Creating new permit request: name={}, type={}, status={}, applicant={}",
+                request.getPermitName(),
+                request.getPermitType(),
+                request.getStatus(),
+                request.getApplicantName());
+
         PermitEntity entity = PermitMapper.toEntity(request);
         PermitEntity saved = permitRepository.save(entity);
+
+        log.info(
+                "Permit successfully created: id={}, name={}, type={}, status={}, applicant={}, submittedDate={}",
+                saved.getId(),
+                saved.getPermitName(),
+                saved.getPermitType(),
+                saved.getStatus(),
+                saved.getApplicantName(),
+                saved.getSubmittedDate());
         return new PermitResponseDTO(saved);
     }
 
@@ -43,8 +63,22 @@ public class PermitService {
      * Retrieves a permit by ID and converts it to a response DTO.
      */
     public PermitResponseDTO getPermit(UUID id) {
+        log.info("Retrieving permit with ID {}", id);
+
         PermitEntity existing = permitRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Permit with ID " + id + " not found"));
+                .orElseThrow(() -> {
+                    log.warn("Permit with ID {} not found", id);
+                    return new ResourceNotFoundException("Permit with ID " + id + " not found");
+                });
+
+        log.info(
+                "Permit retrieved: id={}, name={}, type={}, status={}, applicant={}, submittedDate={}",
+                existing.getId(),
+                existing.getPermitName(),
+                existing.getPermitType(),
+                existing.getStatus(),
+                existing.getApplicantName(),
+                existing.getSubmittedDate());
         return new PermitResponseDTO(existing);
     }
 
@@ -52,21 +86,45 @@ public class PermitService {
      * Lists all permits, converting each to a response DTO.
      */
     public List<PermitResponseDTO> listPermits() {
-        return permitRepository.findAll()
+        log.info("Listing all permits");
+
+        List<PermitResponseDTO> permits = permitRepository.findAll()
                 .stream()
                 .map(PermitResponseDTO::new)
                 .collect(Collectors.toList());
+
+        log.info("Retrieved {} permits", permits.size());
+        return permits;
     }
 
     /**
      * Updates an existing permit using a validated DTO.
      */
     public PermitResponseDTO updatePermit(UUID id, PermitRequestDTO request) {
+        log.info(
+                "Updating permit {} with new values: name={}, type={}, status={}, applicant={}",
+                id,
+                request.getPermitName(),
+                request.getPermitType(),
+                request.getStatus(),
+                request.getApplicantName());
         PermitEntity existing = permitRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Permit with ID " + id + " not found"));
+                .orElseThrow(() -> {
+                    log.warn("Cannot update: permit with ID {} not found", id);
+                    return new ResourceNotFoundException("Permit with ID " + id + " not found");
+                });
 
         PermitMapper.updateEntityFromDto(existing, request);
         PermitEntity saved = permitRepository.save(existing);
+
+        log.info(
+                "Permit successfully updated: id={}, name={}, type={}, status={}, applicant={}, submittedDate={}",
+                saved.getId(),
+                saved.getPermitName(),
+                saved.getPermitType(),
+                saved.getStatus(),
+                saved.getApplicantName(),
+                saved.getSubmittedDate());
         return new PermitResponseDTO(saved);
     }
 
@@ -74,10 +132,15 @@ public class PermitService {
      * Deletes a permit by ID.
      */
     public boolean deletePermit(UUID id) {
+        log.info("Attempting to delete permit with ID {}", id);
+
         if (!permitRepository.existsById(id)) {
+            log.warn("Cannot delete: permit with ID {} not found", id);
             throw new ResourceNotFoundException("Permit with ID " + id + " not found");
         }
+
         permitRepository.deleteById(id);
+        log.info("Permit with ID {} successfully deleted", id);
         return true;
     }
 }
