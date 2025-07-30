@@ -1,0 +1,20 @@
+<configuration>
+    <!-- Write all logs to a file -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>build/test-logs/permit-api-test-logs.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Capture logs for your package -->
+    <logger name="com.permittrack.permitapi" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE" />
+    </logger>
+
+    <!-- Root logger for other logs -->
+    <root level="ERROR">
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

@@ -3,6 +3,7 @@ package com.permittrack.permitapi.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 
@@ -59,18 +60,32 @@ import ch.qos.logback.core.AppenderBase;
  */
 
 public class InMemoryLogAppender extends AppenderBase<ILoggingEvent> {
-    private final List<ILoggingEvent> events = new ArrayList<>();
+    private final List<ILoggingEvent> logs = new ArrayList<>();
 
     @Override
     protected void append(ILoggingEvent eventObject) {
-        events.add(eventObject);
+        logs.add(eventObject);
     }
 
-    public List<ILoggingEvent> getEvents() {
-        return events;
+    public List<ILoggingEvent> getLogs() {
+        return logs;
+    }
+
+    /**
+     * Utility method to check if a log message containing the given text
+     * was logged at the specified level.
+     *
+     * @param message substring to search for in log messages
+     * @param level   log level to match (INFO, WARN, ERROR, etc.)
+     * @return true if a log entry with this message and level was found
+     */
+    public boolean contains(String message, Level level) {
+        return logs.stream().anyMatch(
+                log -> log.getLevel().equals(level)
+                        && log.getFormattedMessage().contains(message));
     }
 
     public void clear() {
-        events.clear();
+        logs.clear();
     }
 }

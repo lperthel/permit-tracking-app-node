@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -38,6 +40,8 @@ import jakarta.servlet.ServletException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     /**
      * Handles validation errors that occur when @Valid fails in a controller
      * method.
@@ -63,6 +67,9 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors()
                 .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+
+        log.warn("Validation failed: {}", errors);
+
         return ResponseEntity.badRequest().body(errors);
     }
 
@@ -80,15 +87,21 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+
         if (ex.getRequiredType() == UUID.class) {
+            log.warn("Invalid UUID provided: {}", ex.getValue());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid UUID");
         }
+        log.warn("Invalid parameter '{}' with value: {}", ex.getName(), ex.getValue());
+
         return ResponseEntity.badRequest().body("Invalid parameter: " + ex.getName());
 
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> handleNotFound(ResourceNotFoundException ex) {
+        log.warn("Resource not found: {}", ex.getMessage());
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
@@ -127,16 +140,19 @@ public class GlobalExceptionHandler {
                     "Invalid value: " + ife.getValue() +
                             " for field: " + ife.getPath().get(0).getFieldName()
             });
+            log.warn("JSON parse error: Invalid value {} for field {}", ife.getValue(),
+                    ife.getPath().get(0).getFieldName());
         } else {
             // Fallback for other JSON parsing errors
             // (malformed JSON, wrong types, missing quotes, etc.)
             body.put("details", new String[] {
                     "Malformed JSON or unsupported value"
             });
+            log.warn("Malformed JSON or unsupported value: {}", ex.getMessage());
         }
 
         // Return a clean 400 Bad Request with the JSON body
-        // ✅ Keeps response consistent for all deserialization failures
+        // Keeps response consistent for all deserialization failures
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -148,10 +164,12 @@ public class GlobalExceptionHandler {
         // OWASP-friendly response
         if (ex.getMessage().contains("Request body too large")) {
             body.put("details", new String[] { "Request payload exceeds 2 MB limit" });
+            log.error("Payload too large: {}", ex.getMessage());
             return new ResponseEntity<>(body, HttpStatus.PAYLOAD_TOO_LARGE); // 413
         }
 
         body.put("details", new String[] { ex.getMessage() });
+        log.warn("Servlet exception: {}", ex.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 

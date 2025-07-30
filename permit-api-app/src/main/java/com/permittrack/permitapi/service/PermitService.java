@@ -67,7 +67,6 @@ public class PermitService {
 
         PermitEntity existing = permitRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("Permit with ID {} not found", id);
                     return new ResourceNotFoundException("Permit with ID " + id + " not found");
                 });
 
@@ -110,7 +109,6 @@ public class PermitService {
                 request.getApplicantName());
         PermitEntity existing = permitRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("Cannot update: permit with ID {} not found", id);
                     return new ResourceNotFoundException("Permit with ID " + id + " not found");
                 });
 
@@ -135,7 +133,6 @@ public class PermitService {
         log.info("Attempting to delete permit with ID {}", id);
 
         if (!permitRepository.existsById(id)) {
-            log.warn("Cannot delete: permit with ID {} not found", id);
             throw new ResourceNotFoundException("Permit with ID " + id + " not found");
         }
 
