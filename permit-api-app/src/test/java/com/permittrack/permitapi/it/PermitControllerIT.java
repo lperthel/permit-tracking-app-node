@@ -1,4 +1,4 @@
-package com.permittrack.permitapi.controller;
+package com.permittrack.permitapi.it;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;

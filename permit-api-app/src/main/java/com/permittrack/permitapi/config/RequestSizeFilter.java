@@ -201,7 +201,7 @@ public class RequestSizeFilter implements Filter {
                     "JSON request payload exceeds 2 MB limit");
         } else {
             logAndReject(req, resp, HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
-                    "Unsupported media type: only application/json requests are allowed up to 2 MB");
+                    "Unsupported media type: only application/json requests are allowed up to 2 MB");
         }
         return false;
     }

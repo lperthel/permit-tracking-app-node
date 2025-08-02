@@ -16,6 +16,7 @@ spring:
 
 logging:
   level:
-    "[org.springframework.web.servlet.mvc.method.annotation]": TRACE
+    "[org.springframework.web]": DEBUG
     "[org.springframework.web.servlet.DispatcherServlet]": DEBUG
-    "[org.springframework.boot.web.servlet]": DEBUG
+    "[org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping]": TRACE
+    "[org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter]": TRACE

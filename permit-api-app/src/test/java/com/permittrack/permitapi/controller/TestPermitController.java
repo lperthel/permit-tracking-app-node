@@ -27,4 +27,10 @@ public class TestPermitController {
         log.info(">>> TestPermitController#listPermits invoked <<<");
         return ResponseEntity.ok("[]");
     }
+
+    // @DeleteMapping("/{id}")
+    // public ResponseEntity<Void> deletePermit(@PathVariable UUID id) {
+    // return ResponseEntity.noContent().build();
+    // }
+
 }

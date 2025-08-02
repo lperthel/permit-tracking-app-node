@@ -67,6 +67,8 @@ public class PermitController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePermit(@PathVariable UUID id) {
+        log.info(">>> REAL PermitController#deletePermit invoked {} <<<", id); // ✅ Debug log
+
         permitService.deletePermit(id);
         return ResponseEntity.noContent().build();
     }
