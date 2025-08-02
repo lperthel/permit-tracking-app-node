@@ -102,8 +102,10 @@ public class RequestSizeFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        if (!handleNonHttpServlet(request, response, chain))
+        if (!handleNonHttpServlet(request, response, chain)) {
+            LOGGER.debug("Non-HTTP request skipped RequestSizeFilter.");
             return;
+        }
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -116,6 +118,9 @@ public class RequestSizeFilter implements Filter {
             return;
         if (!handleBodyValidation(httpRequest, httpResponse))
             return;
+
+        LOGGER.info("Request passed size validation: method={}, uri={}, contentLength={}",
+                httpRequest.getMethod(), httpRequest.getRequestURI(), httpRequest.getContentLength());
 
         // Pass through if all checks pass
         chain.doFilter(request, response);
@@ -190,13 +195,13 @@ public class RequestSizeFilter implements Filter {
             return true; // valid size
         }
 
-        boolean isJson = req.getContentType().startsWith("application/json");
+        boolean isJson = req.getContentType() != null && req.getContentType().startsWith("application/json");
         if (isJson) {
             logAndReject(req, resp, HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
-                    "JSON request payload exceeds 2 MB limit");
+                    "JSON request payload exceeds 2 MB limit");
         } else {
             logAndReject(req, resp, HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
-                    "Unsupported media type: only application/json requests are allowed up to 2 MB");
+                    "Unsupported media type: only application/json requests are allowed up to 2 MB");
         }
         return false;
     }
