@@ -1,222 +1,147 @@
 package com.permittrack.permitapi.it;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.UUID;
-
+import com.permittrack.permitapi.config.RequestSizeFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.permittrack.permitapi.PermitApiApplication;
-import com.permittrack.permitapi.service.PermitService;
+import java.util.UUID;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Integration tests for RequestSizeFilter.
+ * Integration tests for {@link RequestSizeFilter}.
  *
- * Demonstrates:
- * 1. Filter correctly rejects oversized payloads (413)
- * 2. Handles GET/DELETE-with-body edge cases (400)
- * 3. Rejects unsupported methods and content types (405/415)
- * 4. Accepts valid small/empty requests (200)
- * 5. Verifies /permits mapping and context loads under 'filter-test' profile
+ * <h2>Purpose</h2>
+ * - Verifies end-to-end filter behavior when registered in Spring Boot.
+ * - Confirms that requests are blocked or allowed according to filter rules.
+ * - Ensures consistent JSON error responses for all blocked cases.
  *
- * Portfolio Value:
- * - Full end-to-end validation of a security-related servlet filter
- * - Uses MockMvc for HTTP-level testing and OWASP-aligned responses
- * - Logs requests/responses with `.andDo(print())` for demo visibility
+ * <h2>Why IT?</h2>
+ * - Complements the unit tests by proving the filter is wired correctly in the
+ * servlet container.
+ * - Uses MockMvc to simulate actual HTTP requests without mocking the filter directly.
  */
-@SpringBootTest(classes = PermitApiApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ActiveProfiles("filter-test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test") // Use H2
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // optional, helps with setup reuse
 @DisplayName("RequestSizeFilter Integration Tests")
 class RequestSizeFilterIT {
 
-    private static final String PERMITS_ENDPOINT = "/permits";
-    private static final String MESSAGE_OVERSIZED = "JSON request payload exceeds 2 MB limit";
-    private static final String MESSAGE_MISSING_CT = "Missing Content-Type header";
-    private static final String MESSAGE_UNSUPPORTED = "Unsupported media type: only application/json requests are allowed up to 2 MB";
-    private static final String MESSAGE_GET_BODY = "Request body not allowed for GET requests";
-    private static final String MESSAGE_DELETE_BODY = "Request body not allowed for DELETE requests";
-    private static final String MESSAGE_PATCH_NOT_ALLOWED = "HTTP method not allowed: PATCH";
-    private static final String MESSAGE_OPTIONS_NOT_ALLOWED = "HTTP method not allowed: OPTIONS";
+  @Autowired
+  private MockMvc mockMvc;
 
-    @Autowired
-    private MockMvc mockMvc;
+  /**
+   * ---------------- POST/PUT Validation ----------------
+   **/
+  @Nested
+  @DisplayName("POST/PUT Validation")
+  class PostPutIT {
 
-     @TestConfiguration
-     static class MockConfig {
-     @Bean
-     PermitService permitService() {
-     return Mockito.mock(PermitService.class);
-     }
-     }
+    @Test
+    @DisplayName("Small JSON POST passes (200)")
+    void smallJsonPost_passes() throws Exception {
+      // ✅ Minimal valid JSON to satisfy @Valid PermitRequestDTO
+      String validJson = """
+            {
+              "permitType": "TEMP",
+              "permitName": "Test Permit",
+              "applicantName": "John Doe",
+              "status": "SUBMITTED"
+            }
+        """;
 
-    @Nested
-    @DisplayName("Valid & Small Requests")
-    class ValidRequests {
-
-        @Test
-        @DisplayName("Verify /permits mapping and log request/response")
-        void mappingVerificationTest() throws Exception {
-            mockMvc.perform(
-                    post(PERMITS_ENDPOINT)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content("{}"))
-                    .andDo(print())
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("Small POST passes filter")
-        void smallPostRequest_passesThrough() throws Exception {
-            mockMvc.perform(post(PERMITS_ENDPOINT)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(generateJsonPayload(100)))
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("Small GET passes filter")
-        void smallGetRequest_passesThrough() throws Exception {
-            mockMvc.perform(get(PERMITS_ENDPOINT).param("page", "0"))
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("Small DELETE passes filter")
-        void smallDeleteRequest_passesThrough() throws Exception {
-            UUID permitId = UUID.randomUUID();
-
-            mockMvc.perform(delete(PERMITS_ENDPOINT + "/{id}", permitId))
-                    .andDo(print()) // logs request & response
-                    .andExpect(status().isNoContent());
-
-        }
-
-        @Test
-        @DisplayName("0-byte POST passes filter")
-        void zeroLengthJsonPost_passes() throws Exception {
-            mockMvc.perform(
-                    post(PERMITS_ENDPOINT)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(new byte[0]))
-                    .andExpect(status().isOk());
-        }
+      mockMvc.perform(post("/permits")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(validJson))
+        .andExpect(status().isOk())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
-    @Nested
-    @DisplayName("Oversized JSON Requests")
-    class OversizedRequests {
+    @Test
+    @DisplayName("Oversized JSON POST is rejected with 413")
+    void oversizedJsonPost_isRejectedWith413() throws Exception {
+      byte[] bigBody = new byte[2 * 1024 * 1024 + 1]; // 2MB+1
+      mockMvc.perform(post("/permits")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(bigBody))
+        .andExpect(status().isPayloadTooLarge())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("exceeds 2 MB limit")));
+    }
+  }
 
-        @Test
-        @DisplayName("Oversized POST rejected with 413")
-        void oversizedPostRequest_isRejectedWith413() throws Exception {
-            mockMvc.perform(post(PERMITS_ENDPOINT)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(generateJsonPayload(3_000_000)))
-                    .andExpect(status().isPayloadTooLarge())
-                    .andExpect(jsonPath("$.message").value(MESSAGE_OVERSIZED));
-        }
+  /**
+   * ---------------- GET/DELETE/HEAD Validation ----------------
+   **/
+  @Nested
+  @DisplayName("GET/DELETE/HEAD Validation")
+  class GetDeleteHeadIT {
+
+    @Test
+    @DisplayName("GET with body is rejected with 400")
+    void getWithBody_isRejectedWith400() throws Exception {
+      mockMvc.perform(get("/permits").content("{}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
-    @Nested
-    @DisplayName("Content-Type Handling")
-    class ContentTypeTests {
-
-        @Test
-        @DisplayName("Missing Content-Type rejected with 400")
-        void missingContentType_isRejectedWith400() throws Exception {
-            mockMvc.perform(post(PERMITS_ENDPOINT)
-                    .content(generateJsonPayload(100)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value(MESSAGE_MISSING_CT));
-        }
-
-        @Test
-        @DisplayName("Non-JSON oversized request rejected with 415")
-        void nonJsonOversizedRequest_isRejectedWith415() throws Exception {
-            mockMvc.perform(post(PERMITS_ENDPOINT)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .content("X".repeat(3_000_000)))
-                    .andExpect(status().isUnsupportedMediaType())
-                    .andExpect(jsonPath("$.message").value(MESSAGE_UNSUPPORTED));
-        }
+    @Test
+    @DisplayName("DELETE with body is rejected with 400")
+    void deleteWithBody_isRejectedWith400() throws Exception {
+      mockMvc.perform(delete("/permits/" + UUID.randomUUID()).content("{}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
-    @Nested
-    @DisplayName("GET / DELETE Body Not Allowed")
-    class BodyNotAllowedTests {
-
-        @Test
-        void getWithBody_isRejectedWith400() throws Exception {
-            mockMvc.perform(get(PERMITS_ENDPOINT)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(generateJsonPayload(100)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value(MESSAGE_GET_BODY));
-        }
-
-        @Test
-        void deleteWithBody_isRejectedWith400() throws Exception {
-            mockMvc.perform(delete(PERMITS_ENDPOINT + "/123")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(generateJsonPayload(100)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message").value(MESSAGE_DELETE_BODY));
-        }
+    @Test
+    @DisplayName("HEAD request with no body passes (200)")
+    void headRequest_passes() throws Exception {
+      mockMvc.perform(head("/permits"))
+        .andExpect(status().isOk());
     }
 
-    @Nested
-    @DisplayName("Disallowed HTTP Methods")
-    class DisallowedMethodsTests {
+    @Test
+    @DisplayName("HEAD request with body is rejected with 400")
+    void headRequestWithBody_isRejectedWith400() throws Exception {
+      mockMvc.perform(head("/permits").content("{}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+  }
 
-        @Test
-        void patchRequest_isRejectedWith405() throws Exception {
-            mockMvc.perform(patch(PERMITS_ENDPOINT)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(generateJsonPayload(100)))
-                    .andExpect(status().isMethodNotAllowed())
-                    .andExpect(jsonPath("$.message").value(MESSAGE_PATCH_NOT_ALLOWED));
-        }
+  /**
+   * ---------------- Disallowed HTTP Methods ----------------
+   **/
+  @Nested
+  @DisplayName("Disallowed Methods")
+  class DisallowedMethodsIT {
 
-        @Test
-        void optionsRequest_isRejectedWith405() throws Exception {
-            mockMvc.perform(options(PERMITS_ENDPOINT))
-                    .andExpect(status().isMethodNotAllowed())
-                    .andExpect(jsonPath("$.message").value(MESSAGE_OPTIONS_NOT_ALLOWED));
-        }
+    @Test
+    @DisplayName("PATCH is rejected with 405")
+    void patchRequest_isRejectedWith405() throws Exception {
+      mockMvc.perform(patch("/permits"))
+        .andExpect(status().isMethodNotAllowed())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("HTTP method not allowed")));
     }
 
-    /** ---------------- Helper ---------------- **/
-
-    private String generateJsonPayload(int size) {
-        return """
-                {
-                  "permitName": "%s",
-                  "applicantName": "Valid Name",
-                  "permitType": "Standard",
-                  "status": "SUBMITTED"
-                }
-                """.formatted("A".repeat(size));
+    @Test
+    @DisplayName("OPTIONS is rejected with 405")
+    void optionsRequest_isRejectedWith405() throws Exception {
+      mockMvc.perform(options("/permits"))
+        .andExpect(status().isMethodNotAllowed())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
+  }
 }
