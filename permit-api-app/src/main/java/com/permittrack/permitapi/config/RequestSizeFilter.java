@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * Payload Too Large with a small JSON body.
  * - Otherwise, the request continues normally down the filter
  * chain.
- * 
+ *
  * Why we need this:
  * -----------------
  * 1. **OWASP Compliance**:
@@ -84,7 +84,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * {@literal @ControllerAdvice} will never run.
  * - Writing the response here is the only way to guarantee
  * proper HTTP 413 responses.
- * 
+ *
  * Notes:
  * ------
  * - The max size is currently set to 2 MB.
@@ -96,7 +96,7 @@ public class RequestSizeFilter implements Filter {
 
     private static final int MAX_SIZE = 2 * 1024 * 1024; // 2 MB
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestSizeFilter.class);
-    private static final Set<String> ALLOWED_METHODS = Set.of("GET", "POST", "PUT", "DELETE");
+    private static final Set<String> ALLOWED_METHODS = Set.of("GET", "POST", "PUT", "DELETE","HEAD");
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -118,6 +118,8 @@ public class RequestSizeFilter implements Filter {
             return;
         if (!handleBodyValidation(httpRequest, httpResponse))
             return;
+        if(!handleHeadValidation(httpRequest, httpResponse))
+          return;
 
         LOGGER.info("Request passed size validation: method={}, uri={}, contentLength={}",
                 httpRequest.getMethod(), httpRequest.getRequestURI(), httpRequest.getContentLength());
@@ -173,6 +175,14 @@ public class RequestSizeFilter implements Filter {
             return false;
         }
 
+      if (!"application/json".equalsIgnoreCase(req.getContentType())) {
+        LOGGER.warn("Blocked request with unsupported media type: {}", req.getContentType());
+        resp.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+        resp.setContentType("application/json");
+        resp.getWriter().write("{\"error\":\"Unsupported media type\"}");
+        return false;
+      }
+
         int length = req.getContentLength();
         if (length < 0) {
             logAndReject(req, resp, HttpServletResponse.SC_BAD_REQUEST,
@@ -219,4 +229,29 @@ public class RequestSizeFilter implements Filter {
         resp.getWriter().write("{ \"message\": \"" + message + "\" }");
         resp.getWriter().flush();
     }
+  /**
+   * Validates a HEAD request.
+   *
+   * <h2>Behavior</h2>
+   * - Rejects any HEAD request with a body (HTTP 400)
+   * - Allows empty-body HEAD requests to pass through
+   * - Logs blocked requests at WARN level for security auditing
+   */
+  private boolean handleHeadValidation(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+    String method = req.getMethod();
+    if (!(method.equals("HEAD"))) {
+      return true;
+    }
+
+    if (req.getContentLength() > 0 || req.getContentLengthLong() > 0) {
+      LOGGER.warn("Blocked HEAD request with body: uri={}", req.getRequestURI());
+      resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      resp.setContentType("application/json");
+      resp.getWriter().write("{\"error\":\"Request body not allowed for HEAD requests\"}");
+      return false; // stop filter chain
+    }
+    return true; // proceed with chain.doFilter()
+  }
+
 }
