@@ -46,3 +46,4 @@ frontend/src/app/assets/constants/*.js.map
 .DS_Store
 package-lock.json
 frontend/package-lock.json
+frontend/cypress/downloads/downloads.html
