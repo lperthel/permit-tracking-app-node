@@ -25,3 +25,4 @@ replay_pid*
 /permit-api-app/.mvn
 /permit-api-app/logs
 permit-api-app/.envrc
+/.idea
