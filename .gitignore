@@ -43,3 +43,6 @@ frontend/Thumbs.db
 frontend/server/database.json
 frontend/cypress-dist/**/*
 frontend/src/app/assets/constants/*.js.map
+.DS_Store
+package-lock.json
+frontend/package-lock.json
