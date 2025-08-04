@@ -2,9 +2,11 @@ package com.permittrack.permitapi.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -63,7 +65,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * 3. Captured log entries for INFO/WARN behavior
  *
  * <h2>Complementing Integration Tests</h2>
- * - {@link com.permittrack.permitapi.it.RequestSizeFilterIT} handles Spring MVC
+ * - RequestSizeFilterIT handles Spring MVC
  * integration scenarios with MockMvc and a test controller.
  * - This class covers **full branch logic and log verification** without the
  * overhead of Spring context, ensuring fast and comprehensive regression
@@ -81,295 +83,238 @@ import jakarta.servlet.http.HttpServletResponse;
 @DisplayName("RequestSizeFilter Unit Tests")
 class RequestSizeFilterUnitTest {
 
-    private RequestSizeFilter filter;
-    private Logger logger;
-    private ListAppender<ILoggingEvent> logAppender;
+  private RequestSizeFilter filter;
+  private Logger logger;
+  private ListAppender<ILoggingEvent> logAppender;
 
-    @BeforeEach
-    void setUp() {
-        filter = new RequestSizeFilter();
+  /**
+   * A custom MockFilterChain that tracks whether the filter chain was invoked.
+   *
+   * <h2>Purpose</h2>
+   * - Default {@link MockFilterChain} in Spring always returns 200 OK even if the
+   *   filter never calls {@code chain.doFilter()}, making it impossible to
+   *   distinguish a "pass-through" vs. "self-terminated" filter.
+   * - This subclass sets a simple {@code invoked} flag whenever
+   *   {@code doFilter()} is called, allowing tests to assert whether a request
+   *   continued to the next filter/controller.
+   *
+   * <h2>Value</h2>
+   * - Verifies both rejection and pass-through paths of the filter.
+   */
+  static class TrackingFilterChain extends MockFilterChain {
+    boolean invoked = false;
 
-        // Capture logs from RequestSizeFilter
-        logger = (Logger) org.slf4j.LoggerFactory.getLogger(RequestSizeFilter.class);
-        logAppender = new ListAppender<>();
-        logAppender.start();
-        logger.addAppender(logAppender);
+    @Override
+    public void doFilter(jakarta.servlet.ServletRequest request, jakarta.servlet.ServletResponse response)
+    throws IOException, ServletException {
+      invoked = true;
+      super.doFilter(request, response);
+    }
+  }
+
+  @BeforeEach
+  void setUp() {
+    filter = new RequestSizeFilter();
+
+    // Capture logs
+    logger = (Logger) org.slf4j.LoggerFactory.getLogger(RequestSizeFilter.class);
+    logAppender = new ListAppender<>();
+    logAppender.start();
+    logger.addAppender(logAppender);
+  }
+
+  @AfterEach
+  void tearDown() {
+    logger.detachAppender(logAppender);
+    logAppender.stop();
+  }
+
+  /** ---------------- POST / PUT Header Validation ---------------- **/
+  @Nested
+  @DisplayName("POST/PUT Header Validation")
+  class PostPutValidationTests {
+
+    @Test
+    @DisplayName("Reject unknown Content-Length with 400 and log WARN")
+    void postWithUnknownContentLength_isRejectedWith400_andLogsWarning() throws Exception {
+      MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits") {
+        @Override
+        public int getContentLength() { return -1; }
+        @Override
+        public long getContentLengthLong() { return -1; }
+      };
+      request.setContentType("application/json");
+      request.setContent("{}".getBytes());
+
+      MockHttpServletResponse response = new MockHttpServletResponse();
+      FilterChain chain = new MockFilterChain();
+
+      filter.doFilter(request, response, chain);
+
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
+      assertThat(response.getContentType()).contains("application/json");
+      assertThat(response.getContentAsString()).contains("Missing or unknown Content-Length");
+
+      assertThat(logAppender.list)
+        .anySatisfy(event -> {
+          assertThat(event.getLevel()).isEqualTo(Level.WARN);
+          assertThat(event.getFormattedMessage()).contains("Blocked request");
+        });
     }
 
-    @AfterEach
-    void tearDown() {
-        logger.detachAppender(logAppender);
-        logAppender.stop();
+    @Test
+    @DisplayName("Missing Content-Type is rejected with 400")
+    void missingContentType_isRejectedWith400_andLogsWarning() throws Exception {
+      MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits");
+      byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+      request.setContent(body);
+      request.addHeader("Content-Length", body.length);
+
+      MockHttpServletResponse response = new MockHttpServletResponse();
+      FilterChain chain = new MockFilterChain();
+
+      filter.doFilter(request, response, chain);
+
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
+      assertThat(response.getContentType()).contains("application/json");
+      assertThat(response.getContentAsString()).contains("Missing Content-Type header");
     }
 
-    /** ---------------- POST / PUT Header Validation ---------------- **/
-    @Nested
-    @DisplayName("POST/PUT Header Validation")
-    class PostPutValidationTests {
+    @Test
+    @DisplayName("Small non-JSON POST is rejected with 415")
+    void smallNonJsonPost_isRejectedWith415() throws Exception {
+      MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits");
+      byte[] body = "<xml></xml>".getBytes(StandardCharsets.UTF_8);
+      request.setContentType("application/xml");
+      request.setContent(body);
+      request.addHeader("Content-Length", body.length);
 
-        @Test
-        @DisplayName("Reject unknown Content-Length with 400 and log WARN")
-        void postWithUnknownContentLength_isRejectedWith400_andLogsWarning() throws Exception {
-            MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits") {
-                @Override
-                public int getContentLength() {
-                    return -1;
-                }
+      MockHttpServletResponse response = new MockHttpServletResponse();
+      FilterChain chain = new MockFilterChain();
 
-                @Override
-                public long getContentLengthLong() {
-                    return -1;
-                }
-            };
-            request.setContentType("application/json");
-            request.setContent("{}".getBytes());
+      filter.doFilter(request, response, chain);
 
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+      assertThat(response.getContentType()).contains("application/json");
+      assertThat(response.getContentAsString()).contains("Unsupported media type");
+    }
+  }
 
-            filter.doFilter(request, response, chain);
+  /** ---------------- GET / DELETE Body Validation ---------------- **/
+  @Nested
+  @DisplayName("GET/DELETE Body Validation")
+  class GetDeleteValidationTests {
+    @Test
+    @DisplayName("GET with body is rejected with 400")
+    void getWithBody_isRejectedWith400() throws Exception {
+      MockHttpServletRequest request = new MockHttpServletRequest("GET", "/permits");
+      request.setContent("{}".getBytes());
 
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
-            assertThat(response.getContentAsString())
-                    .contains("Missing or unknown Content-Length header");
+      MockHttpServletResponse response = new MockHttpServletResponse();
+      FilterChain chain = new MockFilterChain();
 
-            assertThat(logAppender.list)
-                    .anySatisfy(event -> {
-                        assertThat(event.getLevel()).isEqualTo(Level.WARN);
-                        assertThat(event.getFormattedMessage()).contains("Blocked request");
-                    });
-        }
+      filter.doFilter(request, response, chain);
 
-        @Test
-        @DisplayName("Missing Content-Type is rejected with 400")
-        void missingContentType_isRejectedWith400_andLogsWarning() throws Exception {
-            MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits");
-            byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
-            request.setContent(body);
-            request.addHeader("Content-Length", body.length);
-
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
-
-            filter.doFilter(request, response, chain);
-
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
-            assertThat(response.getContentAsString())
-                    .contains("Missing Content-Type header");
-        }
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
+      assertThat(response.getContentType()).contains("application/json");
     }
 
-    /** ---------------- GET / DELETE Body Validation ---------------- **/
-    @Nested
-    @DisplayName("GET/DELETE Body Validation")
-    class GetDeleteValidationTests {
+    @Test
+    @DisplayName("DELETE with body is rejected with 400")
+    void deleteWithBody_isRejectedWith400() throws Exception {
+      MockHttpServletRequest request = new MockHttpServletRequest("DELETE", "/permits/" + UUID.randomUUID());
+      request.setContent("{}".getBytes());
 
-        @Test
-        @DisplayName("GET with body is rejected with 400 and logs WARN")
-        void getWithBody_isRejectedWith400_andLogsWarning() throws Exception {
-            MockHttpServletRequest request = new MockHttpServletRequest("GET", "/permits");
-            request.setContent("{}".getBytes());
+      MockHttpServletResponse response = new MockHttpServletResponse();
+      FilterChain chain = new MockFilterChain();
 
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
+      filter.doFilter(request, response, chain);
 
-            filter.doFilter(request, response, chain);
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
+      assertThat(response.getContentType()).contains("application/json");
+    }
+  }
 
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
-            assertThat(response.getContentAsString())
-                    .contains("Request body not allowed for GET requests");
-        }
+  /** ---------------- Oversized Body Validation ---------------- **/
+  @Nested
+  @DisplayName("Oversized Requests")
+  class OversizedRequestsTests {
 
-        @Test
-        @DisplayName("DELETE with body is rejected with 400 and logs WARN")
-        void deleteWithBody_isRejectedWith400_andLogsWarning() throws Exception {
-            MockHttpServletRequest request = new MockHttpServletRequest("DELETE", "/permits/" + UUID.randomUUID());
-            request.setContent("{}".getBytes());
+    @Test
+    @DisplayName("Oversized JSON POST is rejected with 413")
+    void oversizedJsonPost_isRejectedWith413() throws Exception {
+      byte[] bigBody = new byte[2 * 1024 * 1024 + 1];
+      MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits");
+      request.setContentType("application/json");
+      request.setContent(bigBody);
+      request.addHeader("Content-Length", bigBody.length);
 
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
+      MockHttpServletResponse response = new MockHttpServletResponse();
+      FilterChain chain = new MockFilterChain();
 
-            filter.doFilter(request, response, chain);
+      filter.doFilter(request, response, chain);
 
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
-            assertThat(response.getContentAsString())
-                    .contains("Request body not allowed for DELETE requests");
-        }
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+      assertThat(response.getContentType()).contains("application/json");
+    }
+  }
+
+  /** ---------------- Disallowed / Edge HTTP Methods ---------------- **/
+  @Nested
+  @DisplayName("Disallowed HTTP Methods")
+  class DisallowedMethodsTests {
+
+    @Test
+    @DisplayName("PATCH is rejected with 405")
+    void patchRequest_isRejectedWith405() throws Exception {
+      MockHttpServletRequest request = new MockHttpServletRequest("PATCH", "/permits");
+      MockHttpServletResponse response = new MockHttpServletResponse();
+
+      filter.doFilter(request, response, new MockFilterChain());
+
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 
-    /** ---------------- Oversized Body Validation ---------------- **/
-    @Nested
-    @DisplayName("Oversized Requests")
-    class OversizedRequestsTests {
+    @Test
+    @DisplayName("HEAD request is allowed and passes chain")
+    void headRequest_passes_andInvokesChain() throws Exception {
+      MockHttpServletRequest request = new MockHttpServletRequest("HEAD", "/permits");
+      TrackingFilterChain chain = new TrackingFilterChain();
+      MockHttpServletResponse response = new MockHttpServletResponse();
 
-        @Test
-        @DisplayName("Oversized JSON POST is rejected with 413")
-        void oversizedJsonPost_isRejectedWith413_andLogsWarning() throws Exception {
-            byte[] bigBody = new byte[2 * 1024 * 1024 + 1]; // 2MB+1
-            MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits");
-            request.setContentType("application/json");
-            request.setContent(bigBody);
-            request.addHeader("Content-Length", bigBody.length);
+      filter.doFilter(request, response, chain);
 
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
-
-            filter.doFilter(request, response, chain);
-
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
-            assertThat(response.getContentAsString())
-                    .contains("JSON request payload exceeds 2 MB limit");
-        }
-
-        @Test
-        @DisplayName("Oversized JSON PUT is rejected with 413")
-        void oversizedJsonPut_isRejectedWith413_andLogsWarning() throws Exception {
-            byte[] bigBody = new byte[2 * 1024 * 1024 + 1]; // 2MB+1
-            MockHttpServletRequest request = new MockHttpServletRequest("PUT", "/permits/" + UUID.randomUUID());
-            request.setContentType("application/json");
-            request.setContent(bigBody);
-            request.addHeader("Content-Length", bigBody.length);
-
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
-
-            filter.doFilter(request, response, chain);
-
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
-            assertThat(response.getContentAsString())
-                    .contains("JSON request payload exceeds 2 MB limit");
-        }
-
-        @Test
-        @DisplayName("Oversized non-JSON POST is rejected with 415")
-        void oversizedNonJsonPost_isRejectedWith415_andLogsWarning() throws Exception {
-            byte[] bigBody = new byte[2 * 1024 * 1024 + 1]; // 2MB+1
-            MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits");
-            request.setContentType("application/xml"); // unsupported
-            request.setContent(bigBody);
-            request.addHeader("Content-Length", bigBody.length);
-
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
-
-            filter.doFilter(request, response, chain);
-
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-            assertThat(response.getContentAsString())
-                    .contains("Unsupported media type");
-        }
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+      assertThat(chain.invoked).isTrue();
     }
+  }
 
-    /** ---------------- Disallowed HTTP Methods ---------------- **/
-    @Nested
-    @DisplayName("Disallowed HTTP Methods")
-    class DisallowedMethodsTests {
+  /** ---------------- Successful Requests ---------------- **/
+  @Nested
+  @DisplayName("Successful Requests")
+  class SuccessfulRequestsTests {
 
-        @Test
-        @DisplayName("PATCH is rejected with 405")
-        void patchRequest_isRejectedWith405_andLogsWarning() throws Exception {
-            MockHttpServletRequest request = new MockHttpServletRequest("PATCH", "/permits");
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
+    @Test
+    @DisplayName("POST within limit passes and invokes chain")
+    void postWithinLimit_passes_andLogsInfo() throws Exception {
+      MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits");
+      request.setContentType("application/json");
+      byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+      request.setContent(body);
+      request.addHeader("Content-Length", body.length);
 
-            filter.doFilter(request, response, chain);
+      TrackingFilterChain chain = new TrackingFilterChain();
+      MockHttpServletResponse response = new MockHttpServletResponse();
 
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-            assertThat(response.getContentAsString())
-                    .contains("HTTP method not allowed: PATCH");
-        }
+      filter.doFilter(request, response, chain);
 
-        @Test
-        @DisplayName("OPTIONS is rejected with 405")
-        void optionsRequest_isRejectedWith405_andLogsWarning() throws Exception {
-            MockHttpServletRequest request = new MockHttpServletRequest("OPTIONS", "/permits");
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
-
-            filter.doFilter(request, response, chain);
-
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-            assertThat(response.getContentAsString())
-                    .contains("HTTP method not allowed: OPTIONS");
-        }
+      assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+      assertThat(chain.invoked).isTrue();
+      assertThat(logAppender.list)
+        .anySatisfy(event -> {
+          assertThat(event.getLevel()).isEqualTo(Level.INFO);
+          assertThat(event.getFormattedMessage()).contains("Request passed size validation");
+        });
     }
-
-    /** ---------------- Successful Requests ---------------- **/
-    @Nested
-    @DisplayName("Successful Requests")
-    class SuccessfulRequestsTests {
-
-        @Test
-        @DisplayName("POST within limit passes and logs INFO")
-        void postWithinLimit_passes_andLogsInfo() throws Exception {
-            MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits");
-            request.setContentType("application/json");
-            byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
-            request.setContent(body);
-            request.addHeader("Content-Length", body.length);
-
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
-
-            filter.doFilter(request, response, chain);
-
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-
-            assertThat(logAppender.list)
-                    .anySatisfy(event -> {
-                        assertThat(event.getLevel()).isEqualTo(Level.INFO);
-                        assertThat(event.getFormattedMessage()).contains("Request passed size validation");
-                    });
-        }
-    }
-
-    /** ---------------- Edge Cases ---------------- **/
-    @Nested
-    @DisplayName("Edge Case Requests")
-    class EdgeCaseRequestsTests {
-
-        @Test
-        @DisplayName("Exactly 2 MB JSON POST passes and logs INFO once")
-        void exactTwoMbJsonPost_passes_andLogsInfoOnce() throws Exception {
-            byte[] exact2MB = new byte[2 * 1024 * 1024]; // Exactly 2 MB
-            MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits");
-            request.setContentType("application/json");
-            request.setContent(exact2MB);
-            request.addHeader("Content-Length", exact2MB.length);
-
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
-
-            filter.doFilter(request, response, chain);
-
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-
-            long infoCount = logAppender.list.stream()
-                    .filter(event -> event.getLevel() == Level.INFO)
-                    .count();
-            assertThat(infoCount).isEqualTo(1L);
-        }
-
-        @Test
-        @DisplayName("0-length JSON POST passes and logs INFO once")
-        void zeroLengthJsonPost_passes_andLogsInfoOnce() throws Exception {
-            byte[] emptyBody = new byte[0];
-            MockHttpServletRequest request = new MockHttpServletRequest("POST", "/permits");
-            request.setContentType("application/json");
-            request.setContent(emptyBody);
-            request.addHeader("Content-Length", emptyBody.length);
-
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            FilterChain chain = new MockFilterChain();
-
-            filter.doFilter(request, response, chain);
-
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-
-            long infoCount = logAppender.list.stream()
-                    .filter(event -> event.getLevel() == Level.INFO)
-                    .count();
-            assertThat(infoCount).isEqualTo(1L);
-        }
-    }
+  }
 }

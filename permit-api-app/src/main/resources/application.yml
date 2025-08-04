@@ -5,8 +5,8 @@ spring:
       max-file-size: 2MB
   datasource:
     url: jdbc:postgresql://localhost:5432/permitdb
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: ${PERMIT_DB_USER}
+    password: ${PERMIT_DB_PASS}
 
   jpa:
     hibernate:

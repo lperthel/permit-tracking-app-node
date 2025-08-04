@@ -11,12 +11,6 @@ target/
 *.war
 *.ear
 
-# ---- Maven Wrapper ----
-.mvn/
-!.mvn/wrapper/maven-wrapper.jar
-mvnw
-mvnw.cmd
-
 # ---- Spring Boot Temp / Logs ----
 *.log
 *.tmp
@@ -65,3 +59,7 @@ permit-ui/out-tsc/
 # ===============================
 # - Backend: keep 'permit-api-app/target/' ignored
 # - Frontend: build output & dependencies
+permit-ui/server/database.json
+permit-api-app/.env
+permit-ui/cypress/downloads/downloads.html
+README-JAVA.md

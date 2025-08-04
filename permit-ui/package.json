@@ -9,6 +9,8 @@
     "test": "karma start",
     "server": "json-server --watch ./server/database.json",
     "e2e": "ng e2e",
+    "generate": "node ./server/generateData.mjs",
+    "gs": "npm run generate && npm run server",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
