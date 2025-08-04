@@ -237,7 +237,7 @@ describe('New Product Modal', () => {
   });
 });
 
-describe.only('Update Product Modal', () => {
+describe('Update Product Modal', () => {
   beforeEach(() => {
     cy.visit(uiServer);
     cy.wait(500);
