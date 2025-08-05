@@ -1,85 +1,111 @@
-# AngularCRUDTables
+Permit Tracking Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.2.
+A modern, government‑style permit tracking application built with:
 
-## Database Server
+    Backend: Java 17 + Spring Boot 3 + PostgreSQL (permit-api)
 
-The mock database server is built using [Faker](https://fakerjs.dev/) and stores its data in:
+    Frontend: Angular 19 + Bootstrap + Cypress (permit-ui)
 
-```
-./server/database.json
-```
+⚠️ **Current Status:**  
+The frontend and backend are **currently disjointed projects**.  
+I am in the process of **updating the Angular UI to connect with the Spring Boot API**.  
+For now, the frontend uses mock data (Faker), and the backend can run independently for API testing.
 
-To generate you own data for the server, cd into server/ and run:
 
-```bash
-npm run generate
-```
+This project demonstrates:
 
-To start the server, cd into server and run:
+    RESTful backend with request validation, logging, and integration tests
 
-```bash
-npm run server
-```
+    Angular 19 frontend with responsive Bootstrap UI and Cypress end‑to‑end tests
 
-The server will listen on:
+    Local‑first architecture, cloud‑ready for AWS ECS + RDS deployment
 
-```
-http://localhost:3000/
-```
+Repository Structure
 
-## Development Server
+permit-tracking-app/
+ ├─ permit-api-app/       # Spring Boot backend
+ │   ├─ src/
+ │   ├─ scripts/          # Local setup scripts (Postgres, H2)
+ │   └─ README.md         # Backend-specific guide
+ │
+ ├─ permit-ui/            # Angular 19 frontend
+ │   ├─ src/
+ │   ├─ e2e/              # Cypress tests
+ │   └─ README.md         # Frontend-specific guide
+ │
+ └─ README.md             # This file
 
-To start the Angular development server, run:
+    Note: The backend and frontend are separate projects and must be run independently.
+    
 
-```bash
-ng serve
-```
+## Backend (Spring Boot)
+Setup and Run
 
-Once the server is running, open your browser and navigate to:
+cd permit-api-app
 
-```
-http://localhost:4200/
-```
+# 1. Setup local PostgreSQL
+./scripts/setup-postgres-mac.sh      # macOS
 
-The application will automatically reload whenever you modify any of the source files.
+# 2. Build and verify
+./scripts/build-backend.sh
 
-## Tests
+# 3. Run backend
+./mvnw spring-boot:run
 
-To run karma unit tests, run
+Backend runs at: http://localhost:8080
 
-```
-ng test
-```
+## Frontend (Angular 19)
+Setup and Run
 
-to run Cypress integration tests, make sure you server is running and run
+cd permit-ui
 
-```
-ng e2e
-```
+# 1. Install dependencies
+npm install
 
-and follow the Cypress GUI.
+# 2. Start local dev server
+npm start
 
-## Usage
+Frontend runs at: http://localhost:4200
+Running Tests
+Backend Tests
 
-This application demonstrates how Angular can be used to perform full CRUD operations on a table of items.
+# Unit tests
+./mvnw test
 
-### Instructions
+# Integration tests (includes MockMvc and filter ITs)
+./mvnw verify -Pintegration
 
-1. **Create an Item**  
-   Click the **"New Product"** button in the top-left corner. Items are added in FIFO order, so newly added items appear on the last page of the table.
+    Unit tests verify RequestSizeFilter logic in isolation
 
-2. **Read Items**  
-   All items are displayed using Angular's [`mat-table`](https://v5.material.angular.dev/components/table/overview) component.
+    Integration tests confirm full Spring wiring and error handling
 
-3. **Update an Item**  
-   Use the **"Update"** button located to the right of each item's quantity field to edit the item.
 
-4. **Delete an Item**  
-   Click the **"Delete"** button located to the right of the item's "Update" button to remove it from the database.
+Tech Highlights
 
-5. **Manually Refresh**  
-   To reload all products from the database, click the **"Refresh Products from DB"** button.
+    Security‑First Backend
 
-Notes:
-AI was used to debug and edit the README.md file. The rest of the work is my own.
+        RequestSizeFilter blocks oversized or malformed requests
+
+        Full coverage with unit + integration tests
+
+    Modular Angular Frontend
+
+        Responsive UI with Bootstrap
+
+        Cypress e2e tests for critical flows
+
+    Portfolio‑Ready Practices
+
+        Clear separation of backend and frontend
+
+        Local setup scripts for PostgreSQL and H2
+
+        Demo‑driven development with CI‑friendly test suites
+
+Next Steps
+    
+    Configure Angular to point to the deployed backend via environment.prod.ts
+
+    Add CI/CD pipelines to automate testing and deployment
+
+    Deploy backend to AWS ECS + RDS and frontend to S3 + CloudFront
