@@ -46,19 +46,19 @@ Locate the sample file in the project root:
 
 Open it and update the values for your environment:
 ```
-export DB_HOST=localhost
-export DB_PORT=5432
-export DB_NAME=permitdb
-export DB_USER=permituser
-export DB_PASSWORD=securepassword
+PERMIT_DB_NAME=permitdb
+PERMIT_DB_USER=permituser
+PERMIT_DB_PASS=LrnkwpW7g*nFq.M@9kHG
+PERMIT_DB_HOST=localhost
+PERMIT_DB_PORT=5432
 
 Required    Variables:
 Variable	  Description
-DB_HOST	    PostgreSQL hostname
-DB_PORT	    PostgreSQL port (usually 5432)
-DB_NAME	    Database name
-DB_USER	    Database username
-DB_PASSWORD	Database password
+PERMIT_DB_HOST	    PostgreSQL hostname
+PERMIT_DB_PORT	    PostgreSQL port (usually 5432)
+PERMIT_DB_NAME	    Database name
+PERMIT_DB_USER	    Database username
+PERMIT_DB_PASSWORD	Database password
 ```
 Rename the file to .env:
 
