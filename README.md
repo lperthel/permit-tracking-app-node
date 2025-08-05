@@ -147,32 +147,34 @@ Note: Faker server must be running for Cypress Intergation Tests
 
 ## Tech Highlights
 
-    Security‑First Backend
+Security‑First Backend
 
-        RequestSizeFilter blocks oversized or malformed requests
+    RequestSizeFilter blocks oversized or malformed requests
 
-        Full coverage with unit + integration tests
+    Full coverage with unit + integration tests
 
-    Modular Angular Frontend
+Modular Angular Frontend
 
-        Responsive UI with Bootstrap
+    Responsive UI with Bootstrap
 
-        Cypress e2e tests for critical flows
+    Cypress e2e tests for critical flows
 
-    Portfolio‑Ready Practices
+Portfolio‑Ready Practices
 
-        Clear separation of backend and frontend
+    Clear separation of backend and frontend
 
-        Local setup scripts for PostgreSQL and H2
+    Local setup scripts for PostgreSQL and H2
 
-        Demo‑driven development with CI‑friendly test suites
+    Demo‑driven development with CI‑friendly test suites
 
 ## Next Steps
-    
-    Change Angular to conform to Permit model object
 
-    Integrate OWASP dependency Check
+Update Postman scripts to work with new controller
 
-    Add CI/CD pipelines to automate testing and deployment
+Change Angular to conform to Permit model object
 
-    Deploy backend to AWS ECS + RDS and frontend to S3 + CloudFront
+Integrate OWASP dependency Check
+
+Add CI/CD pipelines to automate testing and deployment
+
+Deploy backend to AWS ECS + RDS and frontend to S3 + CloudFront
