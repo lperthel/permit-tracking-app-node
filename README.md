@@ -72,7 +72,7 @@ No manual export is required if you are using the included scripts.
 
 To verify that your environment is correctly loaded:
 
-./scripts/check_env.sh
+```./scripts/check_env.sh```
 
 (Optional script: prints all loaded variables for debugging.)
 
@@ -107,10 +107,10 @@ Backend runs at: http://localhost:8080
 ### Running Backend Tests
 
 #### Unit tests
-./scripts/test.sh
+```./scripts/test.sh```
 
 #### Integration tests (includes MockMvc and ITs)
-./scripts/verify.sh
+```./scripts/verify.sh```
 
 ## Frontend (Angular 19)
 ### Setup and Run
@@ -123,17 +123,17 @@ Backend runs at: http://localhost:8080
 #### 2. Generate Mock DB Data
 ```npm run generate```
 
-Note: This data is viewable/editable in ./server/database.json
+Note: This data is viewable/editable in ```./server/database.json```
 
 #### 3. Start local Mock DB Server
 ```npm run faker```
 
-Faker server runs at: http://localhost:3000
+Faker server runs at: ```http://localhost:3000```
 
 #### 3. Start local dev server
 ```ng serve```
 
-Frontend runs at: http://localhost:4200
+Frontend runs at: ```http://localhost:4200```
 
 ### Running Tests
 
