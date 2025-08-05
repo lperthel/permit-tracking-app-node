@@ -52,13 +52,13 @@ cd permit-api-app
 # 3. Run backend
 ./scripts/run_backend.sh
 ```
-## Running Tests
+### Running Tests
 Backend Tests
 
-### Unit tests
+#### Unit tests
 ./scripts/test.sh
 
-### Integration tests (includes MockMvc and ITs)
+#### Integration tests (includes MockMvc and ITs)
 ./scripts/verify.sh
 
 Backend runs at: http://localhost:8080
