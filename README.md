@@ -36,7 +36,7 @@ permit-tracking-app/
 ``` 
 
 ## Backend (Spring Boot)
-### Setup and Run
+### Setup and Run Backend
 ```
 cd permit-api-app
 
@@ -52,7 +52,7 @@ cd permit-api-app
 # 3. Run backend
 ./scripts/run_backend.sh
 ```
-### Running Tests
+### Running Backend Tests
 
 #### Unit tests
 ./scripts/test.sh
