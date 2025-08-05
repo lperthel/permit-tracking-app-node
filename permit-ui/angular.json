@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-CRUD-Tables": {
+    "permit-ui": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -115,13 +115,23 @@
               "devServerTarget": "angular-CRUD-Tables:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+          }
         }
       }
     }
   },
   "cli": {
     "analytics": "9ee4d542-c2d3-4518-9690-51a79eb753a7",
-    "schematicCollections": ["@cypress/schematic", "@schematics/angular"]
+    "schematicCollections": [
+      "angular-eslint",
+      "@cypress/schematic",
+      "@schematics/angular"
+    ]
   },
   "schematics": {
     "@schematics/angular:component": {

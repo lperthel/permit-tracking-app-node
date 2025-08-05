@@ -1,0 +1,16 @@
+enabled: true
+
+rules:
+  # Enable key WCAG guidelines
+  wcag-2a: true
+  wcag-2aa: true
+  best-practice: true
+  experimental: false
+
+ignore:
+  # Ignore TypeScript and test files
+  - "*.ts"
+  - "**/node_modules/**"
+  - "**/*.spec.ts"
+  # Optional: Ignore auto-generated Angular output
+  - "**/dist/**"
