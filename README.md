@@ -20,8 +20,9 @@ This project demonstrates:
 
     Local‑first architecture, cloud‑ready for AWS ECS + RDS deployment
 
-Repository Structure
+## Repository Structure
 
+```
 permit-tracking-app/
  ├─ permit-api-app/       # Spring Boot backend
  │   ├─ src/
@@ -34,9 +35,7 @@ permit-tracking-app/
  │   └─ README.md         # Frontend-specific guide
  │
  └─ README.md             # This file
-
-    Note: The backend and frontend are separate projects and must be run independently.
-    
+``` 
 
 ## Backend (Spring Boot)
 Setup and Run
