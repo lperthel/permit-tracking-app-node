@@ -34,6 +34,56 @@ permit-tracking-app/
  │
  └─ README.md             # This file
 ``` 
+## Environment Variables Setup
+
+This project uses a .env file to manage sensitive configuration such as database credentials and active Spring profiles. All provided shell scripts automatically load these variables, so you do not need to export them manually if the .env file exists.
+
+### 1. Configure Your Environment File
+
+Locate the sample file in the project root:
+
+```.env.example```
+
+Open it and update the values for your environment:
+```
+export DB_HOST=localhost
+export DB_PORT=5432
+export DB_NAME=permitdb
+export DB_USER=permituser
+export DB_PASSWORD=securepassword
+
+Required    Variables:
+Variable	  Description
+DB_HOST	    PostgreSQL hostname
+DB_PORT	    PostgreSQL port (usually 5432)
+DB_NAME	    Database name
+DB_USER	    Database username
+DB_PASSWORD	Database password
+```
+Rename the file to .env:
+
+```mv .env.example .env```
+
+### 2. Automatic Variable Loading
+
+All provided shell scripts (./scripts/start.sh, ./scripts/setup_db.sh, etc.) automatically load variables from .env.
+
+No manual export is required if you are using the included scripts.
+
+To verify that your environment is correctly loaded:
+
+./scripts/check_env.sh
+
+(Optional script: prints all loaded variables for debugging.)
+
+### 3. Changing Variables Later
+
+If you change any variable in .env:
+
+  Save the file.
+  
+  Re‑run your shell script. The updated values will be loaded automatically.
+
 
 ## Backend (Spring Boot)
 ### Setup and Run Backend
