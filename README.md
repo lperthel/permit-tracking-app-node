@@ -1,6 +1,6 @@
-Permit Tracking Application
+# Permit Tracking Application
 
-A modern, government‑style permit tracking application built with:
+A modern, federal government‑style permit tracking application built with:
 
     Backend: Java 17 + Spring Boot 3 + PostgreSQL (permit-api)
 
@@ -11,7 +11,7 @@ The frontend and backend are **currently disjointed projects**.
 I am in the process of **updating the Angular UI to connect with the Spring Boot API**.  
 For now, the frontend uses mock data (Faker), and the backend can run independently for API testing.
 
-
+## Project Highlights
 This project demonstrates:
 
     RESTful backend with request validation, logging, and integration tests
@@ -26,60 +26,75 @@ This project demonstrates:
 permit-tracking-app/
  ├─ permit-api-app/       # Spring Boot backend
  │   ├─ src/
- │   ├─ scripts/          # Local setup scripts (Postgres, H2)
- │   └─ README.md         # Backend-specific guide
+ │   └─ scripts/          # Local setup scripts (Postgres, H2)
  │
  ├─ permit-ui/            # Angular 19 frontend
  │   ├─ src/
- │   ├─ e2e/              # Cypress tests
- │   └─ README.md         # Frontend-specific guide
+ │   └─ e2e/              # Cypress tests
  │
  └─ README.md             # This file
 ``` 
 
 ## Backend (Spring Boot)
-Setup and Run
-
+### Setup and Run
+```
 cd permit-api-app
 
 # 1. Setup local PostgreSQL
 ./scripts/setup-postgres-mac.sh      # macOS
 
+# 2. Install homebrew and maven
+./scripts/install_mvn_mac.sh      # macOS
+
 # 2. Build and verify
-./scripts/build-backend.sh
+./scripts/verify.sh
 
 # 3. Run backend
-./mvnw spring-boot:run
+./scripts/run_backend.sh
+```
+## Running Tests
+Backend Tests
+
+### Unit tests
+./scripts/test.sh
+
+### Integration tests (includes MockMvc and ITs)
+./scripts/verify.sh
 
 Backend runs at: http://localhost:8080
 
 ## Frontend (Angular 19)
-Setup and Run
+### Setup and Run
 
-cd permit-ui
+```cd permit-ui```
 
-# 1. Install dependencies
-npm install
+#### 1. Install dependencies
+```npm install```
 
-# 2. Start local dev server
-npm start
+#### 2. Generate Mock DB Data
+```npm run generate```
+Note: This data is viewable/editable in ./server/database.json
 
+#### 3. Start local Mock DB Server
+```npm run faker```
+
+#### 3. Start local dev server
+```ng serve```
+
+Faker server runs at: http://localhost:3000
 Frontend runs at: http://localhost:4200
-Running Tests
-Backend Tests
 
-# Unit tests
-./mvnw test
+### Running Tests
 
-# Integration tests (includes MockMvc and filter ITs)
-./mvnw verify -Pintegration
+#### Unit tests (Karma)
+```ng test```
 
-    Unit tests verify RequestSizeFilter logic in isolation
+#### Integration tests (Cypress)
+```ng e2e```
 
-    Integration tests confirm full Spring wiring and error handling
+Note: Faker server must be running for Cypress Intergation Tests
 
-
-Tech Highlights
+## Tech Highlights
 
     Security‑First Backend
 
@@ -101,9 +116,11 @@ Tech Highlights
 
         Demo‑driven development with CI‑friendly test suites
 
-Next Steps
+## Next Steps
     
-    Configure Angular to point to the deployed backend via environment.prod.ts
+    Change Angular to conform to Permit model object
+
+    Integrate OWASP dependency Check
 
     Add CI/CD pipelines to automate testing and deployment
 
