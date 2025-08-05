@@ -52,6 +52,8 @@ cd permit-api-app
 # 3. Run backend
 ./scripts/run_backend.sh
 ```
+Backend runs at: http://localhost:8080
+
 ### Running Backend Tests
 
 #### Unit tests
@@ -59,8 +61,6 @@ cd permit-api-app
 
 #### Integration tests (includes MockMvc and ITs)
 ./scripts/verify.sh
-
-Backend runs at: http://localhost:8080
 
 ## Frontend (Angular 19)
 ### Setup and Run
@@ -72,15 +72,17 @@ Backend runs at: http://localhost:8080
 
 #### 2. Generate Mock DB Data
 ```npm run generate```
+
 Note: This data is viewable/editable in ./server/database.json
 
 #### 3. Start local Mock DB Server
 ```npm run faker```
 
+Faker server runs at: http://localhost:3000
+
 #### 3. Start local dev server
 ```ng serve```
 
-Faker server runs at: http://localhost:3000
 Frontend runs at: http://localhost:4200
 
 ### Running Tests
