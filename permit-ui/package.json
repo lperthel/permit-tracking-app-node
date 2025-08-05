@@ -7,10 +7,10 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "karma start",
-    "server": "json-server --watch ./server/database.json",
+    "faker": "json-server --watch ./server/database.json",
     "e2e": "ng e2e",
     "generate": "node ./server/generateData.mjs",
-    "gs": "npm run generate && npm run server",
+    "gs": "npm run generate && npm run faker",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
