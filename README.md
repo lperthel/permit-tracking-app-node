@@ -53,7 +53,6 @@ cd permit-api-app
 ./scripts/run_backend.sh
 ```
 ### Running Tests
-Backend Tests
 
 #### Unit tests
 ./scripts/test.sh
