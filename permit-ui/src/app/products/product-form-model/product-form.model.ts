@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -5,7 +6,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { PRODUCT_FORM_CONSTRAINTS } from './product-form-constants';
-import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root', // or 'any' or declare in the component’s providers array
@@ -21,7 +21,7 @@ export class ProductForm {
     price: '^[0-9]+(\\.[0-9]{1,2})?$',
     quantity: '^[0-9]{1,255}$',
   };
-  constructor(private fb: NonNullableFormBuilder) {
+  constructor(private readonly fb: NonNullableFormBuilder) {
     this.form = this.fb.group({
       name: [
         '',

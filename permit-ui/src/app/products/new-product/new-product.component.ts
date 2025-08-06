@@ -1,33 +1,24 @@
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  NonNullableFormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Product } from '../product/product.model';
-import { ProductService } from '../product/product.service';
-import { v4 as uuidv4 } from 'uuid';
-import { Router } from '@angular/router';
-import {
   Component,
-  inject,
   OnInit,
   signal,
-  TemplateRef,
   viewChild,
   WritableSignal,
 } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { v4 as uuidv4 } from 'uuid';
+import { Product } from '../product/product.model';
+import { ProductService } from '../product/product.service';
 
-import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import DOMPurify from 'dompurify';
-import { ProductFormComponent } from '../product-form/product-form.component';
 import {
   PRODUCT_FORM_ERRORS,
   PRODUCT_FORM_HEADERS,
 } from '../product-form-model/product-form-constants';
 import { ProductForm } from '../product-form-model/product-form.model';
+import { ProductFormComponent } from '../product-form/product-form.component';
 
 @Component({
   selector: 'app-new-product',
@@ -40,12 +31,10 @@ export class NewProductComponent implements OnInit {
   modalHeader = PRODUCT_FORM_HEADERS.newProduct;
 
   constructor(
-    private productService: ProductService,
-    private router: Router,
+    private readonly productService: ProductService,
+    private readonly router: Router,
     public productForm: ProductForm
-  ) {
-    console.log('constructor ran');
-  }
+  ) {}
 
   productFormComponent =
     viewChild.required<ProductFormComponent>('productFormElement');
@@ -56,7 +45,6 @@ export class NewProductComponent implements OnInit {
   }
 
   createProduct() {
-    console.log('form submitted');
     this.productForm.form.markAllAsTouched();
 
     const rawName = this.productForm.form.value.name!;
@@ -81,7 +69,7 @@ export class NewProductComponent implements OnInit {
     };
 
     const sub = this.productService.createProduct(product).subscribe({
-      next: (val) => {
+      next: (_resp) => {
         this.productFormComponent().restError.set('');
         this.productFormComponent().dismissModal('save-click');
       },

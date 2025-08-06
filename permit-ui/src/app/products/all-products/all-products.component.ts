@@ -1,22 +1,28 @@
-import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
-import { Product } from '../product/product.model';
-import { ProductService } from '../product/product.service';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { CurrencyPipe } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnInit,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import {
   ActivatedRoute,
   Router,
   RouterLink,
   RouterOutlet,
 } from '@angular/router';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { CurrencyPipe } from '@angular/common';
-import { RouterTestingModule } from '@angular/router/testing';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   APP_DESCRIPTION,
   APP_HEADER,
 } from '../../assets/constants/app-description';
+import { Product } from '../product/product.model';
+import { ProductService } from '../product/product.service';
 
 @Component({
   selector: 'app-all-products',
@@ -31,11 +37,11 @@ import {
   templateUrl: './all-products.component.html',
   styleUrl: './all-products.component.css',
 })
-export class AllProductsComponent implements OnInit {
+export class AllProductsComponent implements OnInit, AfterViewInit {
   PAGE_HEADER = APP_HEADER;
   PAGE_DESC = APP_DESCRIPTION;
 
-  private writeFailed = false;
+  private readonly writeFailed = false;
   columnsToDisplay = [
     'name',
     'description',
@@ -50,11 +56,11 @@ export class AllProductsComponent implements OnInit {
   manuallyUpdateProductsSuccessful = signal<string>('');
   dataSource = new MatTableDataSource<Product>();
   productService = inject(ProductService);
-  private products$ = toObservable(this.productService.products);
+  private readonly products$ = toObservable(this.productService.products);
 
   ngOnInit(): void {
     const sub = this.products$.subscribe({
-      next: (val) => {
+      next: (_resp) => {
         this.dataSource.data = this.productService.products();
         this.dataSource.paginator = this.paginator();
       },
@@ -80,7 +86,7 @@ export class AllProductsComponent implements OnInit {
     const lastPageButton = document.querySelector(
       'button.mat-mdc-paginator-navigation-last'
     );
-    console.log(`last page button = ${lastPageButton}`);
+
     if (lastPageButton)
       lastPageButton.setAttribute('data-testid', 'pagination-last');
 
@@ -91,7 +97,10 @@ export class AllProductsComponent implements OnInit {
       firstPageButton.setAttribute('data-testid', 'pagination-first');
   }
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
+  constructor(
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly router: Router
+  ) {}
 
   manuallyUpdateProductsFromDB() {
     this.manuallyUpdateProductsSuccessful.set(
@@ -120,7 +129,7 @@ export class AllProductsComponent implements OnInit {
   onDelete(productId: string) {
     const noError = '';
     const sub = this.productService.deleteProduct(productId).subscribe({
-      next: (val) => this.restError.set(noError),
+      next: (_resp) => this.restError.set(noError),
       error: (err: Error) => this.restError.set(err.message),
     });
 

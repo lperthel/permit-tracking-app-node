@@ -1,22 +1,15 @@
-import {
-  Component,
-  input,
-  OnInit,
-  signal,
-  TemplateRef,
-  viewChild,
-} from '@angular/core';
-import { Product } from '../product/product.model';
-import { ProductService } from '../product/product.service';
+import { Component, input, OnInit, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProductForm } from '../product-form-model/product-form.model';
+import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   PRODUCT_FORM_ERRORS,
   PRODUCT_FORM_HEADERS,
 } from '../product-form-model/product-form-constants';
+import { ProductForm } from '../product-form-model/product-form.model';
 import { ProductFormComponent } from '../product-form/product-form.component';
+import { Product } from '../product/product.model';
+import { ProductService } from '../product/product.service';
 
 @Component({
   selector: 'app-update-product',
@@ -35,13 +28,12 @@ export class UpdateProductComponent implements OnInit {
     viewChild.required<ProductFormComponent>('productFormElement');
 
   constructor(
-    private productService: ProductService,
-    private router: Router,
+    private readonly productService: ProductService,
+    private readonly router: Router,
     public productForm: ProductForm
   ) {}
 
   ngOnInit() {
-    console.log(`productId: ${this.productId}`);
     this.foundProduct = this.productService
       .products()
       .find((product) => this.productId() === product.id);
@@ -76,7 +68,7 @@ export class UpdateProductComponent implements OnInit {
     const subscription = this.productService
       .updateProduct(newProduct)
       .subscribe({
-        next: (resp) => {
+        next: (_resp) => {
           this.productFormComponent().restError.set('');
           this.productFormComponent().dismissModal('save-click');
 

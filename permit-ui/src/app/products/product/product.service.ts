@@ -16,7 +16,10 @@ export class ProductService {
   successfulProductRetirevalMessage =
     'Products successfully updated from database';
 
-  constructor(private httpClient: HttpClient, private destroyRef: DestroyRef) {}
+  constructor(
+    private readonly httpClient: HttpClient,
+    private readonly destroyRef: DestroyRef
+  ) {}
 
   createProduct(product: Product): Observable<Product> {
     const backupProducts = this.products();
@@ -29,7 +32,7 @@ export class ProductService {
         this.httpOptions
       )
       .pipe(
-        catchError((err) => {
+        catchError((_err) => {
           this.products.set(backupProducts);
           return throwError(
             () =>
@@ -45,7 +48,7 @@ export class ProductService {
     return this.httpClient
       .get<Product[]>(this.apiServer + '/products/', this.httpOptions)
       .pipe(
-        catchError((err) => {
+        catchError((_err) => {
           return throwError(
             () =>
               new Error(
@@ -69,7 +72,7 @@ export class ProductService {
         this.httpOptions
       )
       .pipe(
-        catchError((err) => {
+        catchError((_err) => {
           this.products.set(backupProducts);
           return throwError(
             () =>
@@ -101,7 +104,7 @@ export class ProductService {
         this.httpOptions
       )
       .pipe(
-        catchError((error) => {
+        catchError((_error) => {
           this.products.set(backupProducts);
           return throwError(
             () =>

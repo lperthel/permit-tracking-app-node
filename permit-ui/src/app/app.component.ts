@@ -1,5 +1,4 @@
-import { Component, Signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
 import { AllProductsComponent } from './products/all-products/all-products.component';
 
 @Component({

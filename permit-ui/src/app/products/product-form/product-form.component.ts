@@ -1,7 +1,6 @@
 import {
   Component,
   EventEmitter,
-  inject,
   input,
   Output,
   output,
@@ -10,10 +9,10 @@ import {
   viewChild,
   WritableSignal,
 } from '@angular/core';
-import { ProductForm } from '../product-form-model/product-form.model';
-import { PRODUCT_FORM_ERRORS } from '../product-form-model/product-form-constants';
-import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PRODUCT_FORM_ERRORS } from '../product-form-model/product-form-constants';
+import { ProductForm } from '../product-form-model/product-form.model';
 
 @Component({
   selector: 'app-product-form',
@@ -33,7 +32,7 @@ export class ProductFormComponent {
   modal = viewChild.required<TemplateRef<any>>('content');
   closeResult: WritableSignal<string> = signal('');
 
-  constructor(private modalService: NgbModal) {}
+  constructor(private readonly modalService: NgbModal) {}
 
   openModal() {
     this.open(this.modal());
@@ -47,7 +46,7 @@ export class ProductFormComponent {
           this.closeResult.set(`Closed with: ${result}`);
           this.closeModalEvent.emit();
         },
-        (reason) => {
+        (_reason) => {
           this.closeModalEvent.emit();
         }
       );
