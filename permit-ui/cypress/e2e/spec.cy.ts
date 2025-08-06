@@ -1,71 +1,61 @@
+import { v4 as uuidv4 } from 'uuid';
 import {
   APP_DESCRIPTION_ENCODED,
   APP_HEADER,
 } from '../../src/app/assets/constants/app-description';
-import { Product } from '../../src/app/products/product/product.model';
 import {
-  PRODUCT_FORM_CONSTRAINTS,
-  PRODUCT_FORM_ERRORS,
-  PRODUCT_FORM_HEADERS,
-} from '../../src/app/products/product-form-model/product-form-constants';
-import { paginationPage, selectors } from './util/selectors';
+  createThisPermit,
+  updatePermit,
+} from '../../src/app/assets/constants/test-permits';
+
+import {
+  PERMIT_FORM_CONSTRAINTS,
+  PERMIT_FORM_ERRORS,
+  PERMIT_FORM_HEADERS,
+} from '../../src/app/permits/permit-form-model/permit-form-constants';
+import { Permit } from '../../src/app/permits/permit/permit.model';
 import {
   clearProductForm,
-  clickButton,
   clickModalCloseButton,
   clickNewProductButton,
   clickSubmitButton,
   fillProductForm,
   navigateToPaginationPage,
 } from './util/form-actions';
-import { v4 as uuidv4 } from 'uuid';
+import { paginationPage, selectors } from './util/selectors';
 
 const dbServer = 'http://localhost:3000';
 const uiServer = 'http://localhost:4200/';
 const submitButtonSelector = '[data-testid="submit-button"]';
 
-const createThisProduct: Product = {
+const createThisProduct: Permit = createThisPermit;
+
+const updatedPermit: Permit = updatePermit;
+
+const deleteThisPermit: Permit = {
   id: uuidv4(),
-  name: 'New Product',
-  description: 'This is an Product created by a cypress integration Test',
-  price: '799.19',
-  quantity: 4,
+  permitName: 'New Permit',
+  applicantName: 'Delete Me',
+  permitType: '749.19',
+  status: 2,
 };
 
-const updatedProduct: Product = {
+const updateThisProductPreChange: Permit = {
   id: uuidv4(),
-  name: 'Updated Product',
-  description:
-    'This is an Product added by a cypress integration Test that has been updated',
-  price: '791.19',
-  quantity: 3,
-};
-
-const deleteThisProduct: Product = {
-  id: uuidv4(),
-  name: 'New Product',
-  description:
-    'This is an Product added by a cypress integration Test that needs to be deleted',
-  price: '749.19',
-  quantity: 2,
-};
-
-const updateThisProductPreChange: Product = {
-  id: uuidv4(),
-  name: 'Update this Product',
-  description:
+  permitName: 'Update this Product',
+  applicantName:
     'This is an Product added by a cypress integration Test that needs to be updated',
-  price: '749.19',
-  quantity: 2,
+  permitType: '749.19',
+  status: 2,
 };
 
-const updateThisProductPostChange: Product = {
+const updateThisProductPostChange: Permit = {
   id: uuidv4(),
-  name: 'Updated Product',
-  description:
+  permitName: 'Updated Product',
+  applicantName:
     'This is an Product added by a cypress integration Test that has been updated',
-  price: '749.20',
-  quantity: 3,
+  permitType: '749.20',
+  status: 3,
 };
 
 describe('CRUD Behavior', () => {
@@ -76,10 +66,10 @@ describe('CRUD Behavior', () => {
     cy.visit(uiServer);
     clickNewProductButton();
     fillProductForm(
-      createThisProduct.name,
-      createThisProduct.description,
-      createThisProduct.price,
-      `${createThisProduct.quantity}`
+      createThisProduct.permitName,
+      createThisProduct.applicantName,
+      createThisProduct.permitType,
+      `${createThisProduct.status}`
     );
     clickSubmitButton();
     cy.wait(50);
@@ -87,13 +77,13 @@ describe('CRUD Behavior', () => {
 
     validateRow(
       0,
-      createThisProduct.name,
-      createThisProduct.description,
-      `\$${createThisProduct.price}`,
-      `${createThisProduct.quantity}`
+      createThisProduct.permitName,
+      createThisProduct.applicantName,
+      `\$${createThisProduct.permitType}`,
+      `${createThisProduct.status}`
     );
 
-    cy.contains('td', createThisProduct.name)
+    cy.contains('td', createThisProduct.permitName)
       .invoke('attr', 'data-id') //invoke tells cypress to call element.getAttribute('data-id')
       .then((id) => {
         cy.request('DELETE', `${dbServer}/products/${id}`).then((res) => {
@@ -106,7 +96,7 @@ describe('CRUD Behavior', () => {
     cy.request(
       'POST',
       `${dbServer}/products/`,
-      JSON.stringify(deleteThisProduct)
+      JSON.stringify(deleteThisPermit)
     ).then((res) => {
       expect(res.status).to.eq(201);
     });
@@ -141,10 +131,10 @@ describe('CRUD Behavior', () => {
 
     validateRow(
       0,
-      updateThisProductPreChange.name,
-      updateThisProductPreChange.description,
-      `\$${updateThisProductPreChange.price}`,
-      `${updateThisProductPreChange.quantity}`
+      updateThisProductPreChange.permitName,
+      updateThisProductPreChange.applicantName,
+      `\$${updateThisProductPreChange.permitType}`,
+      `${updateThisProductPreChange.status}`
     );
 
     console.log('finding update buttn.');
@@ -154,30 +144,30 @@ describe('CRUD Behavior', () => {
       .click();
     cy.get('[data-testid="modal-title"]').should(
       'contain.text',
-      PRODUCT_FORM_HEADERS.updateProduct
+      PERMIT_FORM_HEADERS.updatePermit
     );
     cy.get(selectors.productForm.inputName).should(
       'have.value',
-      updateThisProductPreChange.name
+      updateThisProductPreChange.permitName
     );
     cy.get(selectors.productForm.inputDesc).should(
       'have.value',
-      updateThisProductPreChange.description
+      updateThisProductPreChange.applicantName
     );
     cy.get(selectors.productForm.inputPrice).should(
       'have.value',
-      updateThisProductPreChange.price
+      updateThisProductPreChange.permitType
     );
     cy.get(selectors.productForm.inputQuantity).should(
       'have.value',
-      `${updateThisProductPreChange.quantity}`
+      `${updateThisProductPreChange.status}`
     );
 
     fillProductForm(
-      updateThisProductPostChange.name,
-      updateThisProductPostChange.description,
-      updateThisProductPostChange.price,
-      `${updateThisProductPostChange.quantity}`
+      updateThisProductPostChange.permitName,
+      updateThisProductPostChange.applicantName,
+      updateThisProductPostChange.permitType,
+      `${updateThisProductPostChange.status}`
     );
 
     clickSubmitButton();
@@ -186,13 +176,13 @@ describe('CRUD Behavior', () => {
 
     validateRow(
       0,
-      updateThisProductPostChange.name,
-      updateThisProductPostChange.description,
-      `\$${updateThisProductPostChange.price}`,
-      `${updateThisProductPostChange.quantity}`
+      updateThisProductPostChange.permitName,
+      updateThisProductPostChange.applicantName,
+      `\$${updateThisProductPostChange.permitType}`,
+      `${updateThisProductPostChange.status}`
     );
 
-    cy.contains('td', updateThisProductPostChange.name)
+    cy.contains('td', updateThisProductPostChange.permitName)
       .invoke('attr', 'data-id') //invoke tells cypress to call element.getAttribute('data-id')
       .then((productId) => {
         cy.request('DELETE', `${dbServer}/products/${productId}`).then(
@@ -213,7 +203,7 @@ describe('New Product Modal', () => {
   it('should render all required elements', () => {
     cy.get('[data-testid="modal-title"]').should(
       'contain.text',
-      PRODUCT_FORM_HEADERS.newProduct
+      PERMIT_FORM_HEADERS.newPermit
     );
     cy.get('[data-testid="modal-close-button"]').should('exist');
     cy.get('[data-testid="product-form"]').should('exist');
@@ -251,7 +241,7 @@ describe('Update Product Modal', () => {
     cy.get('[data-testid="modal-header"]').should('exist');
     cy.get('[data-testid="modal-title"]').should(
       'contain.text',
-      PRODUCT_FORM_HEADERS.updateProduct
+      PERMIT_FORM_HEADERS.updatePermit
     );
     cy.get('[data-testid="modal-close-button"]').should('exist');
     cy.get('[data-testid="product-form"]').should('exist');
@@ -296,23 +286,25 @@ describe('New Item Form Validation', () => {
       clickSubmitButton();
       cy.get(selectors.productForm.errorName).should(
         'contain',
-        PRODUCT_FORM_ERRORS.invalidName
+        PERMIT_FORM_ERRORS.invalidName
       );
     });
 
     it('should clear error when a valid name is entered', () => {
-      cy.get(selectors.productForm.inputName).type(createThisProduct.name);
+      cy.get(selectors.productForm.inputName).type(
+        createThisProduct.permitName
+      );
       cy.get(selectors.productForm.errorName).should('not.exist');
     });
 
     it('should show error for name longer than 50 characters', () => {
       cy.get(selectors.productForm.inputName)
-        .invoke('val', 'a'.repeat(PRODUCT_FORM_CONSTRAINTS.nameMaxLength + 1))
+        .invoke('val', 'a'.repeat(PERMIT_FORM_CONSTRAINTS.nameMaxLength + 1))
         .trigger('input');
       clickSubmitButton();
       cy.get(selectors.productForm.errorName).should(
         'contain',
-        PRODUCT_FORM_ERRORS.invalidName
+        PERMIT_FORM_ERRORS.invalidName
       );
       cy.get(selectors.productForm.inputName).type('{backspace}');
       clickSubmitButton();
@@ -325,25 +317,25 @@ describe('New Item Form Validation', () => {
       clickSubmitButton();
       cy.get(selectors.productForm.errorDesc).should(
         'contain',
-        PRODUCT_FORM_ERRORS.invalidDescription
+        PERMIT_FORM_ERRORS.invalidDescription
       );
     });
 
     it('should clear error when a valid name is entered', () => {
       cy.get(selectors.productForm.inputDesc).type(
-        createThisProduct.description
+        createThisProduct.applicantName
       );
       cy.get(selectors.productForm.errorDesc).should('not.exist');
     });
 
     it('should show error for a description longer than the defined max length', () => {
       cy.get(selectors.productForm.inputDesc)
-        .invoke('val', 'a'.repeat(PRODUCT_FORM_CONSTRAINTS.descMaxLength + 1))
+        .invoke('val', 'a'.repeat(PERMIT_FORM_CONSTRAINTS.descMaxLength + 1))
         .trigger('input');
       clickSubmitButton();
       cy.get(selectors.productForm.errorDesc).should(
         'contain',
-        PRODUCT_FORM_ERRORS.invalidDescription
+        PERMIT_FORM_ERRORS.invalidDescription
       );
       cy.get(selectors.productForm.inputDesc).type('{backspace}');
       clickSubmitButton();
@@ -356,7 +348,7 @@ describe('New Item Form Validation', () => {
       clickSubmitButton();
       cy.get(selectors.productForm.errorPrice).should(
         'contain',
-        PRODUCT_FORM_ERRORS.invalidPrice
+        PERMIT_FORM_ERRORS.invalidPrice
       );
     });
 
@@ -365,12 +357,14 @@ describe('New Item Form Validation', () => {
       clickSubmitButton();
       cy.get(selectors.productForm.errorPrice).should(
         'contain',
-        PRODUCT_FORM_ERRORS.invalidPrice
+        PERMIT_FORM_ERRORS.invalidPrice
       );
     });
 
     it('should accept a valid price', () => {
-      cy.get(selectors.productForm.inputPrice).type(createThisProduct.price);
+      cy.get(selectors.productForm.inputPrice).type(
+        createThisProduct.permitType
+      );
       clickSubmitButton();
       cy.get(selectors.productForm.errorPrice).should('not.exist');
     });
@@ -576,19 +570,19 @@ function validateElementOnFirstPage() {
 function validateNewItemExists() {
   validateRow(
     0,
-    createThisProduct.name,
-    createThisProduct.description,
-    `\$${createThisProduct.price}`,
-    `${createThisProduct.quantity}`
+    createThisProduct.permitName,
+    createThisProduct.applicantName,
+    `\$${createThisProduct.permitType}`,
+    `${createThisProduct.status}`
   );
 }
 
 function validateDeleteMeItemExists() {
   validateRow(
     0,
-    deleteThisProduct.name,
-    deleteThisProduct.description,
-    `\$${deleteThisProduct.price}`,
-    `${deleteThisProduct.quantity}`
+    deleteThisPermit.permitName,
+    deleteThisPermit.applicantName,
+    `\$${deleteThisPermit.permitType}`,
+    `${deleteThisPermit.status}`
   );
 }

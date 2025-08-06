@@ -1,0 +1,132 @@
+import { TestBed } from '@angular/core/testing';
+import {
+  FormBuilder,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { PERMIT_FORM_CONSTRAINTS } from './permit-form-constants';
+import { PermitForm } from './permit-form.model';
+
+describe('PermitForm', () => {
+  let permitForm: PermitForm;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule],
+      providers: [
+        {
+          provide: NonNullableFormBuilder,
+          useFactory: () => new FormBuilder().nonNullable,
+        },
+      ],
+    });
+    const fb = TestBed.inject(NonNullableFormBuilder);
+    permitForm = new PermitForm(fb);
+  });
+
+  it('should create the form with all fields', () => {
+    expect(permitForm.form.contains('name')).toBeTrue();
+    expect(permitForm.form.contains('description')).toBeTrue();
+    expect(permitForm.form.contains('price')).toBeTrue();
+    expect(permitForm.form.contains('quantity')).toBeTrue();
+  });
+
+  describe('Name Field Validation', () => {
+    it('should invalidate empty name', () => {
+      const nameControl = permitForm.form.controls['name'];
+      nameControl.markAsTouched();
+      nameControl.setValue('');
+      expect(permitForm.invalidName).toBeTrue();
+    });
+
+    it('should validate a proper name', () => {
+      const nameControl = permitForm.form.controls['name'];
+      nameControl.markAsTouched();
+      nameControl.setValue('a'.repeat(PERMIT_FORM_CONSTRAINTS.nameMaxLength));
+      expect(permitForm.invalidName).toBeFalse();
+    });
+
+    it(`should show error for name longer than ${PERMIT_FORM_CONSTRAINTS.nameMaxLength} characters`, () => {
+      const nameControl = permitForm.form.controls['name'];
+      nameControl.markAsTouched();
+      nameControl.setValue(
+        'a'.repeat(PERMIT_FORM_CONSTRAINTS.nameMaxLength + 1)
+      );
+      expect(permitForm.invalidName).toBeTrue();
+    });
+  });
+
+  describe('Description Field Validation', () => {
+    it('should validate a correct description', () => {
+      const descControl = permitForm.form.controls['description'];
+      descControl.markAsTouched();
+      descControl.setValue('a'.repeat(PERMIT_FORM_CONSTRAINTS.descMaxLength));
+      expect(permitForm.invalidName).toBeFalse();
+    });
+  });
+  describe('Price Field Validation', () => {
+    it('should fail validation if price has too many decimals', () => {
+      const priceControl = permitForm.form.controls['price'];
+      priceControl.markAsTouched();
+      priceControl.setValue('99.999');
+      expect(permitForm.invalidPrice).toBeTrue();
+    });
+
+    it('should validate a correct price', () => {
+      const priceControl = permitForm.form.controls['price'];
+      priceControl.markAsTouched();
+      priceControl.setValue('99.99');
+      expect(permitForm.invalidPrice).toBeFalse();
+      priceControl.setValue('99.9');
+      expect(permitForm.invalidPrice).toBeFalse();
+      priceControl.setValue('1'.repeat(PERMIT_FORM_CONSTRAINTS.priceMaxLength));
+      priceControl.setValue('1'.repeat(3));
+      expect(permitForm.invalidPrice).toBeFalse();
+    });
+
+    it('should fail validation for a malformed price', () => {
+      const priceControl = permitForm.form.controls['price'];
+      priceControl.markAsTouched();
+      priceControl.setValue('99.');
+      expect(permitForm.invalidPrice).toBeTrue();
+      priceControl.setValue('a');
+      expect(permitForm.invalidPrice).toBeTrue();
+    });
+    it('should fail validation for invalid price length', () => {
+      const priceControl = permitForm.form.controls['price'];
+      priceControl.markAsTouched();
+      priceControl.setValue(
+        '1'.repeat(PERMIT_FORM_CONSTRAINTS.priceMaxLength + 1)
+      );
+      expect(permitForm.invalidPrice).toBeTrue();
+    });
+  });
+
+  describe('Quantity Field Validation', () => {
+    it('should validate a correct quantity', () => {
+      const quantityControl = permitForm.form.controls['quantity'];
+      quantityControl.markAsTouched();
+      quantityControl.setValue('1'.repeat(PERMIT_FORM_CONSTRAINTS.quantityMax));
+      expect(permitForm.invalidQuanity).toBeFalse();
+    });
+
+    it('should fail validation for a malformed quantity', () => {
+      const quantityControl = permitForm.form.controls['quantity'];
+      quantityControl.markAsTouched();
+      quantityControl.setValue('99.');
+      expect(permitForm.invalidQuanity).toBeTrue();
+      quantityControl.setValue('a');
+      expect(permitForm.invalidQuanity).toBeTrue();
+      quantityControl.setValue('-1');
+      expect(permitForm.invalidQuanity).toBeTrue();
+    });
+    it('should fail validation for invalid quantity length', () => {
+      const quantityControl = permitForm.form.controls['quantity'];
+      quantityControl.markAsTouched();
+      quantityControl.setValue(
+        '1'.repeat(PERMIT_FORM_CONSTRAINTS.quantityMax + 1)
+      );
+      expect(permitForm.invalidQuanity).toBeTrue();
+    });
+  });
+});

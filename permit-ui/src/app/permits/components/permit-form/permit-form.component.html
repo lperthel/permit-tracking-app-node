@@ -12,10 +12,10 @@
     ></button>
   </div>
   <form
-    [formGroup]="productForm().form"
+    [formGroup]="permitForm().form"
     class="needs-validation"
     (ngSubmit)="onSubmit()"
-    data-testid="product-form"
+    data-testid="permit-form"
   >
     <div class="modal-body" data-testid="modal-body">
       @if(restError()){
@@ -37,7 +37,7 @@
             data-testid="input-name"
           />
         </div>
-        @if(productForm().invalidName){
+        @if(permitForm().invalidName){
         <div data-testid="error-name">
           <p class="lp-control-error">
             {{ errorMessages.invalidName }}
@@ -54,7 +54,7 @@
             data-testid="input-description"
           />
         </div>
-        @if(productForm().invalidDescription){
+        @if(permitForm().invalidDescription){
         <div data-testid="error-description">
           <p class="lp-control-error">
             {{ errorMessages.invalidDescription }}
@@ -71,7 +71,7 @@
             data-testid="input-price"
           />
         </div>
-        @if(productForm().invalidPrice){
+        @if(permitForm().invalidPrice){
         <div data-testid="error-price">
           <p class="lp-control-error">
             {{ errorMessages.invalidPrice }}
@@ -88,7 +88,7 @@
             data-testid="input-quantity"
           />
         </div>
-        @if(productForm().invalidQuanity){
+        @if(permitForm().invalidQuanity){
         <div data-testid="error-quantity">
           <p class="lp-control-error">
             {{ errorMessages.invalidQuantity }}

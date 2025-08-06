@@ -1,10 +1,11 @@
-import { v4 as uuidv4 } from "uuid";
+/* global console */
+
 import { faker } from "@faker-js/faker";
-import { writeFile } from "fs/promises";
-import { unlink } from "fs/promises";
 import { existsSync } from "fs";
-import { fileURLToPath } from "url";
+import { unlink, writeFile } from "fs/promises";
 import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+import { v4 as uuidv4 } from "uuid";
 
 faker.seed(123);
 
@@ -22,15 +23,23 @@ if (existsSync(outputFile)) {
   }
 }
 
-var database = { products: [] };
+const permitStatuses = ["SUBMITTED", "APPROVED", "REJECTED", "UNDER_REVIEW"];
 
-for (var i = 1; i <= 300; i++) {
-  database.products.push({
-    id:  uuidv4(),
-    name: faker.commerce.productName(),
-    description: faker.lorem.sentences(),
-    price: faker.commerce.price(),
-    quantity: faker.number.int({ min: 1, max: 100 }),
+const database = { permits: [] };
+
+for (let i = 1; i <= 300; i++) {
+  database.permits.push({
+    id: uuidv4(),
+    permitName: faker.commerce.productName(), // Example: "Eco-Friendly Lamp"
+    applicantName: faker.person.fullName().replace(/[^a-zA-Z0-9 \-.']/g, ""), // Strips invalid chars
+    permitType: faker.helpers.arrayElement([
+      "Building",
+      "Electrical",
+      "Plumbing",
+      "Occupancy",
+      "Zoning",
+    ]),
+    status: faker.helpers.arrayElement(permitStatuses),
   });
 }
 

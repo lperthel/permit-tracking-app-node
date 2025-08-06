@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
-import { NewProductComponent } from './products/new-product/new-product.component';
+import { NewPermitComponent } from './permits/pages/new-permit/new-permit.component';
 
 export const routes: Routes = [
   {
-    path: 'new-product',
-    component: NewProductComponent,
+    path: 'new-permit',
+    component: NewPermitComponent,
   },
   {
-    path: 'update/:productId',
+    path: 'update/:permitId',
     loadComponent: () =>
-      import('./products/update-product/update-product.component').then(
-        (mod) => mod.UpdateProductComponent
+      import('./permits/pages/update-permit/update-permit.component').then(
+        (mod) => mod.UpdatePermitComponent
       ),
   },
 ];

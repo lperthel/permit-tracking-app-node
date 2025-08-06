@@ -5,12 +5,12 @@ import {
   NonNullableFormBuilder,
   Validators,
 } from '@angular/forms';
-import { PRODUCT_FORM_CONSTRAINTS } from './product-form-constants';
+import { PERMIT_FORM_CONSTRAINTS } from './permit-form-constants';
 
 @Injectable({
   providedIn: 'root', // or 'any' or declare in the component’s providers array
 })
-export class ProductForm {
+export class PermitForm {
   public form: FormGroup<{
     name: FormControl<string>;
     description: FormControl<string>;
@@ -27,21 +27,21 @@ export class ProductForm {
         '',
         [
           Validators.required,
-          Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.nameMaxLength),
+          Validators.maxLength(PERMIT_FORM_CONSTRAINTS.nameMaxLength),
         ],
       ],
       description: [
         '',
         [
           Validators.required,
-          Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.descMaxLength),
+          Validators.maxLength(PERMIT_FORM_CONSTRAINTS.descMaxLength),
         ],
       ],
       price: [
         '',
         [
           Validators.required,
-          Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.priceMaxLength),
+          Validators.maxLength(PERMIT_FORM_CONSTRAINTS.priceMaxLength),
           Validators.pattern(this.patterns.price),
         ],
       ],
@@ -49,7 +49,7 @@ export class ProductForm {
         '',
         [
           Validators.required,
-          Validators.maxLength(PRODUCT_FORM_CONSTRAINTS.quantityMax),
+          Validators.maxLength(PERMIT_FORM_CONSTRAINTS.quantityMax),
           Validators.pattern(this.patterns.quantity),
         ],
       ],

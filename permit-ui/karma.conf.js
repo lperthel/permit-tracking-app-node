@@ -1,37 +1,59 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
-module.exports = function (config) {
+export default function (config) {
   config.set({
     basePath: "",
     frameworks: ["jasmine", "@angular-devkit/build-angular"],
-    files: ["src/**/*.spec.ts"],
     plugins: [
-      require("karma-jasmine"),
-      require("karma-chrome-launcher"),
-      require("karma-jasmine-html-reporter"),
-      require("karma-coverage"),
-      require("@angular-devkit/build-angular/plugins/karma"),
+      "karma-jasmine",
+      "karma-chrome-launcher",
+      "karma-jasmine-html-reporter",
+      "karma-coverage",
+      "@angular-devkit/build-angular/plugins/karma",
     ],
     client: {
       jasmine: {
-        // you can add configuration options for Jasmine here
-        // the possible options are listed at https://jasmine.github.io/api/edge/Configuration.html
-        // for example, you can disable the random execution with `random: false`
-        // or set a specific seed with `seed: 4321`
+        // Jasmine configuration options
+        // https://jasmine.github.io/api/edge/Configuration.html
+        random: false, // Disable random test execution for consistent debugging
       },
+      clearContext: false, // Leave Jasmine Spec Runner output visible in browser
     },
     jasmineHtmlReporter: {
-      suppressAll: true, // removes the duplicated traces
+      suppressAll: true, // Removes duplicated traces for cleaner output
     },
     coverageReporter: {
-      dir: require("path").join(__dirname, "./coverage/angular-crud-tables"),
+      dir: "./coverage/permit-ui",
       subdir: ".",
-      reporters: [{ type: "html" }, { type: "text-summary" }],
+      reporters: [
+        { type: "html" }, // HTML coverage report for browsers
+        { type: "text-summary" }, // Console summary
+        { type: "lcov" }, // For CI tools like SonarQube
+      ],
+      check: {
+        global: {
+          statements: 80, // Government-grade coverage requirements
+          branches: 70,
+          functions: 80,
+          lines: 80,
+        },
+      },
     },
-    reporters: ["progress", "kjhtml"],
+    reporters: ["progress", "kjhtml", "coverage"],
+    port: 9876,
+    colors: true,
+    logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ["Chrome"],
+    singleRun: false,
     restartOnFileChange: true,
+    // Add Chrome headless for CI
+    customLaunchers: {
+      ChromeHeadlessCI: {
+        base: "ChromeHeadless",
+        flags: ["--no-sandbox", "--disable-gpu"],
+      },
+    },
   });
-};
+}

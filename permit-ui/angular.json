@@ -15,21 +15,16 @@
           "options": {
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+            "karmaConfig": "karma.conf.js",
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/styles.css"],
-            "scripts": [],
-            "karmaConfig": "karma.conf.js"
+            "scripts": []
           }
         },
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/angular-crud-tables",
+            "outputPath": "dist/permit-ui",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js", "@angular/localize/init"],
@@ -60,24 +55,42 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "sourceMap": {
+                "scripts": true,
+                "styles": false,
+                "hidden": true
+              }
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "namedChunks": true,
+              "progress": true
+            },
+            "staging": {
+              "optimization": true,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "namedChunks": true
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "development"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "port": 4200,
+            "open": true,
+            "liveReload": true
+          },
           "configurations": {
             "production": {
-              "buildTarget": "angular-CRUD-Tables:build:production"
+              "buildTarget": "permit-ui:build:production"
             },
             "development": {
-              "buildTarget": "angular-CRUD-Tables:build:development"
+              "buildTarget": "permit-ui:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -88,11 +101,11 @@
         "cypress-run": {
           "builder": "@cypress/schematic:cypress",
           "options": {
-            "devServerTarget": "angular-CRUD-Tables:serve"
+            "devServerTarget": "permit-ui:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "angular-CRUD-Tables:serve:production"
+              "devServerTarget": "permit-ui:serve:production"
             }
           }
         },
@@ -106,13 +119,13 @@
         "e2e": {
           "builder": "@cypress/schematic:cypress",
           "options": {
-            "devServerTarget": "angular-CRUD-Tables:serve",
+            "devServerTarget": "permit-ui:serve",
             "watch": true,
             "headless": false
           },
           "configurations": {
             "production": {
-              "devServerTarget": "angular-CRUD-Tables:serve:production"
+              "devServerTarget": "permit-ui:serve:production"
             }
           }
         },

@@ -26,6 +26,9 @@ spring.log
 .project
 .settings/
 .vscode/
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/extensions.json
 *.swp
 *.swo
 
@@ -63,3 +66,4 @@ permit-ui/server/database.json
 permit-api-app/.env
 permit-ui/cypress/downloads/downloads.html
 README-JAVA.md
+/permit-ui/coverage

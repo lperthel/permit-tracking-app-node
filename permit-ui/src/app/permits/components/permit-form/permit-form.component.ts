@@ -1,3 +1,4 @@
+// @ts-ignore - TODO: Fix during refactor
 import {
   Component,
   EventEmitter,
@@ -11,20 +12,20 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PRODUCT_FORM_ERRORS } from '../product-form-model/product-form-constants';
-import { ProductForm } from '../product-form-model/product-form.model';
+import { PERMIT_FORM_ERRORS } from '../../permit-form-model/permit-form-constants';
+import { PermitForm } from '../../permit-form-model/permit-form.model';
 
 @Component({
-  selector: 'app-product-form',
+  selector: 'app-permit-form',
   imports: [ReactiveFormsModule, NgbAlertModule],
-  templateUrl: './product-form.component.html',
-  styleUrl: './product-form.component.css',
+  templateUrl: './permit-form.component.html',
+  styleUrl: './permit-form.component.css',
 })
-export class ProductFormComponent {
-  errorMessages = PRODUCT_FORM_ERRORS;
-  productForm = input.required<ProductForm>();
+export class PermitFormComponent {
+  errorMessages = PERMIT_FORM_ERRORS;
+  permitForm = input.required<PermitForm>();
   formHeader = input.required<string>();
-  // public formSubmission = output<ProductForm>();
+
   public closeModalEvent = output<void>();
   @Output() public formSubmission = new EventEmitter<void>();
   restError = signal<string>('');
