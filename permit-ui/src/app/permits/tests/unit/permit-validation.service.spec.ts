@@ -10,10 +10,19 @@ import { PermitValidationService } from '../../shared/services/permit-validation
 describe('PermitValidationService', () => {
   let service: PermitValidationService;
 
-  // Test constants defined at top
+  // Test constants - now using service constants
   const VALID_PERMIT: Permit = createThisPermit;
-  const VALIDATION_ERROR_MESSAGE = 'Invalid permit data received from server';
-  const INPUT_VALIDATION_ERROR = 'Invalid permit data provided';
+  const VALIDATION_ERROR_MESSAGE =
+    PermitValidationService.VALIDATION_ERROR_MESSAGE;
+  const INPUT_VALIDATION_ERROR = PermitValidationService.INPUT_VALIDATION_ERROR; // This should match the private constant
+  const INVALID_DATA_LOG_PREFIX =
+    PermitValidationService.INVALID_DATA_LOG_PREFIX;
+  const ITEM_INDEX_LOG_PREFIX = PermitValidationService.ITEM_INDEX_LOG_PREFIX;
+  const DATA_QUALITY_LOG_PREFIX =
+    PermitValidationService.DATA_QUALITY_LOG_PREFIX;
+  const RESPONSE_NOT_ARRAY_ERROR =
+    PermitValidationService.RESPONSE_NOT_ARRAY_ERROR;
+  const USER_FRIENDLY_ERROR = PermitValidationService.USER_FRIENDLY_ERROR;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -150,17 +159,17 @@ describe('PermitValidationService', () => {
       expect(result.length).toBe(2);
       expect(result).toEqual([VALID_PERMIT, updatePermit]);
 
-      // Verify audit logging
+      // Verify audit logging - using constants
       expect(console.warn).toHaveBeenCalledWith(
-        'Invalid permit data filtered out',
-        'Item at index 1'
+        INVALID_DATA_LOG_PREFIX,
+        `${ITEM_INDEX_LOG_PREFIX} 1`
       );
       expect(console.warn).toHaveBeenCalledWith(
-        'Invalid permit data filtered out',
-        'Item at index 3'
+        INVALID_DATA_LOG_PREFIX,
+        `${ITEM_INDEX_LOG_PREFIX} 3`
       );
       expect(console.warn).toHaveBeenCalledWith(
-        'Data validation: 2 invalid permits filtered out of 4'
+        `${DATA_QUALITY_LOG_PREFIX}: 2 invalid permits filtered out of 4`
       );
     });
 
@@ -179,8 +188,8 @@ describe('PermitValidationService', () => {
       );
 
       expect(console.error).toHaveBeenCalledWith(
-        'Invalid permit data filtered out',
-        'Response is not an array'
+        INVALID_DATA_LOG_PREFIX,
+        RESPONSE_NOT_ARRAY_ERROR
       );
     });
 
@@ -196,7 +205,7 @@ describe('PermitValidationService', () => {
 
       expect(result).toEqual([]);
       expect(console.warn).toHaveBeenCalledWith(
-        'Data validation: 4 invalid permits filtered out of 4'
+        `${DATA_QUALITY_LOG_PREFIX}: 4 invalid permits filtered out of 4`
       );
     });
   });
@@ -221,8 +230,8 @@ describe('PermitValidationService', () => {
       ).toThrowError(VALIDATION_ERROR_MESSAGE);
 
       expect(console.error).toHaveBeenCalledWith(
-        'Invalid permit data filtered out',
-        'Single permit response invalid'
+        INVALID_DATA_LOG_PREFIX,
+        'Single permit validation failed for permit: [object Object]'
       );
     });
 
@@ -259,9 +268,7 @@ describe('PermitValidationService', () => {
     it('should return user-friendly error message', () => {
       const message = service.getValidationErrorMessage();
 
-      expect(message).toBe(
-        'The permit data is incomplete or invalid. Please check all required fields.'
-      );
+      expect(message).toBe(USER_FRIENDLY_ERROR);
       expect(message).not.toContain('server'); // No internal details exposed
     });
   });

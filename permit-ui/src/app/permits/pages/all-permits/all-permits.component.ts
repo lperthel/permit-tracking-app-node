@@ -113,7 +113,7 @@ export class AllPermitsComponent implements OnInit, AfterViewInit {
   refreshPermitsFromDB() {
     this.isLoading.set(true); // Start loading
 
-    const sub = this.permitService.requestAllPermits.subscribe({
+    const sub = this.permitService.requestAllPermits().subscribe({
       next: (resp) => {
         this.permitService.permits.set(resp);
         this.restError.set(UI_TEXT.EMPTY_ERROR);

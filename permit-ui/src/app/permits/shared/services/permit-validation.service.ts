@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Permit } from '../models/permit.model';
 
+export class ValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
 /**
  * Service responsible for validating permit data integrity and compliance
  * Handles data validation for government permit tracking system
@@ -8,37 +15,62 @@ import { Permit } from '../models/permit.model';
  */
 @Injectable({ providedIn: 'root' })
 export class PermitValidationService {
-  // Constants defined at top per project guidelines
-  private static readonly VALIDATION_ERROR_MESSAGE =
+  // Error messages
+  public static readonly VALIDATION_ERROR_MESSAGE =
     'Invalid permit data received from server';
-  private static readonly INPUT_VALIDATION_ERROR =
+  public static readonly INPUT_VALIDATION_ERROR =
     'Invalid permit data provided';
-  private static readonly REQUIRED_PERMIT_FIELDS = [
+  public static readonly USER_FRIENDLY_ERROR =
+    'The permit data is incomplete or invalid. Please check all required fields.';
+
+  // Validation criteria
+  public static readonly REQUIRED_PERMIT_FIELDS = [
     'id',
     'permitName',
     'applicantName',
     'permitType',
     'status',
   ] as const;
-  private static readonly INVALID_DATA_LOG_PREFIX =
+
+  public static readonly VALID_STATUSES = [
+    'SUBMITTED',
+    'APPROVED',
+    'REJECTED',
+    'UNDER_REVIEW',
+  ] as const;
+
+  // Logging messages
+  public static readonly INVALID_DATA_LOG_PREFIX =
     'Invalid permit data filtered out';
-  private static readonly DATA_QUALITY_LOG_PREFIX = 'Data validation';
+  public static readonly DATA_QUALITY_LOG_PREFIX = 'Data validation';
+  public static readonly RESPONSE_NOT_ARRAY_ERROR = 'Response is not an array';
+  public static readonly ITEM_INDEX_LOG_PREFIX = 'Item at index';
+  public static readonly FILTERED_COUNT_LOG_TEMPLATE =
+    'invalid permits filtered out of';
+  public static readonly SINGLE_PERMIT_VALIDATION_ERROR_PREFIX =
+    'Single permit validation failed for permit:';
+
+  // Data type constants
+  private static readonly OBJECT_TYPE = 'object';
+  private static readonly STRING_TYPE = 'string';
 
   /**
    * Validates that an object contains all required Permit fields with valid values
    * @param data - Object to validate against Permit interface
    * @returns Type guard indicating if data is a valid Permit
    */
-  isValidPermit(data: any): data is Permit {
-    if (!data || typeof data !== 'object') {
+  isValidPermit(data: unknown): data is Permit {
+    if (!data || typeof data !== PermitValidationService.OBJECT_TYPE) {
       return false;
     }
 
+    const dataRecord = data as Record<string, unknown>;
+
     return PermitValidationService.REQUIRED_PERMIT_FIELDS.every(
       (field) =>
-        field in data &&
-        typeof data[field] === 'string' &&
-        data[field].trim().length > 0
+        field in dataRecord &&
+        typeof dataRecord[field] === PermitValidationService.STRING_TYPE &&
+        (dataRecord[field] as string).trim().length > 0
     );
   }
 
@@ -48,9 +80,9 @@ export class PermitValidationService {
    * @param permit - Permit object to validate
    * @throws Error if permit data is invalid
    */
-  validateInputPermit(permit: any): asserts permit is Permit {
+  validateInputPermit(permit: unknown): asserts permit is Permit {
     if (!this.isValidPermit(permit)) {
-      throw new Error(PermitValidationService.INPUT_VALIDATION_ERROR);
+      throw new ValidationError(PermitValidationService.INPUT_VALIDATION_ERROR);
     }
   }
 
@@ -61,14 +93,16 @@ export class PermitValidationService {
    * @returns Array of validated Permit objects
    * @throws Error if response structure is fundamentally invalid
    */
-  validateAndFilterPermits(data: any): Permit[] {
+  validateAndFilterPermits(data: unknown): Permit[] {
     // Validate response structure
     if (!Array.isArray(data)) {
       console.error(
         PermitValidationService.INVALID_DATA_LOG_PREFIX,
-        'Response is not an array'
+        PermitValidationService.RESPONSE_NOT_ARRAY_ERROR
       );
-      throw new Error(PermitValidationService.VALIDATION_ERROR_MESSAGE);
+      throw new ValidationError(
+        PermitValidationService.VALIDATION_ERROR_MESSAGE
+      );
     }
 
     const validPermits: Permit[] = [];
@@ -82,7 +116,7 @@ export class PermitValidationService {
         // Audit log: record validation failure without exposing sensitive data
         console.warn(
           PermitValidationService.INVALID_DATA_LOG_PREFIX,
-          `Item at index ${index}`
+          `${PermitValidationService.ITEM_INDEX_LOG_PREFIX} ${index}`
         );
       }
     });
@@ -91,7 +125,7 @@ export class PermitValidationService {
     const filteredCount = originalCount - validPermits.length;
     if (filteredCount > 0) {
       console.warn(
-        `${PermitValidationService.DATA_QUALITY_LOG_PREFIX}: ${filteredCount} invalid permits filtered out of ${originalCount}`
+        `${PermitValidationService.DATA_QUALITY_LOG_PREFIX}: ${filteredCount} ${PermitValidationService.FILTERED_COUNT_LOG_TEMPLATE} ${originalCount}`
       );
     }
 
@@ -105,13 +139,15 @@ export class PermitValidationService {
    * @returns Validated Permit object
    * @throws Error if response is invalid
    */
-  validateSinglePermitResponse(data: any): Permit {
+  validateSinglePermitResponse(data: unknown): Permit {
     if (!this.isValidPermit(data)) {
       console.error(
         PermitValidationService.INVALID_DATA_LOG_PREFIX,
-        'Single permit response invalid'
+        singlePermitValidationError(data)
       );
-      throw new Error(PermitValidationService.VALIDATION_ERROR_MESSAGE);
+      throw new ValidationError(
+        PermitValidationService.VALIDATION_ERROR_MESSAGE
+      );
     }
     return data;
   }
@@ -122,13 +158,7 @@ export class PermitValidationService {
    * @returns true if status is valid
    */
   isValidStatus(status: string): boolean {
-    const VALID_STATUSES = [
-      'SUBMITTED',
-      'APPROVED',
-      'REJECTED',
-      'UNDER_REVIEW',
-    ];
-    return VALID_STATUSES.includes(status);
+    return PermitValidationService.VALID_STATUSES.includes(status as any);
   }
 
   /**
@@ -137,6 +167,10 @@ export class PermitValidationService {
    * @returns User-friendly error message
    */
   getValidationErrorMessage(): string {
-    return 'The permit data is incomplete or invalid. Please check all required fields.';
+    return PermitValidationService.USER_FRIENDLY_ERROR;
   }
 }
+
+export const singlePermitValidationError = (data: unknown) => {
+  return `${PermitValidationService.SINGLE_PERMIT_VALIDATION_ERROR_PREFIX} ${data}`;
+};

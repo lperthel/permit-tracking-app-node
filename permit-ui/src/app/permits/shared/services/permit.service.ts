@@ -1,13 +1,17 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DestroyRef, Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, Subscription, throwError } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import {
   API_CONSTANTS,
   LOGGING_CONSTANTS,
 } from '../../../assets/constants/service.constants';
 import { UI_TEXT } from '../../../assets/constants/ui-text.constants';
 import { Permit } from '../models/permit.model';
-import { PermitValidationService } from './permit-validation.service';
+import {
+  PermitValidationService,
+  ValidationError,
+} from './permit-validation.service';
 
 @Injectable({ providedIn: 'root' })
 export class PermitService {
@@ -27,37 +31,41 @@ export class PermitService {
   ) {}
 
   createPermit(permit: Permit): Observable<Permit> {
-    // Validate input before processing
-    this.validator.validateInputPermit(permit);
+    return new Observable<Permit>((observer) => {
+      try {
+        this.validator.validateInputPermit(permit); // ← Sync validation
+        observer.next(permit); // ← Emit the permit if valid
+        observer.complete(); // ← Signal completion
+      } catch (error) {
+        observer.error(error); // ← Emit ValidationError if invalid
+      }
+    }).pipe(
+      switchMap(() => {
+        const backupPermits = this.permits();
+        this.permits.update((permits) => [...permits, permit]);
 
-    const backupPermits = this.permits();
-    this.permits.update((permits) => [...permits, permit]);
-
-    return this.httpClient
-      .post<any>(
-        API_CONSTANTS.SERVER_URL + API_CONSTANTS.PERMITS_PATH,
-        JSON.stringify(permit),
-        this.httpOptions
-      )
-      .pipe(
-        // Validate server response
-        map((response) =>
-          this.validator.validateSinglePermitResponse(response)
-        ),
-        catchError((err) => {
-          console.error(
-            LOGGING_CONSTANTS.CREATE_ERROR_PREFIX,
-            permit.id,
-            LOGGING_CONSTANTS.STATUS_LOG,
-            err.status
+        return this.httpClient
+          .post<Permit>(
+            API_CONSTANTS.SERVER_URL + API_CONSTANTS.PERMITS_PATH,
+            JSON.stringify(permit),
+            this.httpOptions
+          )
+          .pipe(
+            map((response) =>
+              this.validator.validateSinglePermitResponse(response)
+            ),
+            catchError((err) => {
+              this.permits.set(backupPermits);
+              return throwError(
+                () => new Error(UI_TEXT.SERVER_CONNECTION_ERROR)
+              );
+            })
           );
-          this.permits.set(backupPermits);
-          return throwError(() => new Error(UI_TEXT.SERVER_CONNECTION_ERROR));
-        })
-      );
+      })
+    );
   }
 
-  get requestAllPermits(): Observable<Permit[]> {
+  requestAllPermits(): Observable<Permit[]> {
     return this.httpClient
       .get<any[]>(
         API_CONSTANTS.SERVER_URL + API_CONSTANTS.PERMITS_PATH,
@@ -67,7 +75,14 @@ export class PermitService {
         // Validate and filter response data
         map((data) => this.validator.validateAndFilterPermits(data)),
         catchError((err) => {
+          console.log(`>>>>caught error ${err}`);
           console.error(LOGGING_CONSTANTS.FETCH_ERROR_PREFIX, err.status);
+
+          // Let ValidationError pass through, convert others to server error
+          if (err instanceof ValidationError) {
+            return throwError(() => err);
+          }
+
           return throwError(() => new Error(UI_TEXT.SERVER_CONNECTION_ERROR));
         })
       );
@@ -88,7 +103,7 @@ export class PermitService {
     return this.httpClient
       .put<any>(
         API_CONSTANTS.SERVER_URL + API_CONSTANTS.PERMITS_PATH + newPermit.id,
-        newPermit,
+        JSON.stringify(newPermit),
         this.httpOptions
       )
       .pipe(

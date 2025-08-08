@@ -4,13 +4,18 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../../environments/environment';
+import { API_CONSTANTS } from '../../../assets/constants/service.constants';
 import {
   createThisPermit,
   deleteThisPermit,
   updatePermit,
 } from '../../../assets/constants/test-permits';
+import { UI_TEXT } from '../../../assets/constants/ui-text.constants';
 import { Permit } from '../../shared/models/permit.model';
-import { PermitValidationService } from '../../shared/services/permit-validation.service';
+import {
+  PermitValidationService,
+  ValidationError,
+} from '../../shared/services/permit-validation.service';
 import { PermitService } from '../../shared/services/permit.service';
 
 describe('PermitService', () => {
@@ -19,11 +24,46 @@ describe('PermitService', () => {
   let validationServiceSpy: jasmine.SpyObj<PermitValidationService>;
 
   // Constants defined at top of describe block
-  const BASE_URL = `${environment.apiUrl}/permits`;
+  const BASE_URL = `${environment.apiUrl}${API_CONSTANTS.PERMITS_PATH}`;
   const MOCK_PERMITS: Permit[] = [createThisPermit, updatePermit];
   const ERROR_STATUS = 500;
-  const VALIDATION_ERROR = 'Invalid permit data provided';
-  const SERVER_ERROR = 'Server connection error';
+
+  // Reference validation service constants
+  const VALIDATION_ERROR = PermitValidationService.INPUT_VALIDATION_ERROR;
+  const VALIDATION_ERROR_MESSAGE =
+    PermitValidationService.VALIDATION_ERROR_MESSAGE;
+  const SERVER_ERROR = UI_TEXT.SERVER_CONNECTION_ERROR;
+
+  // HTTP and test constants
+  const CONTENT_TYPE_HEADER = 'Content-Type';
+  const APPLICATION_JSON = 'application/json';
+  const HTTP_GET_METHOD = 'GET';
+  const HTTP_POST_METHOD = 'POST';
+  const HTTP_PUT_METHOD = 'PUT';
+  const HTTP_DELETE_METHOD = 'DELETE';
+
+  // Error messages for service-specific validations
+  const INVALID_PERMIT_ID_ERROR = 'Invalid permit ID provided';
+  const SERVER_ERROR_TEXT = 'Server Error';
+  const INTERNAL_SERVER_ERROR_TEXT = 'Internal Server Error';
+  const INVALID_SERVER_RESPONSE_ERROR = 'Invalid server response';
+
+  // Test failure messages
+  const SHOULD_HAVE_FAILED_VALIDATION = 'Should have failed validation';
+  const SHOULD_HAVE_FAILED_DUE_TO_VALIDATION =
+    'Should have failed due to validation error';
+  const SHOULD_HAVE_FAILED = 'Should have failed';
+  const SHOULD_HAVE_REJECTED_EMPTY_ID = 'Should have rejected empty ID';
+  const SHOULD_HAVE_REJECTED_WHITESPACE_ID =
+    'Should have rejected whitespace ID';
+
+  // Test data
+  const INVALID_DATA_OBJECT = { invalid: 'data' };
+  const INCOMPLETE_RESPONSE_OBJECT = { incomplete: 'response' };
+  const INVALID_RESPONSE_ARRAY = [{ invalid: 'response' }];
+  const APPROVED_STATUS = 'APPROVED';
+  const EMPTY_STRING = '';
+  const WHITESPACE_STRING = '   ';
 
   beforeEach(() => {
     // Create validation service spy
@@ -73,13 +113,15 @@ describe('PermitService', () => {
     });
 
     it('should fetch and validate permits successfully', () => {
-      service.requestAllPermits.subscribe((permits) => {
+      service.requestAllPermits().subscribe((permits) => {
         expect(permits).toEqual(MOCK_PERMITS);
       });
 
       const req = httpMock.expectOne(BASE_URL);
-      expect(req.request.method).toBe('GET');
-      expect(req.request.headers.get('Content-Type')).toBe('application/json');
+      expect(req.request.method).toBe(HTTP_GET_METHOD);
+      expect(req.request.headers.get(CONTENT_TYPE_HEADER)).toBe(
+        APPLICATION_JSON
+      );
       req.flush(MOCK_PERMITS);
 
       // Verify validation was called
@@ -91,7 +133,7 @@ describe('PermitService', () => {
     it('should handle validation filtering', () => {
       const serverResponse = [
         MOCK_PERMITS[0],
-        { invalid: 'data' },
+        INVALID_DATA_OBJECT,
         MOCK_PERMITS[1],
       ];
       const filteredResponse = [MOCK_PERMITS[0], MOCK_PERMITS[1]];
@@ -100,7 +142,7 @@ describe('PermitService', () => {
         filteredResponse
       );
 
-      service.requestAllPermits.subscribe((permits) => {
+      service.requestAllPermits().subscribe((permits) => {
         expect(permits).toEqual(filteredResponse);
       });
 
@@ -114,32 +156,33 @@ describe('PermitService', () => {
 
     it('should handle validation errors', () => {
       validationServiceSpy.validateAndFilterPermits.and.throwError(
-        VALIDATION_ERROR
+        new ValidationError(VALIDATION_ERROR)
       );
 
-      service.requestAllPermits.subscribe({
-        next: () => fail('Should have failed due to validation error'),
+      service.requestAllPermits().subscribe({
+        next: () => fail(SHOULD_HAVE_FAILED_DUE_TO_VALIDATION),
         error: (error) => {
+          expect(error).toBeInstanceOf(ValidationError);
           expect(error.message).toBe(VALIDATION_ERROR);
         },
       });
 
       const req = httpMock.expectOne(BASE_URL);
-      req.flush([{ invalid: 'response' }]);
+      req.flush(INVALID_RESPONSE_ARRAY);
     });
 
     it('should handle fetch HTTP errors', () => {
-      service.requestAllPermits.subscribe({
-        next: () => fail('Should have failed'),
+      service.requestAllPermits().subscribe({
+        next: () => fail(SHOULD_HAVE_FAILED),
         error: (error) => {
           expect(error.message).toBe(SERVER_ERROR);
         },
       });
 
       const req = httpMock.expectOne(BASE_URL);
-      req.flush('Server Error', {
+      req.flush(SERVER_ERROR_TEXT, {
         status: ERROR_STATUS,
-        statusText: 'Internal Server Error',
+        statusText: INTERNAL_SERVER_ERROR_TEXT,
       });
     });
   });
@@ -164,8 +207,8 @@ describe('PermitService', () => {
       expect(service.permits()).toContain(newPermit);
 
       const req = httpMock.expectOne(BASE_URL);
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toBe(JSON.stringify(newPermit));
+      expect(req.request.method).toBe(HTTP_POST_METHOD);
+      expect(req.request.body).toEqual(JSON.stringify(newPermit));
       req.flush(newPermit);
 
       // Verify validation was called
@@ -178,11 +221,11 @@ describe('PermitService', () => {
     });
 
     it('should reject invalid input before making HTTP request', () => {
-      const invalidPermit = { invalid: 'data' } as any;
+      const invalidPermit = INVALID_DATA_OBJECT as any;
       validationServiceSpy.validateInputPermit.and.throwError(VALIDATION_ERROR);
 
       service.createPermit(invalidPermit).subscribe({
-        next: () => fail('Should have failed validation'),
+        next: () => fail(SHOULD_HAVE_FAILED_VALIDATION),
         error: (error) => {
           expect(error.message).toBe(VALIDATION_ERROR);
         },
@@ -197,16 +240,16 @@ describe('PermitService', () => {
 
     it('should handle invalid server response', () => {
       const newPermit = createThisPermit;
-      const invalidResponse = { incomplete: 'response' };
+      const invalidResponse = INCOMPLETE_RESPONSE_OBJECT;
 
       validationServiceSpy.validateSinglePermitResponse.and.throwError(
-        'Invalid server response'
+        INVALID_SERVER_RESPONSE_ERROR
       );
 
       service.createPermit(newPermit).subscribe({
-        next: () => fail('Should have failed validation'),
+        next: () => fail(SHOULD_HAVE_FAILED_VALIDATION),
         error: (error) => {
-          expect(error.message).toBe('Invalid server response');
+          expect(error.message).toBe(SERVER_ERROR); // ← Change this line
         },
       });
 
@@ -223,7 +266,7 @@ describe('PermitService', () => {
       const initialPermits = service.permits();
 
       service.createPermit(newPermit).subscribe({
-        next: () => fail('Should have failed'),
+        next: () => fail(SHOULD_HAVE_FAILED),
         error: (error) => {
           expect(error.message).toBe(SERVER_ERROR);
           // Verify rollback occurred
@@ -232,9 +275,9 @@ describe('PermitService', () => {
       });
 
       const req = httpMock.expectOne(BASE_URL);
-      req.flush('Server Error', {
+      req.flush(SERVER_ERROR_TEXT, {
         status: ERROR_STATUS,
-        statusText: 'Internal Server Error',
+        statusText: INTERNAL_SERVER_ERROR_TEXT,
       });
     });
   });
@@ -249,7 +292,7 @@ describe('PermitService', () => {
 
     it('should validate input and update permit successfully', () => {
       const existingPermit = createThisPermit;
-      const updatedPermit = { ...existingPermit, status: 'APPROVED' };
+      const updatedPermit = { ...existingPermit, status: APPROVED_STATUS };
 
       // Set up initial state
       service.permits.set([existingPermit]);
@@ -262,7 +305,7 @@ describe('PermitService', () => {
       expect(service.permits()[0]).toEqual(updatedPermit);
 
       const req = httpMock.expectOne(`${BASE_URL}/${updatedPermit.id}`);
-      expect(req.request.method).toBe('PUT');
+      expect(req.request.method).toBe(HTTP_PUT_METHOD);
       expect(req.request.body).toEqual(updatedPermit);
       req.flush(updatedPermit);
 
@@ -276,11 +319,11 @@ describe('PermitService', () => {
     });
 
     it('should reject invalid input before HTTP request', () => {
-      const invalidPermit = { invalid: 'data' } as any;
+      const invalidPermit = INVALID_DATA_OBJECT as any;
       validationServiceSpy.validateInputPermit.and.throwError(VALIDATION_ERROR);
 
       service.updatePermit(invalidPermit).subscribe({
-        next: () => fail('Should have failed validation'),
+        next: () => fail(SHOULD_HAVE_FAILED_VALIDATION),
         error: (error) => {
           expect(error.message).toBe(VALIDATION_ERROR);
         },
@@ -299,27 +342,27 @@ describe('PermitService', () => {
       });
 
       const req = httpMock.expectOne(`${BASE_URL}/${permitId}`);
-      expect(req.request.method).toBe('DELETE');
+      expect(req.request.method).toBe(HTTP_DELETE_METHOD);
       req.flush(null);
     });
 
     it('should reject empty or whitespace permit ID', () => {
-      service.deletePermit('').subscribe({
-        next: () => fail('Should have rejected empty ID'),
+      service.deletePermit(EMPTY_STRING).subscribe({
+        next: () => fail(SHOULD_HAVE_REJECTED_EMPTY_ID),
         error: (error) => {
-          expect(error.message).toBe('Invalid permit ID provided');
+          expect(error.message).toBe(INVALID_PERMIT_ID_ERROR);
         },
       });
 
-      service.deletePermit('   ').subscribe({
-        next: () => fail('Should have rejected whitespace ID'),
+      service.deletePermit(WHITESPACE_STRING).subscribe({
+        next: () => fail(SHOULD_HAVE_REJECTED_WHITESPACE_ID),
         error: (error) => {
-          expect(error.message).toBe('Invalid permit ID provided');
+          expect(error.message).toBe(INVALID_PERMIT_ID_ERROR);
         },
       });
 
       httpMock.expectNone(`${BASE_URL}/`);
-      httpMock.expectNone(`${BASE_URL}/   `);
+      httpMock.expectNone(`${BASE_URL}/${WHITESPACE_STRING}`);
     });
 
     it('should rollback optimistic delete on HTTP error', () => {
@@ -330,7 +373,7 @@ describe('PermitService', () => {
       const initialPermits = service.permits();
 
       service.deletePermit(permitId).subscribe({
-        next: () => fail('Should have failed'),
+        next: () => fail(SHOULD_HAVE_FAILED),
         error: (error) => {
           expect(error.message).toBe(SERVER_ERROR);
           expect(service.permits()).toEqual(initialPermits);
@@ -338,9 +381,9 @@ describe('PermitService', () => {
       });
 
       const req = httpMock.expectOne(`${BASE_URL}/${permitId}`);
-      req.flush('Server Error', {
+      req.flush(SERVER_ERROR_TEXT, {
         status: ERROR_STATUS,
-        statusText: 'Internal Server Error',
+        statusText: INTERNAL_SERVER_ERROR_TEXT,
       });
     });
   });
