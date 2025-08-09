@@ -16,8 +16,8 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { ROUTE_CONSTANTS } from '../../../app.routes';
 import { PAGINATION } from '../../../assets/constants/pagination.constants';
-import { ROUTES } from '../../../assets/constants/routes.constants';
 import { UI_TEXT } from '../../../assets/constants/ui-text.constants';
 import { Permit } from '../../shared/models/permit.model';
 import { PermitService } from '../../shared/services/permit.service';
@@ -58,7 +58,7 @@ export class AllPermitsComponent implements OnInit, AfterViewInit {
   protected readonly UI_TEXT = AllPermitsComponentConstants.UI_TEXT;
   protected readonly ARIA_LABELS = AllPermitsComponentConstants.ARIA_LABELS;
   protected readonly TEST_IDS = AllPermitsComponentConstants.TEST_IDS;
-  protected readonly ROUTES = AllPermitsComponentConstants.ROUTES;
+  protected readonly ROUTES = ROUTE_CONSTANTS;
   protected readonly PAGINATION = AllPermitsComponentConstants.PAGINATION;
   protected readonly PAGE_HEADER = AllPermitsComponentConstants.APP_HEADER;
   protected readonly PAGE_DESC = AllPermitsComponentConstants.APP_DESCRIPTION;
@@ -138,10 +138,6 @@ export class AllPermitsComponent implements OnInit, AfterViewInit {
     this.permitService.closeConnection(sub);
   }
 
-  onUpdate(permitId: string) {
-    this.router.navigate([ROUTES.UPDATE(permitId)]);
-  }
-
   onDelete(permitId: string) {
     const sub = this.permitService.deletePermit(permitId).subscribe({
       next: (_resp) => this.restError.set(UI_TEXT.EMPTY_ERROR),
@@ -150,7 +146,7 @@ export class AllPermitsComponent implements OnInit, AfterViewInit {
 
     this.permitService.closeConnection(sub);
 
-    this.router.navigate([ROUTES.ROOT_PAGE], {
+    this.router.navigate([this.ROUTES.ROOT_PAGE], {
       relativeTo: this.activatedRoute,
       onSameUrlNavigation: 'reload',
       queryParamsHandling: 'preserve',

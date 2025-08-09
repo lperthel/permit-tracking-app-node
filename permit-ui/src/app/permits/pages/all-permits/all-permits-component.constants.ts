@@ -77,12 +77,6 @@ export class AllPermitsComponentConstants {
     DELETE_CELL: (index: number) => `delete-cell-${index}`,
   } as const;
 
-  // Routes
-  static readonly ROUTES = {
-    NEW_PERMIT: '/permits/new',
-    UPDATE: (id: number) => `/permits/${id}/update`,
-  } as const;
-
   // Pagination settings
   static readonly PAGINATION = {
     PAGE_SIZE_OPTIONS: [2, 4, 6, 10],

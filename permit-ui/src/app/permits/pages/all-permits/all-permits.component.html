@@ -62,7 +62,7 @@
     <button
       type="button"
       class="btn btn-primary"
-      [routerLink]="ROUTES.NEW_PERMIT"
+      [routerLink]="ROUTES.NEW_PERMIT_PATH"
       [attr.aria-label]="ARIA_LABELS.CREATE_NEW_PERMIT"
       [attr.data-testid]="TEST_IDS.NEW_PERMIT_BUTTON"
     >
@@ -96,7 +96,7 @@
       <button
         type="button"
         class="btn btn-primary btn-sm"
-        [routerLink]="ROUTES.NEW_PERMIT"
+        [routerLink]="ROUTES.NEW_PERMIT_PATH"
       >
         {{ UI_TEXT.CREATE_FIRST_PERMIT }}
       </button>
@@ -210,7 +210,7 @@
       >
         <button
           class="btn btn-primary"
-          [routerLink]="ROUTES.UPDATE(permit.id)"
+          [routerLink]="ROUTES.GENERATE_UPDATE_URL(permit.id)"
           [attr.aria-label]="ARIA_LABELS.UPDATE_PERMIT(permit.permitName)"
         >
           {{ UI_TEXT.UPDATE_BUTTON }}

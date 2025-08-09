@@ -45,13 +45,14 @@ export function validateCRUDCleanup() {
  * Validates the expected item exists on the last page
  * Used for cleanup verification
  */
+
 export function validateItemOnLastPage() {
   validateRow(
     0,
-    'Final Test Permit',
-    'Last page permit with comprehensive details for cleanup validation testing.',
-    'Construction',
-    'APPROVED'
+    'Handcrafted Granite Chicken',
+    'Lorenzo Mante',
+    'Zoning',
+    'REJECTED'
   );
 }
 

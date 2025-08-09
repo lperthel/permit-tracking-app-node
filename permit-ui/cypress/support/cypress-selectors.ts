@@ -3,7 +3,15 @@
 import { PAGINATION } from '../../src/app/assets/constants/pagination.constants';
 import { PERMIT_FORM_SELECTORS } from '../../src/app/assets/constants/permit-form.constants';
 import { AllPermitsComponentConstants } from '../../src/app/permits/pages/all-permits/all-permits-component.constants';
-import { getTestSelector } from './permit_test_helpers';
+
+/**
+ * Helper function to get selector with data-testid prefix
+ * Usage: getTestSelector(PERMIT_FORM_SELECTORS.MODAL_TITLE)
+ * Returns: '[data-testid="modal-title"]'
+ */
+export const getTestSelector = (selector: string): string => {
+  return `[data-testid="${selector}"]`;
+};
 
 export const selectors = {
   // General UI selectors - using AllPermitsComponentConstants

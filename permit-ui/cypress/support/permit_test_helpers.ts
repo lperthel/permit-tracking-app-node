@@ -149,12 +149,3 @@ export const getPermitTableRowCount = () => {
 export const waitForPermitCount = (expectedCount: number) => {
   cy.get(selectors.table).find('tbody tr').should('have.length', expectedCount);
 };
-
-/**
- * Helper function to get selector with data-testid prefix
- * Usage: getTestSelector(PERMIT_FORM_SELECTORS.MODAL_TITLE)
- * Returns: '[data-testid="modal-title"]'
- */
-export const getTestSelector = (selector: string): string => {
-  return `[data-testid="${selector}"]`;
-};
