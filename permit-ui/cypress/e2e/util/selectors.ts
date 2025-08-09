@@ -1,33 +1,26 @@
 export const selectors = {
   createButton: '[data-testid="create-button"]',
-  refreshProductsFromDbButton: 'refresh-products-from-db',
-  productForm: {
-    inputName: '[data-testid="input-name"]',
-    inputDesc: '[data-testid="input-description"]',
-    inputPrice: '[data-testid="input-price"]',
-    inputQuantity: '[data-testid="input-quantity"]',
-    errorName: '[data-testid="error-name"]',
-    errorDesc: '[data-testid="error-description"]',
-    errorPrice: '[data-testid="error-price"]',
-    errorQuantity: '[data-testid="error-quantity"]',
+  refreshPermitsFromDbButton: 'refresh-products-from-db',
+  permitForm: {
+    inputPermitName: '[data-testid="input-name"]',
+    inputApplicant: '[data-testid="input-description"]',
+    inputPermitType: '[data-testid="input-price"]',
+    inputStatus: '[data-testid="input-quantity"]',
+    errorPermitName: '[data-testid="error-name"]',
+    errorApplicantName: '[data-testid="error-description"]',
+    errorPermitType: '[data-testid="error-price"]',
+    errorPermitStatus: '[data-testid="error-quantity"]',
   },
-  productRowName: (index: number) =>
+  permitRowName: (index: number) =>
     `[data-testid="inventory-table-name-cell${index}"]`,
-  productRowDesc: (index: number) =>
+  permitRowApplicantName: (index: number) =>
     `[data-testid="inventory-table-description-cell${index}"]`,
-  productRowPrice: (index: number) =>
+  permitRowPermitType: (index: number) =>
     `[data-testid="inventory-table-price-cell${index}"]`,
-  productRowQuantity: (index: number) =>
+  productRowStatus: (index: number) =>
     `[data-testid="inventory-table-quantity-cell${index}"]`,
-  productRowDelete: (index: number) =>
+  permitRowDelete: (index: number) =>
     `[data-testid="inventory-table-delete-cell${index}"]`,
-  productRowUpdate: (index: number) =>
+  permitRowUpdate: (index: number) =>
     `[data-testid="inventory-table-update-cell${index}"]`,
-};
-
-export const paginationPage = {
-  first: 'pagination-first',
-  prev: 'pagination-prev',
-  next: 'pagination-next',
-  last: 'pagination-last',
 };

@@ -1,22 +1,22 @@
 import { selectors } from './selectors';
 
-export const fillProductForm = (
-  name: string,
-  desc: string,
-  price: string,
-  quantity: string
+export const fillPermitForm = (
+  permitName: string,
+  applicantName: string,
+  permitType: string,
+  status: string
 ) => {
-  cy.get(selectors.productForm.inputName).clear().type(name);
-  cy.get(selectors.productForm.inputDesc).clear().type(desc);
-  cy.get(selectors.productForm.inputPrice).clear().type(price);
-  cy.get(selectors.productForm.inputQuantity).clear().type(quantity);
+  cy.get(selectors.permitForm.inputPermitName).clear().type(permitName);
+  cy.get(selectors.permitForm.inputApplicant).clear().type(applicantName);
+  cy.get(selectors.permitForm.inputPermitType).clear().type(permitType);
+  cy.get(selectors.permitForm.inputStatus).clear().type(status);
 };
 
 export const clearProductForm = () => {
-  cy.get(selectors.productForm.inputName).clear();
-  cy.get(selectors.productForm.inputDesc).clear();
-  cy.get(selectors.productForm.inputPrice).clear();
-  cy.get(selectors.productForm.inputQuantity).clear();
+  cy.get(selectors.permitForm.inputPermitName).clear();
+  cy.get(selectors.permitForm.inputApplicant).clear();
+  cy.get(selectors.permitForm.inputPermitType).clear();
+  cy.get(selectors.permitForm.inputStatus).clear();
 };
 
 export const clickSubmitButton = () => clickButton('submit-button');

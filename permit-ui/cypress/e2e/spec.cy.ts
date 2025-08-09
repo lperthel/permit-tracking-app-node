@@ -8,21 +8,22 @@ import {
   updatePermit,
 } from '../../src/app/assets/constants/test-permits';
 
+import { PAGINATION } from '../../src/app/assets/constants/pagination.constants';
 import {
   PERMIT_FORM_CONSTRAINTS,
   PERMIT_FORM_ERRORS,
   PERMIT_FORM_HEADERS,
 } from '../../src/app/permits/permit-form-model/permit-form-constants';
-import { Permit } from '../../src/app/permits/permit/permit.model';
+import { Permit } from '../../src/app/permits/shared/models/permit.model';
 import {
   clearProductForm,
   clickModalCloseButton,
   clickNewProductButton,
   clickSubmitButton,
-  fillProductForm,
+  fillPermitForm,
   navigateToPaginationPage,
 } from './util/form-actions';
-import { paginationPage, selectors } from './util/selectors';
+import { selectors } from './util/selectors';
 
 const dbServer = 'http://localhost:3000';
 const uiServer = 'http://localhost:4200/';
@@ -65,7 +66,7 @@ describe('CRUD Behavior', () => {
   it('app should allow a user to create a product and app should display the product in the table', () => {
     cy.visit(uiServer);
     clickNewProductButton();
-    fillProductForm(
+    fillPermitForm(
       createThisProduct.permitName,
       createThisProduct.applicantName,
       createThisProduct.permitType,
@@ -73,7 +74,7 @@ describe('CRUD Behavior', () => {
     );
     clickSubmitButton();
     cy.wait(50);
-    navigateToPaginationPage(paginationPage.last);
+    navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.LAST);
 
     validateRow(
       0,
@@ -103,14 +104,11 @@ describe('CRUD Behavior', () => {
 
     cy.visit(uiServer);
     cy.wait(50);
-    navigateToPaginationPage(paginationPage.last);
+    navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.LAST);
 
     validateDeleteMeItemExists();
 
-    cy.get(selectors.productRowDelete(0))
-      .find('button')
-      .should('exist')
-      .click();
+    cy.get(selectors.permitRowDelete(0)).find('button').should('exist').click();
 
     cy.wait(50);
     validateItemOnLastPage();
@@ -127,7 +125,7 @@ describe('CRUD Behavior', () => {
     cy.visit(uiServer);
 
     cy.wait(1000);
-    navigateToPaginationPage(paginationPage.last);
+    navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.LAST);
 
     validateRow(
       0,
@@ -138,32 +136,29 @@ describe('CRUD Behavior', () => {
     );
 
     console.log('finding update buttn.');
-    cy.get(selectors.productRowUpdate(0))
-      .find('button')
-      .should('exist')
-      .click();
+    cy.get(selectors.permitRowUpdate(0)).find('button').should('exist').click();
     cy.get('[data-testid="modal-title"]').should(
       'contain.text',
       PERMIT_FORM_HEADERS.updatePermit
     );
-    cy.get(selectors.productForm.inputName).should(
+    cy.get(selectors.permitForm.inputPermitName).should(
       'have.value',
       updateThisProductPreChange.permitName
     );
-    cy.get(selectors.productForm.inputDesc).should(
+    cy.get(selectors.permitForm.inputApplicant).should(
       'have.value',
       updateThisProductPreChange.applicantName
     );
-    cy.get(selectors.productForm.inputPrice).should(
+    cy.get(selectors.permitForm.inputPermitType).should(
       'have.value',
       updateThisProductPreChange.permitType
     );
-    cy.get(selectors.productForm.inputQuantity).should(
+    cy.get(selectors.permitForm.inputStatus).should(
       'have.value',
       `${updateThisProductPreChange.status}`
     );
 
-    fillProductForm(
+    fillPermitForm(
       updateThisProductPostChange.permitName,
       updateThisProductPostChange.applicantName,
       updateThisProductPostChange.permitType,
@@ -172,7 +167,7 @@ describe('CRUD Behavior', () => {
 
     clickSubmitButton();
     cy.wait(500);
-    navigateToPaginationPage(paginationPage.last);
+    navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.LAST);
 
     validateRow(
       0,
@@ -207,19 +202,19 @@ describe('New Product Modal', () => {
     );
     cy.get('[data-testid="modal-close-button"]').should('exist');
     cy.get('[data-testid="product-form"]').should('exist');
-    cy.get(selectors.productForm.inputName).should('exist');
-    cy.get(selectors.productForm.inputDesc).should('exist');
-    cy.get(selectors.productForm.inputPrice).should('exist');
-    cy.get(selectors.productForm.inputQuantity).should('exist');
+    cy.get(selectors.permitForm.inputPermitName).should('exist');
+    cy.get(selectors.permitForm.inputApplicant).should('exist');
+    cy.get(selectors.permitForm.inputPermitType).should('exist');
+    cy.get(selectors.permitForm.inputStatus).should('exist');
     cy.get(submitButtonSelector).should('exist');
   });
 
   it('should show error messages when fields are invalid', () => {
     clickSubmitButton();
-    cy.get(selectors.productForm.errorName).should('exist');
-    cy.get(selectors.productForm.errorDesc).should('exist');
-    cy.get(selectors.productForm.errorPrice).should('exist');
-    cy.get(selectors.productForm.errorQuantity).should('exist');
+    cy.get(selectors.permitForm.errorPermitName).should('exist');
+    cy.get(selectors.permitForm.errorApplicantName).should('exist');
+    cy.get(selectors.permitForm.errorPermitType).should('exist');
+    cy.get(selectors.permitForm.errorPermitStatus).should('exist');
   });
   it('should close the modal when user presses the "x" button', () => {
     clickModalCloseButton();
@@ -234,10 +229,7 @@ describe('Update Product Modal', () => {
   });
 
   it('should render all required elements', () => {
-    cy.get(selectors.productRowUpdate(0))
-      .find('button')
-      .should('exist')
-      .click();
+    cy.get(selectors.permitRowUpdate(0)).find('button').should('exist').click();
     cy.get('[data-testid="modal-header"]').should('exist');
     cy.get('[data-testid="modal-title"]').should(
       'contain.text',
@@ -245,31 +237,25 @@ describe('Update Product Modal', () => {
     );
     cy.get('[data-testid="modal-close-button"]').should('exist');
     cy.get('[data-testid="product-form"]').should('exist');
-    cy.get(selectors.productForm.inputName).should('exist');
-    cy.get(selectors.productForm.inputDesc).should('exist');
-    cy.get(selectors.productForm.inputPrice).should('exist');
-    cy.get(selectors.productForm.inputQuantity).should('exist');
+    cy.get(selectors.permitForm.inputPermitName).should('exist');
+    cy.get(selectors.permitForm.inputApplicant).should('exist');
+    cy.get(selectors.permitForm.inputPermitType).should('exist');
+    cy.get(selectors.permitForm.inputStatus).should('exist');
     cy.get(submitButtonSelector).should('exist');
   });
 
   it('should show error messages when fields are invalid', () => {
-    cy.get(selectors.productRowUpdate(0))
-      .find('button')
-      .should('exist')
-      .click();
+    cy.get(selectors.permitRowUpdate(0)).find('button').should('exist').click();
     clearProductForm();
     clickSubmitButton();
-    cy.get(selectors.productForm.errorName).should('exist');
-    cy.get(selectors.productForm.errorDesc).should('exist');
-    cy.get(selectors.productForm.errorPrice).should('exist');
-    cy.get(selectors.productForm.errorQuantity).should('exist');
+    cy.get(selectors.permitForm.errorPermitName).should('exist');
+    cy.get(selectors.permitForm.errorApplicantName).should('exist');
+    cy.get(selectors.permitForm.errorPermitType).should('exist');
+    cy.get(selectors.permitForm.errorPermitStatus).should('exist');
   });
 
   it('should close the modal when user presses the "x" button', () => {
-    cy.get(selectors.productRowUpdate(0))
-      .find('button')
-      .should('exist')
-      .click();
+    cy.get(selectors.permitRowUpdate(0)).find('button').should('exist').click();
     clickModalCloseButton();
     cy.url().should('eq', uiServer);
   });
@@ -284,89 +270,89 @@ describe('New Item Form Validation', () => {
   describe('Name Field Validation', () => {
     it('should show required error when left empty', () => {
       clickSubmitButton();
-      cy.get(selectors.productForm.errorName).should(
+      cy.get(selectors.permitForm.errorPermitName).should(
         'contain',
         PERMIT_FORM_ERRORS.invalidName
       );
     });
 
     it('should clear error when a valid name is entered', () => {
-      cy.get(selectors.productForm.inputName).type(
+      cy.get(selectors.permitForm.inputPermitName).type(
         createThisProduct.permitName
       );
-      cy.get(selectors.productForm.errorName).should('not.exist');
+      cy.get(selectors.permitForm.errorPermitName).should('not.exist');
     });
 
     it('should show error for name longer than 50 characters', () => {
-      cy.get(selectors.productForm.inputName)
+      cy.get(selectors.permitForm.inputPermitName)
         .invoke('val', 'a'.repeat(PERMIT_FORM_CONSTRAINTS.nameMaxLength + 1))
         .trigger('input');
       clickSubmitButton();
-      cy.get(selectors.productForm.errorName).should(
+      cy.get(selectors.permitForm.errorPermitName).should(
         'contain',
         PERMIT_FORM_ERRORS.invalidName
       );
-      cy.get(selectors.productForm.inputName).type('{backspace}');
+      cy.get(selectors.permitForm.inputPermitName).type('{backspace}');
       clickSubmitButton();
-      cy.get(selectors.productForm.errorName).should('not.exist');
+      cy.get(selectors.permitForm.errorPermitName).should('not.exist');
     });
   });
 
   describe('Description Field Validation', () => {
     it('should show required error when left empty', () => {
       clickSubmitButton();
-      cy.get(selectors.productForm.errorDesc).should(
+      cy.get(selectors.permitForm.errorApplicantName).should(
         'contain',
         PERMIT_FORM_ERRORS.invalidDescription
       );
     });
 
     it('should clear error when a valid name is entered', () => {
-      cy.get(selectors.productForm.inputDesc).type(
+      cy.get(selectors.permitForm.inputApplicant).type(
         createThisProduct.applicantName
       );
-      cy.get(selectors.productForm.errorDesc).should('not.exist');
+      cy.get(selectors.permitForm.errorApplicantName).should('not.exist');
     });
 
     it('should show error for a description longer than the defined max length', () => {
-      cy.get(selectors.productForm.inputDesc)
+      cy.get(selectors.permitForm.inputApplicant)
         .invoke('val', 'a'.repeat(PERMIT_FORM_CONSTRAINTS.descMaxLength + 1))
         .trigger('input');
       clickSubmitButton();
-      cy.get(selectors.productForm.errorDesc).should(
+      cy.get(selectors.permitForm.errorApplicantName).should(
         'contain',
         PERMIT_FORM_ERRORS.invalidDescription
       );
-      cy.get(selectors.productForm.inputDesc).type('{backspace}');
+      cy.get(selectors.permitForm.inputApplicant).type('{backspace}');
       clickSubmitButton();
-      cy.get(selectors.productForm.errorDesc).should('not.exist');
+      cy.get(selectors.permitForm.errorApplicantName).should('not.exist');
     });
   });
 
   describe('Price Field Validation', () => {
     it('should show required error when left empty', () => {
       clickSubmitButton();
-      cy.get(selectors.productForm.errorPrice).should(
+      cy.get(selectors.permitForm.errorPermitType).should(
         'contain',
         PERMIT_FORM_ERRORS.invalidPrice
       );
     });
 
     it('should show error when price is not a number', () => {
-      cy.get(selectors.productForm.inputPrice).type('abc');
+      cy.get(selectors.permitForm.inputPermitType).type('abc');
       clickSubmitButton();
-      cy.get(selectors.productForm.errorPrice).should(
+      cy.get(selectors.permitForm.errorPermitType).should(
         'contain',
         PERMIT_FORM_ERRORS.invalidPrice
       );
     });
 
     it('should accept a valid price', () => {
-      cy.get(selectors.productForm.inputPrice).type(
+      cy.get(selectors.permitForm.inputPermitType).type(
         createThisProduct.permitType
       );
       clickSubmitButton();
-      cy.get(selectors.productForm.errorPrice).should('not.exist');
+      cy.get(selectors.permitForm.errorPermitType).should('not.exist');
     });
   });
 });
@@ -376,21 +362,21 @@ describe('New Item Validation: Test form eror validation when creating a new ite
     cy.visit(uiServer);
     clickNewProductButton();
     cy.get(submitButtonSelector).click();
-    cy.get(selectors.productForm.errorName).should('exist');
-    cy.get(selectors.productForm.errorDesc).should('exist');
-    cy.get(selectors.productForm.errorPrice).should('exist');
-    cy.get(selectors.productForm.errorQuantity).should('exist');
+    cy.get(selectors.permitForm.errorPermitName).should('exist');
+    cy.get(selectors.permitForm.errorApplicantName).should('exist');
+    cy.get(selectors.permitForm.errorPermitType).should('exist');
+    cy.get(selectors.permitForm.errorPermitStatus).should('exist');
   });
 
   it('Correct the name and make sure the error is fixed', () => {
-    cy.get(selectors.productForm.errorName).should('exist');
-    cy.get(selectors.productForm.inputName).type('hello');
-    cy.get(selectors.productForm.errorName).should('not.exist');
+    cy.get(selectors.permitForm.errorPermitName).should('exist');
+    cy.get(selectors.permitForm.inputPermitName).type('hello');
+    cy.get(selectors.permitForm.errorPermitName).should('not.exist');
   });
   it('Correct the name and make sure the error is fixed', () => {
-    cy.get(selectors.productForm.errorName).should('exist');
-    cy.get(selectors.productForm.inputName).type('hello');
-    cy.get(selectors.productForm.errorName).should('not.exist');
+    cy.get(selectors.permitForm.errorPermitName).should('exist');
+    cy.get(selectors.permitForm.inputPermitName).type('hello');
+    cy.get(selectors.permitForm.errorPermitName).should('not.exist');
   });
 });
 
@@ -406,7 +392,7 @@ describe('Paginator Behavior: Navigate between pages and validate the expect ite
     cy.visit(uiServer);
     validateElementOnFirstPage();
 
-    navigateToPaginationPage(paginationPage.next);
+    navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.NEXT);
     validateRow(
       0,
       secondPageFirstItem.name,
@@ -414,16 +400,16 @@ describe('Paginator Behavior: Navigate between pages and validate the expect ite
       secondPageFirstItem.price,
       secondPageFirstItem.quantity
     );
-    navigateToPaginationPage(paginationPage.prev);
+    navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.PREV);
     validateElementOnFirstPage();
   });
   it('Navigate to the last page and test that the first element on page the row exists', () => {
     cy.visit(uiServer);
     validateElementOnFirstPage();
 
-    navigateToPaginationPage(paginationPage.last);
+    navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.LAST);
     validateItemOnLastPage();
-    navigateToPaginationPage(paginationPage.first);
+    navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.FIRST);
     validateElementOnFirstPage();
   });
 });
@@ -533,17 +519,19 @@ function validateRow(
   quantity: string
 ) {
   console.log('validating row');
-  cy.contains(selectors.productRowName(index), name).should('exist');
-  cy.contains(selectors.productRowDesc(index), description).should('exist');
-  cy.contains(selectors.productRowPrice(index), price).should('exist');
-  cy.contains(selectors.productRowQuantity(index), quantity).should('exist');
+  cy.contains(selectors.permitRowName(index), name).should('exist');
+  cy.contains(selectors.permitRowApplicantName(index), description).should(
+    'exist'
+  );
+  cy.contains(selectors.permitRowPermitType(index), price).should('exist');
+  cy.contains(selectors.productRowStatus(index), quantity).should('exist');
   console.log('done validating row');
 }
 
 function validateCRUDCleanup() {
   cy.visit(uiServer);
   cy.wait(1000);
-  navigateToPaginationPage(paginationPage.last);
+  navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.LAST);
   validateItemOnLastPage();
 }
 

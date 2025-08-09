@@ -297,25 +297,26 @@ describe('PermitService', () => {
       // Set up initial state
       service.permits.set([existingPermit]);
 
-      service.updatePermit(updatedPermit).subscribe((permit) => {
-        expect(permit).toEqual(updatedPermit);
-      });
-
-      // Verify optimistic update
-      expect(service.permits()[0]).toEqual(updatedPermit);
-
-      const req = httpMock.expectOne(`${BASE_URL}/${updatedPermit.id}`);
-      expect(req.request.method).toBe(HTTP_PUT_METHOD);
-      expect(req.request.body).toEqual(updatedPermit);
-      req.flush(updatedPermit);
-
-      // Verify validation calls
-      expect(validationServiceSpy.validateInputPermit).toHaveBeenCalledWith(
+      validationServiceSpy.validateSinglePermitResponse.and.returnValue(
         updatedPermit
       );
-      expect(
-        validationServiceSpy.validateSinglePermitResponse
-      ).toHaveBeenCalledWith(updatedPermit);
+
+      service.updatePermit(updatedPermit).subscribe((permit) => {
+        expect(permit).toEqual(updatedPermit);
+        expect(service.permits()[0]).toEqual(updatedPermit);
+        expect(validationServiceSpy.validateInputPermit).toHaveBeenCalledWith(
+          updatedPermit
+        );
+        expect(
+          validationServiceSpy.validateSinglePermitResponse
+        ).toHaveBeenCalledWith(updatedPermit);
+      });
+
+      const req = httpMock.expectOne(`${BASE_URL}${updatedPermit.id}`);
+      expect(req.request.method).toBe(HTTP_PUT_METHOD);
+      expect(req.request.body).toEqual(JSON.stringify(updatedPermit));
+
+      req.flush(updatedPermit);
     });
 
     it('should reject invalid input before HTTP request', () => {
@@ -329,7 +330,7 @@ describe('PermitService', () => {
         },
       });
 
-      httpMock.expectNone(`${BASE_URL}/${invalidPermit.id}`);
+      httpMock.expectNone(`${BASE_URL}${invalidPermit.id}`);
     });
   });
 
@@ -338,10 +339,10 @@ describe('PermitService', () => {
       const permitId = deleteThisPermit.id;
 
       service.deletePermit(permitId).subscribe((response) => {
-        expect(response).toBeUndefined();
+        expect(response).toBeNull();
       });
 
-      const req = httpMock.expectOne(`${BASE_URL}/${permitId}`);
+      const req = httpMock.expectOne(`${BASE_URL}${permitId}`);
       expect(req.request.method).toBe(HTTP_DELETE_METHOD);
       req.flush(null);
     });
@@ -361,8 +362,8 @@ describe('PermitService', () => {
         },
       });
 
-      httpMock.expectNone(`${BASE_URL}/`);
-      httpMock.expectNone(`${BASE_URL}/${WHITESPACE_STRING}`);
+      httpMock.expectNone(`${BASE_URL}`);
+      httpMock.expectNone(`${BASE_URL}${WHITESPACE_STRING}`);
     });
 
     it('should rollback optimistic delete on HTTP error', () => {
@@ -380,7 +381,7 @@ describe('PermitService', () => {
         },
       });
 
-      const req = httpMock.expectOne(`${BASE_URL}/${permitId}`);
+      const req = httpMock.expectOne(`${BASE_URL}${permitId}`);
       req.flush(SERVER_ERROR_TEXT, {
         status: ERROR_STATUS,
         statusText: INTERNAL_SERVER_ERROR_TEXT,

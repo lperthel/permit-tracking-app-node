@@ -89,39 +89,51 @@ export class PermitService {
   }
 
   updatePermit(newPermit: Permit): Observable<Permit> {
-    // Validate input before processing
-    this.validator.validateInputPermit(newPermit);
+    return new Observable<Permit>((observer) => {
+      try {
+        this.validator.validateInputPermit(newPermit);
+        observer.next(newPermit);
+        observer.complete();
+      } catch (error) {
+        observer.error(error);
+      }
+    }).pipe(
+      switchMap(() => {
+        const backupPermits = this.permits();
 
-    const backupPermits = this.permits();
+        this.permits.update((permits) => {
+          return permits.map((oldPermit) => {
+            return oldPermit.id === newPermit.id ? newPermit : oldPermit;
+          });
+        });
 
-    this.permits.update((permits) => {
-      return permits.map((oldPermit) => {
-        return oldPermit.id === newPermit.id ? newPermit : oldPermit;
-      });
-    });
-
-    return this.httpClient
-      .put<any>(
-        API_CONSTANTS.SERVER_URL + API_CONSTANTS.PERMITS_PATH + newPermit.id,
-        JSON.stringify(newPermit),
-        this.httpOptions
-      )
-      .pipe(
-        // Validate server response
-        map((response) =>
-          this.validator.validateSinglePermitResponse(response)
-        ),
-        catchError((err) => {
-          console.error(
-            LOGGING_CONSTANTS.UPDATE_ERROR_PREFIX,
-            newPermit.id,
-            LOGGING_CONSTANTS.STATUS_LOG,
-            err.status
+        return this.httpClient
+          .put<any>(
+            API_CONSTANTS.SERVER_URL +
+              API_CONSTANTS.PERMITS_PATH +
+              newPermit.id,
+            JSON.stringify(newPermit),
+            this.httpOptions
+          )
+          .pipe(
+            map((response) =>
+              this.validator.validateSinglePermitResponse(response)
+            ),
+            catchError((err) => {
+              console.error(
+                LOGGING_CONSTANTS.UPDATE_ERROR_PREFIX,
+                newPermit.id,
+                LOGGING_CONSTANTS.STATUS_LOG,
+                err.status
+              );
+              this.permits.set(backupPermits);
+              return throwError(
+                () => new Error(UI_TEXT.SERVER_CONNECTION_ERROR)
+              );
+            })
           );
-          this.permits.set(backupPermits);
-          return throwError(() => new Error(UI_TEXT.SERVER_CONNECTION_ERROR));
-        })
-      );
+      })
+    );
   }
 
   deletePermit(permitId: string): Observable<void> {
