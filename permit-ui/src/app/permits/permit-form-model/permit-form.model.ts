@@ -5,75 +5,83 @@ import {
   NonNullableFormBuilder,
   Validators,
 } from '@angular/forms';
-import { PERMIT_FORM_CONSTRAINTS } from './permit-form-constants';
+import {
+  PERMIT_FORM_MAX_LENGTHS,
+  PERMIT_FORM_PATTERNS,
+} from './permit-form-constants';
 
 @Injectable({
-  providedIn: 'root', // or 'any' or declare in the component’s providers array
+  providedIn: 'root',
 })
 export class PermitForm {
   public form: FormGroup<{
-    name: FormControl<string>;
-    description: FormControl<string>;
-    price: FormControl<string>;
-    quantity: FormControl<string>;
+    permitName: FormControl<string>;
+    applicantName: FormControl<string>;
+    permitType: FormControl<string>;
+    status: FormControl<string>;
   }>;
-  patterns = {
-    price: '^[0-9]+(\\.[0-9]{1,2})?$',
-    quantity: '^[0-9]{1,255}$',
-  };
+
   constructor(private readonly fb: NonNullableFormBuilder) {
     this.form = this.fb.group({
-      name: [
+      permitName: [
         '',
         [
           Validators.required,
-          Validators.maxLength(PERMIT_FORM_CONSTRAINTS.nameMaxLength),
+          Validators.maxLength(PERMIT_FORM_MAX_LENGTHS.PERMIT_NAME),
+          Validators.pattern(PERMIT_FORM_PATTERNS.PERMIT_NAME),
         ],
       ],
-      description: [
+      applicantName: [
         '',
         [
           Validators.required,
-          Validators.maxLength(PERMIT_FORM_CONSTRAINTS.descMaxLength),
+          Validators.maxLength(PERMIT_FORM_MAX_LENGTHS.APPLICANT_NAME),
+          Validators.pattern(PERMIT_FORM_PATTERNS.APPLICANT_NAME),
         ],
       ],
-      price: [
+      permitType: [
         '',
         [
           Validators.required,
-          Validators.maxLength(PERMIT_FORM_CONSTRAINTS.priceMaxLength),
-          Validators.pattern(this.patterns.price),
+          Validators.maxLength(PERMIT_FORM_MAX_LENGTHS.PERMIT_TYPE),
+          Validators.pattern(PERMIT_FORM_PATTERNS.PERMIT_TYPE),
         ],
       ],
-      quantity: [
+      status: [
         '',
         [
           Validators.required,
-          Validators.maxLength(PERMIT_FORM_CONSTRAINTS.quantityMax),
-          Validators.pattern(this.patterns.quantity),
+          // Note: For now treating status as string input
+          // TODO: Convert to dropdown with PermitStatus enum values
         ],
       ],
     });
   }
 
-  get invalidName() {
-    return this.form.controls.name.touched && this.form.controls.name.invalid;
-  }
-
-  get invalidDescription() {
+  get invalidPermitName() {
     return (
-      this.form.controls.description.touched &&
-      this.form.controls.description.invalid
+      this.form.controls.permitName.touched &&
+      this.form.controls.permitName.invalid
     );
   }
 
-  get invalidPrice() {
-    return this.form.controls.price.touched && this.form.controls.price.invalid;
+  get invalidApplicantName() {
+    return (
+      this.form.controls.applicantName.touched &&
+      this.form.controls.applicantName.invalid
+    );
   }
 
-  get invalidQuanity() {
+  get invalidPermitType() {
     return (
-      this.form.controls.quantity.touched && this.form.controls.quantity.invalid
+      this.form.controls.permitType.touched &&
+      this.form.controls.permitType.invalid
+    );
+  }
+
+  get invalidStatus() {
+    return (
+      this.form.controls.status.touched && this.form.controls.status.invalid
     );
   }
 }

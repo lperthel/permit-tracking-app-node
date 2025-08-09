@@ -3,74 +3,75 @@ import {
   APP_DESCRIPTION_ENCODED,
   APP_HEADER,
 } from '../../src/app/assets/constants/app-description';
-import {
-  createThisPermit,
-  updatePermit,
-} from '../../src/app/assets/constants/test-permits';
+import { createThisPermit } from '../../src/app/assets/constants/test-permits';
 
 import { PAGINATION } from '../../src/app/assets/constants/pagination.constants';
 import {
-  PERMIT_FORM_CONSTRAINTS,
+  PERMIT_FORM_SELECTORS,
+  getTestSelector,
+} from '../../src/app/assets/constants/permit-form.constants';
+import { TEST_IDS } from '../../src/app/assets/constants/test-ids.constants';
+import {
   PERMIT_FORM_ERRORS,
   PERMIT_FORM_HEADERS,
+  PERMIT_FORM_MAX_LENGTHS,
 } from '../../src/app/permits/permit-form-model/permit-form-constants';
 import { Permit } from '../../src/app/permits/shared/models/permit.model';
 import {
-  clearProductForm,
+  clearPermitForm,
   clickModalCloseButton,
-  clickNewProductButton,
+  clickNewPermitButton,
   clickSubmitButton,
   fillPermitForm,
   navigateToPaginationPage,
-} from './util/form-actions';
-import { selectors } from './util/selectors';
+} from './util/cypress-form-actions';
+import { selectors } from './util/cypress-selectors';
 
 const dbServer = 'http://localhost:3000';
 const uiServer = 'http://localhost:4200/';
-const submitButtonSelector = '[data-testid="submit-button"]';
-
-const createThisProduct: Permit = createThisPermit;
-
-const updatedPermit: Permit = updatePermit;
+const submitButtonSelector = getTestSelector(
+  PERMIT_FORM_SELECTORS.SUBMIT_BUTTON
+);
 
 const deleteThisPermit: Permit = {
   id: uuidv4(),
   permitName: 'New Permit',
   applicantName: 'Delete Me',
-  permitType: '749.19',
-  status: 2,
+  permitType: 'Construction',
+  status: 'PENDING',
 };
 
-const updateThisProductPreChange: Permit = {
+const updateThisPermitPreChange: Permit = {
   id: uuidv4(),
-  permitName: 'Update this Product',
+  permitName: 'Update this Permit',
   applicantName:
-    'This is an Product added by a cypress integration Test that needs to be updated',
-  permitType: '749.19',
-  status: 2,
+    'This is a Permit added by a cypress integration Test that needs to be updated',
+  permitType: 'Construction',
+  status: 'PENDING',
 };
 
-const updateThisProductPostChange: Permit = {
+const updateThisPermitPostChange: Permit = {
   id: uuidv4(),
-  permitName: 'Updated Product',
+  permitName: 'Updated Permit',
   applicantName:
-    'This is an Product added by a cypress integration Test that has been updated',
-  permitType: '749.20',
-  status: 3,
+    'This is a Permit added by a cypress integration Test that has been updated',
+  permitType: 'Renovation',
+  status: 'APPROVED',
 };
 
 describe('CRUD Behavior', () => {
   afterEach(() => {
     validateCRUDCleanup();
   });
-  it('app should allow a user to create a product and app should display the product in the table', () => {
+
+  it('app should allow a user to create a permit and app should display the permit in the table', () => {
     cy.visit(uiServer);
-    clickNewProductButton();
+    clickNewPermitButton();
     fillPermitForm(
-      createThisProduct.permitName,
-      createThisProduct.applicantName,
-      createThisProduct.permitType,
-      `${createThisProduct.status}`
+      createThisPermit.permitName,
+      createThisPermit.applicantName,
+      createThisPermit.permitType,
+      createThisPermit.status
     );
     clickSubmitButton();
     cy.wait(50);
@@ -78,25 +79,25 @@ describe('CRUD Behavior', () => {
 
     validateRow(
       0,
-      createThisProduct.permitName,
-      createThisProduct.applicantName,
-      `\$${createThisProduct.permitType}`,
-      `${createThisProduct.status}`
+      createThisPermit.permitName,
+      createThisPermit.applicantName,
+      createThisPermit.permitType,
+      createThisPermit.status
     );
 
-    cy.contains('td', createThisProduct.permitName)
-      .invoke('attr', 'data-id') //invoke tells cypress to call element.getAttribute('data-id')
+    cy.contains('td', createThisPermit.permitName)
+      .invoke('attr', 'data-id')
       .then((id) => {
-        cy.request('DELETE', `${dbServer}/products/${id}`).then((res) => {
+        cy.request('DELETE', `${dbServer}/permits/${id}`).then((res) => {
           expect(res.status).to.eq(200);
         });
       });
   });
 
-  it('App should allow a user to delete a product', () => {
+  it('App should allow a user to delete a permit', () => {
     cy.request(
       'POST',
-      `${dbServer}/products/`,
+      `${dbServer}/permits/`,
       JSON.stringify(deleteThisPermit)
     ).then((res) => {
       expect(res.status).to.eq(201);
@@ -114,11 +115,11 @@ describe('CRUD Behavior', () => {
     validateItemOnLastPage();
   });
 
-  it('app should allow a user to update a product and app should display the product in the table', () => {
+  it('app should allow a user to update a permit and app should display the permit in the table', () => {
     cy.request(
       'POST',
-      `${dbServer}/products/`,
-      JSON.stringify(updateThisProductPreChange)
+      `${dbServer}/permits/`,
+      JSON.stringify(updateThisPermitPreChange)
     ).then((res) => {
       expect(res.status).to.eq(201);
     });
@@ -129,40 +130,39 @@ describe('CRUD Behavior', () => {
 
     validateRow(
       0,
-      updateThisProductPreChange.permitName,
-      updateThisProductPreChange.applicantName,
-      `\$${updateThisProductPreChange.permitType}`,
-      `${updateThisProductPreChange.status}`
+      updateThisPermitPreChange.permitName,
+      updateThisPermitPreChange.applicantName,
+      updateThisPermitPreChange.permitType,
+      updateThisPermitPreChange.status
     );
 
-    console.log('finding update buttn.');
     cy.get(selectors.permitRowUpdate(0)).find('button').should('exist').click();
-    cy.get('[data-testid="modal-title"]').should(
+    cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_TITLE)).should(
       'contain.text',
       PERMIT_FORM_HEADERS.updatePermit
     );
     cy.get(selectors.permitForm.inputPermitName).should(
       'have.value',
-      updateThisProductPreChange.permitName
+      updateThisPermitPreChange.permitName
     );
     cy.get(selectors.permitForm.inputApplicant).should(
       'have.value',
-      updateThisProductPreChange.applicantName
+      updateThisPermitPreChange.applicantName
     );
     cy.get(selectors.permitForm.inputPermitType).should(
       'have.value',
-      updateThisProductPreChange.permitType
+      updateThisPermitPreChange.permitType
     );
     cy.get(selectors.permitForm.inputStatus).should(
       'have.value',
-      `${updateThisProductPreChange.status}`
+      updateThisPermitPreChange.status
     );
 
     fillPermitForm(
-      updateThisProductPostChange.permitName,
-      updateThisProductPostChange.applicantName,
-      updateThisProductPostChange.permitType,
-      `${updateThisProductPostChange.status}`
+      updateThisPermitPostChange.permitName,
+      updateThisPermitPostChange.applicantName,
+      updateThisPermitPostChange.permitType,
+      updateThisPermitPostChange.status
     );
 
     clickSubmitButton();
@@ -171,37 +171,38 @@ describe('CRUD Behavior', () => {
 
     validateRow(
       0,
-      updateThisProductPostChange.permitName,
-      updateThisProductPostChange.applicantName,
-      `\$${updateThisProductPostChange.permitType}`,
-      `${updateThisProductPostChange.status}`
+      updateThisPermitPostChange.permitName,
+      updateThisPermitPostChange.applicantName,
+      updateThisPermitPostChange.permitType,
+      updateThisPermitPostChange.status
     );
 
-    cy.contains('td', updateThisProductPostChange.permitName)
-      .invoke('attr', 'data-id') //invoke tells cypress to call element.getAttribute('data-id')
-      .then((productId) => {
-        cy.request('DELETE', `${dbServer}/products/${productId}`).then(
-          (res) => {
-            expect(res.status).to.eq(200);
-          }
-        );
+    cy.contains('td', updateThisPermitPostChange.permitName)
+      .invoke('attr', 'data-id')
+      .then((permitId) => {
+        cy.request('DELETE', `${dbServer}/permits/${permitId}`).then((res) => {
+          expect(res.status).to.eq(200);
+        });
       });
   });
 });
-describe('New Product Modal', () => {
+
+describe('New Permit Modal', () => {
   beforeEach(() => {
     cy.visit(uiServer);
-    clickNewProductButton();
-    cy.get('[data-testid="modal-header"]').should('exist'); // ensure modal is open
+    clickNewPermitButton();
+    cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_HEADER)).should('exist');
   });
 
   it('should render all required elements', () => {
-    cy.get('[data-testid="modal-title"]').should(
+    cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_TITLE)).should(
       'contain.text',
       PERMIT_FORM_HEADERS.newPermit
     );
-    cy.get('[data-testid="modal-close-button"]').should('exist');
-    cy.get('[data-testid="product-form"]').should('exist');
+    cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_CLOSE_BUTTON)).should(
+      'exist'
+    );
+    cy.get(getTestSelector(PERMIT_FORM_SELECTORS.PERMIT_FORM)).should('exist');
     cy.get(selectors.permitForm.inputPermitName).should('exist');
     cy.get(selectors.permitForm.inputApplicant).should('exist');
     cy.get(selectors.permitForm.inputPermitType).should('exist');
@@ -216,13 +217,14 @@ describe('New Product Modal', () => {
     cy.get(selectors.permitForm.errorPermitType).should('exist');
     cy.get(selectors.permitForm.errorPermitStatus).should('exist');
   });
+
   it('should close the modal when user presses the "x" button', () => {
     clickModalCloseButton();
     cy.url().should('eq', uiServer);
   });
 });
 
-describe('Update Product Modal', () => {
+describe('Update Permit Modal', () => {
   beforeEach(() => {
     cy.visit(uiServer);
     cy.wait(500);
@@ -230,13 +232,15 @@ describe('Update Product Modal', () => {
 
   it('should render all required elements', () => {
     cy.get(selectors.permitRowUpdate(0)).find('button').should('exist').click();
-    cy.get('[data-testid="modal-header"]').should('exist');
-    cy.get('[data-testid="modal-title"]').should(
+    cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_HEADER)).should('exist');
+    cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_TITLE)).should(
       'contain.text',
       PERMIT_FORM_HEADERS.updatePermit
     );
-    cy.get('[data-testid="modal-close-button"]').should('exist');
-    cy.get('[data-testid="product-form"]').should('exist');
+    cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_CLOSE_BUTTON)).should(
+      'exist'
+    );
+    cy.get(getTestSelector(PERMIT_FORM_SELECTORS.PERMIT_FORM)).should('exist');
     cy.get(selectors.permitForm.inputPermitName).should('exist');
     cy.get(selectors.permitForm.inputApplicant).should('exist');
     cy.get(selectors.permitForm.inputPermitType).should('exist');
@@ -246,7 +250,7 @@ describe('Update Product Modal', () => {
 
   it('should show error messages when fields are invalid', () => {
     cy.get(selectors.permitRowUpdate(0)).find('button').should('exist').click();
-    clearProductForm();
+    clearPermitForm();
     clickSubmitButton();
     cy.get(selectors.permitForm.errorPermitName).should('exist');
     cy.get(selectors.permitForm.errorApplicantName).should('exist');
@@ -261,36 +265,36 @@ describe('Update Product Modal', () => {
   });
 });
 
-describe('New Item Form Validation', () => {
+describe('New Permit Form Validation', () => {
   beforeEach(() => {
     cy.visit(uiServer);
-    clickNewProductButton();
+    clickNewPermitButton();
   });
 
-  describe('Name Field Validation', () => {
+  describe('Permit Name Field Validation', () => {
     it('should show required error when left empty', () => {
       clickSubmitButton();
       cy.get(selectors.permitForm.errorPermitName).should(
         'contain',
-        PERMIT_FORM_ERRORS.invalidName
+        PERMIT_FORM_ERRORS.invalidPermitName
       );
     });
 
-    it('should clear error when a valid name is entered', () => {
+    it('should clear error when a valid permit name is entered', () => {
       cy.get(selectors.permitForm.inputPermitName).type(
-        createThisProduct.permitName
+        createThisPermit.permitName
       );
       cy.get(selectors.permitForm.errorPermitName).should('not.exist');
     });
 
-    it('should show error for name longer than 50 characters', () => {
+    it('should show error for permit name longer than 100 characters', () => {
       cy.get(selectors.permitForm.inputPermitName)
-        .invoke('val', 'a'.repeat(PERMIT_FORM_CONSTRAINTS.nameMaxLength + 1))
+        .invoke('val', 'a'.repeat(PERMIT_FORM_MAX_LENGTHS.PERMIT_NAME + 1))
         .trigger('input');
       clickSubmitButton();
       cy.get(selectors.permitForm.errorPermitName).should(
         'contain',
-        PERMIT_FORM_ERRORS.invalidName
+        PERMIT_FORM_ERRORS.invalidPermitName
       );
       cy.get(selectors.permitForm.inputPermitName).type('{backspace}');
       clickSubmitButton();
@@ -298,30 +302,30 @@ describe('New Item Form Validation', () => {
     });
   });
 
-  describe('Description Field Validation', () => {
+  describe('Applicant Name Field Validation', () => {
     it('should show required error when left empty', () => {
       clickSubmitButton();
       cy.get(selectors.permitForm.errorApplicantName).should(
         'contain',
-        PERMIT_FORM_ERRORS.invalidDescription
+        PERMIT_FORM_ERRORS.invalidApplicantName
       );
     });
 
-    it('should clear error when a valid name is entered', () => {
+    it('should clear error when a valid applicant name is entered', () => {
       cy.get(selectors.permitForm.inputApplicant).type(
-        createThisProduct.applicantName
+        createThisPermit.applicantName
       );
       cy.get(selectors.permitForm.errorApplicantName).should('not.exist');
     });
 
-    it('should show error for a description longer than the defined max length', () => {
+    it('should show error for applicant name longer than the defined max length', () => {
       cy.get(selectors.permitForm.inputApplicant)
-        .invoke('val', 'a'.repeat(PERMIT_FORM_CONSTRAINTS.descMaxLength + 1))
+        .invoke('val', 'a'.repeat(PERMIT_FORM_MAX_LENGTHS.APPLICANT_NAME + 1))
         .trigger('input');
       clickSubmitButton();
       cy.get(selectors.permitForm.errorApplicantName).should(
         'contain',
-        PERMIT_FORM_ERRORS.invalidDescription
+        PERMIT_FORM_ERRORS.invalidApplicantName
       );
       cy.get(selectors.permitForm.inputApplicant).type('{backspace}');
       clickSubmitButton();
@@ -329,27 +333,27 @@ describe('New Item Form Validation', () => {
     });
   });
 
-  describe('Price Field Validation', () => {
+  describe('Permit Type Field Validation', () => {
     it('should show required error when left empty', () => {
       clickSubmitButton();
       cy.get(selectors.permitForm.errorPermitType).should(
         'contain',
-        PERMIT_FORM_ERRORS.invalidPrice
+        PERMIT_FORM_ERRORS.invalidPermitType
       );
     });
 
-    it('should show error when price is not a number', () => {
-      cy.get(selectors.permitForm.inputPermitType).type('abc');
+    it('should show error when permit type contains invalid characters', () => {
+      cy.get(selectors.permitForm.inputPermitType).type('abc@#$');
       clickSubmitButton();
       cy.get(selectors.permitForm.errorPermitType).should(
         'contain',
-        PERMIT_FORM_ERRORS.invalidPrice
+        PERMIT_FORM_ERRORS.invalidPermitType
       );
     });
 
-    it('should accept a valid price', () => {
+    it('should accept a valid permit type', () => {
       cy.get(selectors.permitForm.inputPermitType).type(
-        createThisProduct.permitType
+        createThisPermit.permitType
       );
       clickSubmitButton();
       cy.get(selectors.permitForm.errorPermitType).should('not.exist');
@@ -357,10 +361,10 @@ describe('New Item Form Validation', () => {
   });
 });
 
-describe('New Item Validation: Test form eror validation when creating a new item', () => {
+describe('New Permit Validation: Test form error validation when creating a new permit', () => {
   beforeEach(() => {
     cy.visit(uiServer);
-    clickNewProductButton();
+    clickNewPermitButton();
     cy.get(submitButtonSelector).click();
     cy.get(selectors.permitForm.errorPermitName).should('exist');
     cy.get(selectors.permitForm.errorApplicantName).should('exist');
@@ -368,25 +372,27 @@ describe('New Item Validation: Test form eror validation when creating a new ite
     cy.get(selectors.permitForm.errorPermitStatus).should('exist');
   });
 
-  it('Correct the name and make sure the error is fixed', () => {
+  it('Correct the permit name and make sure the error is fixed', () => {
     cy.get(selectors.permitForm.errorPermitName).should('exist');
-    cy.get(selectors.permitForm.inputPermitName).type('hello');
+    cy.get(selectors.permitForm.inputPermitName).type('Valid Permit Name');
     cy.get(selectors.permitForm.errorPermitName).should('not.exist');
   });
-  it('Correct the name and make sure the error is fixed', () => {
-    cy.get(selectors.permitForm.errorPermitName).should('exist');
-    cy.get(selectors.permitForm.inputPermitName).type('hello');
-    cy.get(selectors.permitForm.errorPermitName).should('not.exist');
+
+  it('Correct the applicant name and make sure the error is fixed', () => {
+    cy.get(selectors.permitForm.errorApplicantName).should('exist');
+    cy.get(selectors.permitForm.inputApplicant).type('Valid Applicant Name');
+    cy.get(selectors.permitForm.errorApplicantName).should('not.exist');
   });
 });
 
 describe('Paginator Behavior: Navigate between pages and validate the expect items render', () => {
   it('Navigate to page 2 and test that the first element on page the row exists and then navigate back to page one and test that the ', () => {
     const secondPageFirstItem = {
-      name: 'Frozen Steel Chips',
-      desc: 'Suffragium denuo decor. Adhaero concedo vinitor. Corporis perspiciatis basium asper conturbo urbanus dolor. Virga totam commodi voluptas votum. Sollicito cultura causa agnitio celer cernuus. Audacia viriliter ambulo quibusdam decimus curriculum.',
-      price: '$372.69',
-      quantity: '3',
+      permitName: 'Second Page Permit',
+      applicantName:
+        'Second page applicant with detailed description for testing pagination functionality.',
+      permitType: 'Construction',
+      status: 'PENDING',
     };
 
     cy.visit(uiServer);
@@ -395,14 +401,15 @@ describe('Paginator Behavior: Navigate between pages and validate the expect ite
     navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.NEXT);
     validateRow(
       0,
-      secondPageFirstItem.name,
-      secondPageFirstItem.desc,
-      secondPageFirstItem.price,
-      secondPageFirstItem.quantity
+      secondPageFirstItem.permitName,
+      secondPageFirstItem.applicantName,
+      secondPageFirstItem.permitType,
+      secondPageFirstItem.status
     );
     navigateToPaginationPage(PAGINATION.PAGINATION_SELECTORS.PREV);
     validateElementOnFirstPage();
   });
+
   it('Navigate to the last page and test that the first element on page the row exists', () => {
     cy.visit(uiServer);
     validateElementOnFirstPage();
@@ -417,7 +424,7 @@ describe('Paginator Behavior: Navigate between pages and validate the expect ite
 describe('Paginator Behavior: Change items per page and validate table content', () => {
   const visitAppAndSetPageSize = (pageSize: number) => {
     cy.visit(uiServer);
-    cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
+    cy.get('mat-paginator[aria-label="Permit table pagination controls"]')
       .find('mat-select')
       .click({ force: true });
     cy.get('mat-option').contains(`${pageSize}`).click({ force: true });
@@ -427,14 +434,15 @@ describe('Paginator Behavior: Change items per page and validate table content',
     cy.visit(uiServer);
     validateElementOnFirstPage();
   });
+
   it('shows expected content when using default 10 items per page', () => {
     cy.visit(uiServer);
     validateRow(
       9,
-      'Fantastic Concrete Sausages',
-      'Illo suasoria verecundia nobis candidus. Tergiversatio averto tracto delego tergum capio concedo viriliter. Terebro sto bardus deludo tolero spero absconditus alias. Vinco deprecator centum contra bene.',
-      '$421.70',
-      '46'
+      'Sample Construction Permit',
+      'Detailed construction permit for testing pagination with longer description text.',
+      'Construction',
+      'APPROVED'
     );
   });
 
@@ -442,10 +450,10 @@ describe('Paginator Behavior: Change items per page and validate table content',
     visitAppAndSetPageSize(4);
     validateRow(
       3,
-      'Frozen Granite Table',
-      'Magni timor cruentus suus arto. Uredo vorago ager cursus bardus defendo infit. Clibanus vestigium modi. Tardus talis administratio suggero tumultus asperiores. Cito cohibeo sono amoveo sono valens subito decerno debitis. Maxime ago nostrum tot conduco vestigium tandem natus tantillus.',
-      '$80.00',
-      '91'
+      'Renovation Permit',
+      'Home renovation permit with detailed specifications for testing pagination behavior.',
+      'Renovation',
+      'PENDING'
     );
   });
 
@@ -453,10 +461,10 @@ describe('Paginator Behavior: Change items per page and validate table content',
     visitAppAndSetPageSize(2);
     validateRow(
       1,
-      'Generic Gold Table',
-      'Quia ancilla comes cuppedia usitas casso denuncio. Earum placeat animi trepide pax impedit conicio cognomen cur stabilis. Dolore sortitus occaecati quibusdam spero turbo agnosco tenax careo autem. Allatus vae quis supra acceptus paens iusto. Argumentum sub comis stultus. Creta vespillo turba contabesco adimpleo cogo cubicularis.',
-      '$705.29',
-      '77'
+      'Electrical Permit',
+      'Electrical work permit with comprehensive details for pagination testing functionality.',
+      'Electrical',
+      'APPROVED'
     );
   });
 
@@ -464,10 +472,10 @@ describe('Paginator Behavior: Change items per page and validate table content',
     visitAppAndSetPageSize(6);
     validateRow(
       5,
-      'Elegant Marble Ball',
-      'Tenus natus ambulo subseco solvo admiratio textor earum cursim tertius. Denique attonbitus commemoro tutis audentia cur. Capillus veritatis versus aliqua delectus desipio combibo adiuvo carbo allatus. Timor vehemens adimpleo cogito. Fugit quidem abscido deorsum voveo corrupti alo deinde vix congregatio.',
-      '$799.19',
-      '45'
+      'Plumbing Permit',
+      'Plumbing permit with detailed specifications and requirements for comprehensive testing.',
+      'Plumbing',
+      'PENDING'
     );
   });
 });
@@ -482,50 +490,47 @@ describe('Test landing page rendering and header', () => {
   });
 });
 
-describe('Test mat table columns and features', () => {
-  it('tests that mat table components, elements, associated features (pagination, etc.), etc. renders on the page.', () => {
+describe('Test permit table columns and features', () => {
+  it('tests that permit table components, elements, associated features (pagination, etc.), etc. renders on the page.', () => {
     cy.visit(uiServer);
-    cy.get('[data-testid="inventory-table"]').should('exist');
-    cy.get('[data-testid="inventory-table-name-header"]').should('exist');
-    cy.get('[data-testid="inventory-table-description-header"]').should(
-      'exist'
-    );
-    cy.get('[data-testid="inventory-table-price-header"]').should('exist');
-    cy.get('[data-testid="inventory-table-quantity-header"]').should('exist');
-    cy.get('[data-testid="inventory-table-update-header"]').should('exist');
-    cy.get('[data-testid="inventory-table-delete-header"]').should('exist');
+    cy.get(getTestSelector(TEST_IDS.PERMITS_TABLE)).should('exist');
+    cy.get(getTestSelector(TEST_IDS.PERMIT_NAME_HEADER)).should('exist');
+    cy.get(getTestSelector(TEST_IDS.APPLICANT_NAME_HEADER)).should('exist');
+    cy.get(getTestSelector(TEST_IDS.PERMIT_TYPE_HEADER)).should('exist');
+    cy.get(getTestSelector(TEST_IDS.STATUS_HEADER)).should('exist');
+    cy.get(getTestSelector(TEST_IDS.UPDATE_HEADER)).should('exist');
+    cy.get(getTestSelector(TEST_IDS.DELETE_HEADER)).should('exist');
   });
 
   it('test the table column structure', () => {
     cy.visit(uiServer);
-    cy.get('[data-testid="inventory-table"] th[mat-header-cell]').should(
-      'have.length',
-      6
-    );
+    cy.get(
+      `${getTestSelector(TEST_IDS.PERMITS_TABLE)} th[mat-header-cell]`
+    ).should('have.length', 6);
 
-    cy.get('[data-testid="inventory-table"] th')
-      .should('contain.text', 'Name')
-      .and('contain.text', 'Price')
-      .and('contain.text', 'Quantity')
+    cy.get(`${getTestSelector(TEST_IDS.PERMITS_TABLE)} th`)
+      .should('contain.text', 'Permit Name')
+      .and('contain.text', 'Applicant Name')
+      .and('contain.text', 'Permit Type')
+      .and('contain.text', 'Status')
       .and('contain.text', 'Update')
       .and('contain.text', 'Delete');
   });
 });
+
 function validateRow(
   index: number,
-  name: string,
-  description: string,
-  price: string,
-  quantity: string
+  permitName: string,
+  applicantName: string,
+  permitType: string,
+  status: string
 ) {
-  console.log('validating row');
-  cy.contains(selectors.permitRowName(index), name).should('exist');
-  cy.contains(selectors.permitRowApplicantName(index), description).should(
+  cy.contains(selectors.permitRowName(index), permitName).should('exist');
+  cy.contains(selectors.permitRowApplicantName(index), applicantName).should(
     'exist'
   );
-  cy.contains(selectors.permitRowPermitType(index), price).should('exist');
-  cy.contains(selectors.productRowStatus(index), quantity).should('exist');
-  console.log('done validating row');
+  cy.contains(selectors.permitRowPermitType(index), permitType).should('exist');
+  cy.contains(selectors.permitRowStatus(index), status).should('exist');
 }
 
 function validateCRUDCleanup() {
@@ -538,30 +543,30 @@ function validateCRUDCleanup() {
 function validateItemOnLastPage() {
   validateRow(
     0,
-    'Fantastic Ceramic Gloves',
-    'Totus contego cupiditas ante catena. Dolorum coniecto labore vulpes ulterius adinventitias sordeo. Suffoco adipisci caries adulatio stella ancilla voro. Quisquam blanditiis agnosco decet ubi tabgo dolore reprehenderit ustilo. Audio viscus laboriosam vorago. Voluptas amaritudo atrocitas excepturi labore pax vulgo modi.',
-    '$884.29',
-    '8'
+    'Final Test Permit',
+    'Last page permit with comprehensive details for cleanup validation testing.',
+    'Construction',
+    'APPROVED'
   );
 }
 
 function validateElementOnFirstPage() {
   validateRow(
     0,
-    'Practical Concrete Cheese',
-    'Curo vomer stillicidium denique cruciamentum conicio suspendo decens. Cubicularis taceo auctor. Exercitationem exercitationem reiciendis ulciscor. Perferendis suppono commodi conturbo calco claudeo quos aliquam.',
-    '$434.29',
-    '43'
+    'First Page Permit',
+    'First page permit with detailed information for initial validation testing.',
+    'Construction',
+    'PENDING'
   );
 }
 
 function validateNewItemExists() {
   validateRow(
     0,
-    createThisProduct.permitName,
-    createThisProduct.applicantName,
-    `\$${createThisProduct.permitType}`,
-    `${createThisProduct.status}`
+    createThisPermit.permitName,
+    createThisPermit.applicantName,
+    createThisPermit.permitType,
+    createThisPermit.status
   );
 }
 
@@ -570,7 +575,7 @@ function validateDeleteMeItemExists() {
     0,
     deleteThisPermit.permitName,
     deleteThisPermit.applicantName,
-    `\$${deleteThisPermit.permitType}`,
-    `${deleteThisPermit.status}`
+    deleteThisPermit.permitType,
+    deleteThisPermit.status
   );
 }

@@ -1,8 +1,8 @@
-import { environment } from '../../../environments/environment';
+import { dev_env } from '../../../environments/environment';
 
 export const API_CONSTANTS = {
   // API Configuration
-  SERVER_URL: environment.apiUrl,
+  SERVER_URL: dev_env.apiUrl,
   PERMITS_PATH: '/permits/',
   CONTENT_TYPE_JSON: 'application/json',
 

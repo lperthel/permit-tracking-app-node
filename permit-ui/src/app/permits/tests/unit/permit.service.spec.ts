@@ -3,7 +3,7 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { environment } from '../../../../environments/environment';
+import { dev_env } from '../../../../environments/environment';
 import { API_CONSTANTS } from '../../../assets/constants/service.constants';
 import {
   createThisPermit,
@@ -24,7 +24,7 @@ describe('PermitService', () => {
   let validationServiceSpy: jasmine.SpyObj<PermitValidationService>;
 
   // Constants defined at top of describe block
-  const BASE_URL = `${environment.apiUrl}${API_CONSTANTS.PERMITS_PATH}`;
+  const BASE_URL = `${dev_env.apiUrl}${API_CONSTANTS.PERMITS_PATH}`;
   const MOCK_PERMITS: Permit[] = [createThisPermit, updatePermit];
   const ERROR_STATUS = 500;
 

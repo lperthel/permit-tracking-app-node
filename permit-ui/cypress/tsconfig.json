@@ -1,9 +1,15 @@
-//tsconfig for cypress
 {
   "extends": "../tsconfig.json",
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "e2e/permit-crud-integrations.spec.cy.ts.bak"],
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "moduleResolution": "node",
     "sourceMap": true,
-    "types": ["cypress", "chai"]
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["cypress", "node"]
   }
 }

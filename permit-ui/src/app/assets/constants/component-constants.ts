@@ -5,5 +5,6 @@ export const COMPONENT_CONSTANTS = {
     'applicantName',
     'permitType',
     'status',
+    '',
   ] as const,
 } as const;

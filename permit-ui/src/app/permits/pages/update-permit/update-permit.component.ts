@@ -45,10 +45,10 @@ export class UpdatePermitComponent implements OnInit {
       this.permit = this.foundPermit;
       this.permitForm.form.reset();
       this.permitForm.form.patchValue({
-        name: this.permit.permitName,
-        description: this.permit.applicantName,
-        price: this.permit.permitType,
-        quantity: this.permit.status.toString(),
+        permitName: this.permit.permitName,
+        applicantName: this.permit.applicantName,
+        permitType: this.permit.permitType,
+        status: this.permit.status.toString(),
       });
     }
     this.permitFormComponent().openModal();
@@ -60,10 +60,10 @@ export class UpdatePermitComponent implements OnInit {
     }
     const updatePermit: Permit = {
       id: this.permit.id,
-      permitName: this.permitForm.form.value['name']!,
-      applicantName: this.permitForm.form.value['description']!,
-      permitType: this.permitForm.form.value.price!,
-      status: this.permitForm.form.value.quantity!,
+      permitName: this.permitForm.form.value['permitName']!,
+      applicantName: this.permitForm.form.value['applicantName']!,
+      permitType: this.permitForm.form.value.permitType!,
+      status: this.permitForm.form.value.status!,
     };
 
     const subscription = this.permitService

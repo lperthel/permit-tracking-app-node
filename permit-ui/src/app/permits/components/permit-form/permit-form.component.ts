@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PERMIT_FORM_SELECTORS } from '../../../assets/constants/permit-form.constants';
 import { PERMIT_FORM_ERRORS } from '../../permit-form-model/permit-form-constants';
 import { PermitForm } from '../../permit-form-model/permit-form.model';
 
@@ -22,6 +23,8 @@ import { PermitForm } from '../../permit-form-model/permit-form.model';
   styleUrl: './permit-form.component.css',
 })
 export class PermitFormComponent {
+  protected readonly SELECTORS = PERMIT_FORM_SELECTORS;
+
   errorMessages = PERMIT_FORM_ERRORS;
   permitForm = input.required<PermitForm>();
   formHeader = input.required<string>();

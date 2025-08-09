@@ -78,9 +78,17 @@
     </button>
   </div>
 
-  @defer (when !isLoading()) {
-  <!-- Show empty state if no data -->
-  @if(dataSource.data.length == 0) {
+  <!-- Loading spinner - simple @if, no @defer -->
+  @if(isLoading()) {
+  <div class="d-flex justify-content-center p-4">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">{{ UI_TEXT.LOADING_MESSAGE }}</span>
+    </div>
+  </div>
+  }
+
+  <!-- Empty state - simple @if, no @defer -->
+  @if(dataSource.data.length == 0 && !isLoading()) {
   <div class="text-center p-4">
     <div class="alert alert-info" role="status">
       <h6 class="mb-2">{{ UI_TEXT.NO_PERMITS_FOUND }}</h6>
@@ -96,8 +104,7 @@
   </div>
   }
 
-  <!-- Show table if we have data -->
-  @if (dataSource.data.length > 0) {
+  <!-- Table and paginator - NO @defer, always rendered -->
   <table
     mat-table
     [dataSource]="dataSource"
@@ -250,11 +257,4 @@
     role="navigation"
   >
   </mat-paginator>
-  } } @placeholder {
-  <div class="d-flex justify-content-center p-4">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">{{ UI_TEXT.LOADING_MESSAGE }}</span>
-    </div>
-  </div>
-  }
 </article>

@@ -16,19 +16,23 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
-import { ARIA_LABELS } from '../../../assets/constants/accessibility.constants';
-import {
-  APP_DESCRIPTION,
-  APP_HEADER,
-} from '../../../assets/constants/app-description';
-import { COMPONENT_CONSTANTS } from '../../../assets/constants/component-constants';
 import { PAGINATION } from '../../../assets/constants/pagination.constants';
-import { ROUTES } from '../../../assets/constants/routes.contstants';
-import { TEST_IDS } from '../../../assets/constants/test-ids.constants';
+import { ROUTES } from '../../../assets/constants/routes.constants';
 import { UI_TEXT } from '../../../assets/constants/ui-text.constants';
 import { Permit } from '../../shared/models/permit.model';
 import { PermitService } from '../../shared/services/permit.service';
+import { AllPermitsComponentConstants } from './all-permits-component.constants';
 
+/**
+ * AllPermitsComponent - Displays paginated table of permits
+ *
+ * EVENT FLOW:
+ * =====================
+ * 1. ngOnInit() - Set up subscription and load data
+ * 2. ngAfterViewInit() - Connect paginator
+ * 3. Data loads - Update table via subscription
+ *
+ */
 @Component({
   selector: 'app-all-permits',
   imports: [
@@ -43,17 +47,22 @@ import { PermitService } from '../../shared/services/permit.service';
 })
 export class AllPermitsComponent implements OnInit, AfterViewInit {
   isLoading = signal<boolean>(false);
-  PAGE_HEADER = APP_HEADER;
-  PAGE_DESC = APP_DESCRIPTION;
-  ARIA_LABELS = ARIA_LABELS;
-  ROUTES = ROUTES;
-  TEST_IDS = TEST_IDS;
-  PAGINATION = PAGINATION;
-  UI_TEXT = UI_TEXT;
-  COMPONENT_CONSTANTS = COMPONENT_CONSTANTS;
 
-  columnsToDisplay = COMPONENT_CONSTANTS.COLUMNS_TO_DISPLAY;
-  pageSize = PAGINATION.DEFAULT_PAGE_SIZE;
+  // Replace your hardcoded columnsToDisplay with:
+  columnsToDisplay: string[] = AllPermitsComponentConstants.COLUMNS_TO_DISPLAY;
+
+  // Replace your hardcoded pageSize with:
+  pageSize: number = AllPermitsComponentConstants.PAGINATION.DEFAULT_PAGE_SIZE;
+
+  // Make sure you're importing and using the other constants too:
+  protected readonly UI_TEXT = AllPermitsComponentConstants.UI_TEXT;
+  protected readonly ARIA_LABELS = AllPermitsComponentConstants.ARIA_LABELS;
+  protected readonly TEST_IDS = AllPermitsComponentConstants.TEST_IDS;
+  protected readonly ROUTES = AllPermitsComponentConstants.ROUTES;
+  protected readonly PAGINATION = AllPermitsComponentConstants.PAGINATION;
+  protected readonly PAGE_HEADER = AllPermitsComponentConstants.APP_HEADER;
+  protected readonly PAGE_DESC = AllPermitsComponentConstants.APP_DESCRIPTION;
+
   paginator = viewChild.required<MatPaginator>(MatPaginator);
   restError = signal<string>(this.UI_TEXT.EMPTY_ERROR);
   manuallyUpdatePermitsSuccessful = signal<string>(UI_TEXT.EMPTY_ERROR);
@@ -65,7 +74,6 @@ export class AllPermitsComponent implements OnInit, AfterViewInit {
     const sub = this.permits$.subscribe({
       next: (_resp) => {
         this.dataSource.data = this.permitService.permits();
-        this.dataSource.paginator = this.paginator();
       },
       error: (err) => {
         console.error(err);
@@ -77,7 +85,10 @@ export class AllPermitsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // More maintainable approach using a mapping
+    // Simple - paginator exists immediately, connect it
+    this.dataSource.paginator = this.paginator();
+
+    // Set up pagination button test IDs
     const paginationButtons = [
       {
         selector: PAGINATION.PAGINATION_SELECTORS.NEXT,
@@ -111,17 +122,17 @@ export class AllPermitsComponent implements OnInit, AfterViewInit {
   ) {}
 
   refreshPermitsFromDB() {
-    this.isLoading.set(true); // Start loading
+    this.isLoading.set(true);
 
     const sub = this.permitService.requestAllPermits().subscribe({
       next: (resp) => {
         this.permitService.permits.set(resp);
         this.restError.set(UI_TEXT.EMPTY_ERROR);
-        this.isLoading.set(false); // Stop loading
+        this.isLoading.set(false);
       },
       error: (err: Error) => {
         this.restError.set(err.message);
-        this.isLoading.set(false); // Stop loading on error
+        this.isLoading.set(false);
       },
     });
     this.permitService.closeConnection(sub);

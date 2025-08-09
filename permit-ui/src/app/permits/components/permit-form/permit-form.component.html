@@ -1,6 +1,10 @@
 <ng-template #content let-modal>
-  <div class="modal-header" data-testid="modal-header">
-    <h4 class="modal-title" id="modal-basic-title" data-testid="modal-title">
+  <div class="modal-header" [attr.data-testid]="SELECTORS.MODAL_HEADER">
+    <h4
+      class="modal-title"
+      id="modal-basic-title"
+      [attr.data-testid]="SELECTORS.MODAL_TITLE"
+    >
       {{ formHeader() }}
     </h4>
     <button
@@ -8,101 +12,101 @@
       class="btn-close"
       aria-label="Close"
       (click)="modal.dismiss('Cross click')"
-      data-testid="modal-close-button"
+      [attr.data-testid]="SELECTORS.MODAL_CLOSE_BUTTON"
     ></button>
   </div>
   <form
     [formGroup]="permitForm().form"
     class="needs-validation"
     (ngSubmit)="onSubmit()"
-    data-testid="permit-form"
+    [attr.data-testid]="SELECTORS.PERMIT_FORM"
   >
-    <div class="modal-body" data-testid="modal-body">
+    <div class="modal-body" [attr.data-testid]="SELECTORS.MODAL_BODY">
       @if(restError()){
       <ngb-alert
-        data-testid="rest-error"
+        [attr.data-testid]="SELECTORS.REST_ERROR"
         [type]="'danger'"
         [dismissible]="false"
       >
         {{ restError() }}
       </ngb-alert>
       }
-      <div class="form-group" data-testid="form-group">
-        <label for="name">Name*</label>
+      <div class="form-group" [attr.data-testid]="SELECTORS.FORM_GROUP">
+        <label for="permitName">Permit Name*</label>
         <div class="input-group has-validation">
           <input
-            id="name"
+            id="permitName"
             class="form-control"
-            formControlName="name"
-            data-testid="input-name"
+            formControlName="permitName"
+            [attr.data-testid]="SELECTORS.INPUT_PERMIT_NAME"
           />
         </div>
-        @if(permitForm().invalidName){
-        <div data-testid="error-name">
+        @if(permitForm().invalidPermitName){
+        <div [attr.data-testid]="SELECTORS.ERROR_PERMIT_NAME">
           <p class="lp-control-error">
-            {{ errorMessages.invalidName }}
+            {{ errorMessages.invalidPermitName }}
           </p>
         </div>
         }
 
-        <label for="description">Description*</label>
+        <label for="applicantName">Applicant Name*</label>
         <div class="input-group has-validation">
           <input
-            id="description"
+            id="applicantName"
             class="form-control"
-            formControlName="description"
-            data-testid="input-description"
+            formControlName="applicantName"
+            [attr.data-testid]="SELECTORS.INPUT_APPLICANT_NAME"
           />
         </div>
-        @if(permitForm().invalidDescription){
-        <div data-testid="error-description">
+        @if(permitForm().invalidApplicantName){
+        <div [attr.data-testid]="SELECTORS.ERROR_APPLICANT_NAME">
           <p class="lp-control-error">
-            {{ errorMessages.invalidDescription }}
+            {{ errorMessages.invalidApplicantName }}
           </p>
         </div>
         }
 
-        <label for="price">Price*</label>
+        <label for="permitType">Permit Type*</label>
         <div class="input-group has-validation">
           <input
-            id="price"
+            id="permitType"
             class="form-control"
-            formControlName="price"
-            data-testid="input-price"
+            formControlName="permitType"
+            [attr.data-testid]="SELECTORS.INPUT_PERMIT_TYPE"
           />
         </div>
-        @if(permitForm().invalidPrice){
-        <div data-testid="error-price">
+        @if(permitForm().invalidPermitType){
+        <div [attr.data-testid]="SELECTORS.ERROR_PERMIT_TYPE">
           <p class="lp-control-error">
-            {{ errorMessages.invalidPrice }}
+            {{ errorMessages.invalidPermitType }}
           </p>
         </div>
         }
 
-        <label for="quantity">Quantity*</label>
+        <label for="status">Status*</label>
         <div class="input-group has-validation">
           <input
-            id="quantity"
+            id="status"
             class="form-control"
-            formControlName="quantity"
-            data-testid="input-quantity"
+            formControlName="status"
+            [attr.data-testid]="SELECTORS.INPUT_STATUS"
           />
         </div>
-        @if(permitForm().invalidQuanity){
-        <div data-testid="error-quantity">
+        @if(permitForm().invalidStatus){
+        <div [attr.data-testid]="SELECTORS.ERROR_STATUS">
           <p class="lp-control-error">
-            {{ errorMessages.invalidQuantity }}
+            {{ errorMessages.invalidStatus }}
           </p>
         </div>
         }
       </div>
     </div>
 
-    <div class="modal-footer" data-testid="modal-footer">
+    <div class="modal-footer" [attr.data-testid]="SELECTORS.MODAL_FOOTER">
       <button
         type="submit"
         class="btn btn-outline-secondary"
-        data-testid="submit-button"
+        [attr.data-testid]="SELECTORS.SUBMIT_BUTTON"
       >
         Submit
       </button>

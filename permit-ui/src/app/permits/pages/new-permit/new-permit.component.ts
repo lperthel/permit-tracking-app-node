@@ -47,25 +47,25 @@ export class NewPermitComponent implements OnInit {
   createPermit() {
     this.permitForm.form.markAllAsTouched();
 
-    const rawName = this.permitForm.form.value.name!;
+    const rawName = this.permitForm.form.value.permitName!;
     DOMPurify.sanitize(rawName);
-    const rawDescription = this.permitForm.form.value.description ?? '';
+    const rawDescription = this.permitForm.form.value.applicantName ?? '';
     DOMPurify.sanitize(rawDescription);
 
     if (this.permitForm.form.invalid) {
       return;
     }
 
-    if (this.permitForm.form.value.price?.indexOf('.') == -1) {
-      this.permitForm.form.value.price.concat('.00');
+    if (this.permitForm.form.value.permitType?.indexOf('.') == -1) {
+      this.permitForm.form.value.permitType.concat('.00');
     }
 
     const permit: Permit = {
       id: uuidv4(),
-      permitName: this.permitForm.form.value.name!,
-      applicantName: this.permitForm.form.value.description!,
-      permitType: this.permitForm.form.value.price!,
-      status: this.permitForm.form.value.quantity!,
+      permitName: this.permitForm.form.value.permitName!,
+      applicantName: this.permitForm.form.value.applicantName!,
+      permitType: this.permitForm.form.value.permitType!,
+      status: this.permitForm.form.value.status!,
     };
 
     const sub = this.createPermitService.createPermit(permit).subscribe({

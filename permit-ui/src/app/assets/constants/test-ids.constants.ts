@@ -15,8 +15,7 @@ export const TEST_IDS = {
   DELETE_HEADER: 'permits-table-delete-header',
 
   // Table cells (functions for dynamic IDs)
-  PERMIT_NAME2_CELL: (index: number) =>
-    `permits-table-permit-name-cell${index}`,
+  PERMIT_NAME_CELL: (index: number) => `permits-table-permit-name-cell${index}`,
   APPLICANT_NAME_CELL: (index: number) =>
     `permits-table-applicant-name-cell${index}`,
   PERMIT_TYPE_CELL: (index: number) => `permits-table-permit-type-cell${index}`,

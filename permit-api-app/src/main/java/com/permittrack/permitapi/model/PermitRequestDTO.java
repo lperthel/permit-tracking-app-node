@@ -15,21 +15,21 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PermitRequestDTO {
 
-    @NotBlank(message = "Permit name is required")
-    @Size(max = 100, message = "Permit name must be at most 100 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9 \\-\\.']+$", message = "Permit name: only letters, numbers, spaces, dashes, apostrophes allowed")
-    private String permitName;
+  @NotBlank(message = "Permit name is required")
+  @Size(max = 100, message = "Permit name must be at most 100 characters")
+  @Pattern(regexp = "^[a-zA-Z0-9 \\-.']+$", message = "Permit name: only letters, numbers, spaces, dashes, apostrophes allowed")
+  private String permitName;
 
-    @NotBlank(message = "Applicant name is required")
-    @Size(max = 100, message = "Applicant name must be at most 100 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9 \\-\\.']+$", message = "Applicant name: only letters, numbers, spaces, dashes, apostrophes allowed")
-    private String applicantName;
+  @NotBlank(message = "Applicant name is required")
+  @Size(max = 100, message = "Applicant name must be at most 100 characters")
+  @Pattern(regexp = "^[a-zA-Z0-9 \\-.']+$", message = "Applicant name: only letters, numbers, spaces, dashes, apostrophes,periods allowed")
+  private String applicantName;
 
-    @NotBlank(message = "Permit type is required")
-    @Size(max = 50, message = "Permit type must be at most 50 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9 \\-\\.']+$", message = "Permit type: only letters, numbers, spaces, dashes, apostrophes allowed")
-    private String permitType;
+  @NotBlank(message = "Permit type is required")
+  @Size(max = 50, message = "Permit type must be at most 50 characters")
+  @Pattern(regexp = "^[a-zA-Z0-9 \\-.']+$", message = "Permit type: only letters, numbers, spaces, dashes, apostrophes, periods allowed")
+  private String permitType;
 
-    @NotNull(message = "status is required")
-    private PermitStatus status;
+  @NotNull(message = "status is required")
+  private PermitStatus status;
 }

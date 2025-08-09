@@ -1,4 +1,4 @@
-import { selectors } from './selectors';
+import { selectors } from './cypress-selectors';
 
 export const fillPermitForm = (
   permitName: string,
@@ -12,7 +12,7 @@ export const fillPermitForm = (
   cy.get(selectors.permitForm.inputStatus).clear().type(status);
 };
 
-export const clearProductForm = () => {
+export const clearPermitForm = () => {
   cy.get(selectors.permitForm.inputPermitName).clear();
   cy.get(selectors.permitForm.inputApplicant).clear();
   cy.get(selectors.permitForm.inputPermitType).clear();
@@ -20,14 +20,15 @@ export const clearProductForm = () => {
 };
 
 export const clickSubmitButton = () => clickButton('submit-button');
-export const clickNewProductButton = () => clickButton('new-product-button');
+export const clickNewPermitButton = () => clickButton('new-permit-button'); // Updated from product
 export const clickModalCloseButton = () => clickButton('modal-close-button');
 
 export const clickButton = (dataTestId: string) => {
   cy.get(`[data-testid="${dataTestId}"]`).click({ force: true });
 };
+
 export const navigateToPaginationPage = (dataTestId: string) => {
-  cy.get('mat-paginator[aria-label="Inventory table pagination controls"]')
+  cy.get('mat-paginator[aria-label="Permit table pagination controls"]') // Updated from Inventory
     .find(`[data-testid="${dataTestId}"]`)
     .click({ force: true });
 };
