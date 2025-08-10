@@ -1,37 +1,79 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
+import karma_chrome_launcher from "karma-chrome-launcher";
+import karma_coverage from "karma-coverage";
+import karma_jasmine from "karma-jasmine";
+import karma_jasmine_html_reporter from "karma-jasmine-html-reporter";
+import karma_spec_reporter from "karma-spec-reporter";
 
-module.exports = function (config) {
+export default function (config) {
   config.set({
     basePath: "",
     frameworks: ["jasmine", "@angular-devkit/build-angular"],
-    files: ["src/**/*.spec.ts"],
+
     plugins: [
-      require("karma-jasmine"),
-      require("karma-chrome-launcher"),
-      require("karma-jasmine-html-reporter"),
-      require("karma-coverage"),
-      require("@angular-devkit/build-angular/plugins/karma"),
+      karma_jasmine,
+      karma_chrome_launcher,
+      karma_jasmine_html_reporter,
+      karma_coverage,
+      karma_spec_reporter,
+      "@angular-devkit/build-angular/plugins/karma",
     ],
-    client: {
-      jasmine: {
-        // you can add configuration options for Jasmine here
-        // the possible options are listed at https://jasmine.github.io/api/edge/Configuration.html
-        // for example, you can disable the random execution with `random: false`
-        // or set a specific seed with `seed: 4321`
+
+    browsers: ["MyChrome"],
+
+    customLaunchers: {
+      MyChrome: {
+        base: "Chrome",
+        chromeDataDir: "/tmp/karma-chrome",
+        flags: [
+          "--disable-web-security",
+          "--disable-features=VizDisplayCompositor",
+        ],
       },
     },
-    jasmineHtmlReporter: {
-      suppressAll: true, // removes the duplicated traces
-    },
-    coverageReporter: {
-      dir: require("path").join(__dirname, "./coverage/angular-crud-tables"),
-      subdir: ".",
-      reporters: [{ type: "html" }, { type: "text-summary" }],
-    },
-    reporters: ["progress", "kjhtml"],
+
+    singleRun: false,
     autoWatch: true,
-    browsers: ["Chrome"],
-    restartOnFileChange: true,
+
+    // Use spec reporter instead of mocha reporter
+    reporters: ["spec", "kjhtml"],
+
+    // Spec reporter config (works with Jasmine)
+    specReporter: {
+      maxLogLines: 5, // Limit console output per test
+      suppressErrorSummary: false, // Show error summary
+      suppressFailed: false, // Show failed tests
+      suppressPassed: false, // Show passed tests
+      suppressSkipped: true, // Hide skipped tests
+      showSpecTiming: true, // Show timing info
+    },
+
+    // More verbose logging
+    logLevel: config.LOG_INFO,
+
+    // Show browser console logs in terminal
+    client: {
+      captureConsole: true,
+      clearContext: false,
+      jasmine: {
+        // Force Jasmine to work with ES modules
+        random: false,
+      },
+    },
+
+    // Add module loading configuration
+
+    // Ensure proper file loading order
+    files: [
+      // Jasmine files should be loaded by the framework, not manually
+    ],
+
+    // Better error reporting
+    browserConsoleLogOptions: {
+      level: "log",
+      format: "%b %T: %m",
+      terminal: true,
+    },
   });
-};
+}

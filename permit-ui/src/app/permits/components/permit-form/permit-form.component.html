@@ -1,0 +1,122 @@
+<!-- let-modal recieves an NgbModalRef at run time -->
+<ng-template #newPermitModal let-modal data-testid="permit-ng-module">
+  <div class="modal-header" [attr.data-testid]="SELECTORS.MODAL_HEADER">
+    <h4
+      class="modal-title"
+      id="modal-basic-title"
+      [attr.data-testid]="SELECTORS.MODAL_TITLE"
+    >
+      {{ formHeader() }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+      [attr.data-testid]="SELECTORS.MODAL_CLOSE_BUTTON"
+    ></button>
+  </div>
+  <form
+    [formGroup]="permitForm().form"
+    class="needs-validation"
+    (ngSubmit)="onSubmit()"
+    [attr.data-testid]="SELECTORS.PERMIT_FORM"
+  >
+    <div class="modal-body" [attr.data-testid]="SELECTORS.MODAL_BODY">
+      @if(restError()){
+      <ngb-alert
+        [attr.data-testid]="SELECTORS.REST_ERROR"
+        [type]="'danger'"
+        [dismissible]="false"
+      >
+        {{ restError() }}
+      </ngb-alert>
+      }
+      <div class="form-group" [attr.data-testid]="SELECTORS.FORM_GROUP">
+        <label for="permitName">Permit Name*</label>
+        <div class="input-group has-validation">
+          <input
+            #inputName
+            id="permitName"
+            class="form-control"
+            formControlName="permitName"
+            [attr.data-testid]="SELECTORS.INPUT_PERMIT_NAME"
+          />
+        </div>
+        @if(permitForm().invalidPermitName){
+        <div [attr.data-testid]="SELECTORS.ERROR_PERMIT_NAME">
+          <p class="lp-control-error">
+            {{ errorMessages.invalidPermitName }}
+          </p>
+        </div>
+        }
+
+        <label for="applicantName">Applicant Name*</label>
+        <div class="input-group has-validation">
+          <input
+            id="applicantName"
+            class="form-control"
+            formControlName="applicantName"
+            [attr.data-testid]="SELECTORS.INPUT_APPLICANT_NAME"
+          />
+        </div>
+        @if(permitForm().invalidApplicantName){
+        <div [attr.data-testid]="SELECTORS.ERROR_APPLICANT_NAME">
+          <p class="lp-control-error">
+            {{ errorMessages.invalidApplicantName }}
+          </p>
+        </div>
+        }
+
+        <label for="permitType">Permit Type*</label>
+        <div class="input-group has-validation">
+          <input
+            id="permitType"
+            class="form-control"
+            formControlName="permitType"
+            [attr.data-testid]="SELECTORS.INPUT_PERMIT_TYPE"
+          />
+        </div>
+        @if(permitForm().invalidPermitType){
+        <div [attr.data-testid]="SELECTORS.ERROR_PERMIT_TYPE">
+          <p class="lp-control-error">
+            {{ errorMessages.invalidPermitType }}
+          </p>
+        </div>
+        }
+
+        <label for="status">Status*</label>
+        <div class="input-group has-validation">
+          <select
+            id="status"
+            class="form-select"
+            formControlName="status"
+            [attr.data-testid]="SELECTORS.INPUT_STATUS"
+          >
+            <option value="" disabled>Select a status...</option>
+            @for (status of permitStatusValues; track status) {
+            <option [value]="status">{{ getStatusLabel(status) }}</option>
+            }
+          </select>
+        </div>
+        @if(permitForm().invalidStatus){
+        <div [attr.data-testid]="SELECTORS.ERROR_STATUS">
+          <p class="lp-control-error">
+            {{ errorMessages.invalidStatus }}
+          </p>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="modal-footer" [attr.data-testid]="SELECTORS.MODAL_FOOTER">
+      <button
+        type="submit"
+        class="btn btn-outline-secondary"
+        [attr.data-testid]="SELECTORS.SUBMIT_BUTTON"
+      >
+        Submit
+      </button>
+    </div>
+  </form>
+</ng-template>

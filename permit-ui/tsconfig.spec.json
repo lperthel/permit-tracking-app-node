@@ -1,16 +1,15 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+//config spec for main permit-ui unit tests
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": [
-      "jasmine",
-      "@angular/localize"
-    ]
+    "types": ["jasmine"]
   },
-  "include": [
-    "src/**/*.spec.ts",
-    "src/**/*.d.ts"
+  "include": ["src/**/*.spec.ts", "src/**/*.d.ts"],
+  "exclude": [
+    "cypress/**/*", // ✅ Exclude Cypress entirely
+    "cypress.config.ts", // ✅ Exclude Cypress config
+    "**/*.cy.ts", // ✅ Exclude Cypress test files
+    "node_modules"
   ]
 }

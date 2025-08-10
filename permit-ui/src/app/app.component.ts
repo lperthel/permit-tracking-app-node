@@ -1,13 +1,12 @@
-import { Component, Signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { AllProductsComponent } from './products/all-products/all-products.component';
+import { Component } from '@angular/core';
+import { AllPermitsComponent } from './permits/pages/all-permits/all-permits.component';
 
 @Component({
   selector: 'app-root',
-  imports: [AllProductsComponent],
+  imports: [AllPermitsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'All Products';
+  title = 'All Permits';
 }
