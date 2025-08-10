@@ -8,12 +8,20 @@
     "watch": "ng build --watch --configuration development",
     "test": "karma start",
     "faker": "json-server --watch ./server/database.json",
-    "e2e": "ng e2e",
     "generate": "node ./server/generateData.mjs",
     "gs": "npm run generate && npm run faker",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "e2e:headless": "cypress run --headless",
+    "e2e:ci": "cypress run --browser chrome --headless --reporter spec --record false",
+    "e2e:chrome": "cypress run --browser chrome --headless",
+    "e2e:firefox": "cypress run --browser firefox --headless",
+    "e2e:edge": "cypress run --browser edge --headless",
+    "e2e:serve": "concurrently \"ng serve\" \"wait-on http://localhost:4200 && npm run e2e:headless\" --kill-others --success first",
+    "e2e:serve:ci": "concurrently \"ng serve\" \"wait-on http://localhost:4200 && npm run e2e:ci\" --kill-others --success first",
+    "test:all": "npm run test && npm run e2e:headless"
   },
   "private": true,
   "dependencies": {
@@ -51,6 +59,7 @@
     "@types/dompurify": "^3.0.5",
     "@types/jasmine": "~5.1.0",
     "angular-eslint": "20.1.1",
+    "concurrently": "^9.2.0",
     "cypress": "^14.5.1",
     "eslint": "^9.29.0",
     "jasmine-core": "~5.4.0",
@@ -62,6 +71,7 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "karma-spec-reporter": "^0.0.36",
     "typescript": "~5.6.3",
-    "typescript-eslint": "8.34.1"
+    "typescript-eslint": "8.34.1",
+    "wait-on": "^8.0.4"
   }
 }
