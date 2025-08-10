@@ -322,6 +322,38 @@ describe('PermitService', () => {
       req.flush(updatedPermit);
     });
 
+    it('should rollback optimistic update on HTTP error', () => {
+      const existingPermit = createThisPermit;
+      const updatedPermit = {
+        ...existingPermit,
+        status: PermitStatus.APPROVED,
+      };
+
+      // Set up initial state with existing permit
+      service.permits.set([existingPermit]);
+      const initialPermits = service.permits();
+
+      service.updatePermit(updatedPermit).subscribe({
+        next: () => fail(SHOULD_HAVE_FAILED),
+        error: (error) => {
+          expect(error.message).toBe(SERVER_ERROR);
+          // Verify rollback occurred - should be back to original state
+          expect(service.permits()).toEqual(initialPermits);
+          // Verify optimistic update happened AFTER subscribe but BEFORE HTTP response
+        },
+      });
+      expect(service.permits()[0]).toEqual(updatedPermit);
+
+      const req = httpMock.expectOne(`${BASE_URL}${updatedPermit.id}`);
+      expect(req.request.method).toBe(HTTP_PUT_METHOD);
+
+      // Simulate HTTP error to trigger rollback
+      req.flush(SERVER_ERROR_TEXT, {
+        status: ERROR_STATUS,
+        statusText: INTERNAL_SERVER_ERROR_TEXT,
+      });
+    });
+
     it('should reject invalid input before HTTP request', () => {
       const invalidPermit = INVALID_DATA_OBJECT as any;
       validationServiceSpy.validateInputPermit.and.throwError(VALIDATION_ERROR);
@@ -389,6 +421,25 @@ describe('PermitService', () => {
         status: ERROR_STATUS,
         statusText: INTERNAL_SERVER_ERROR_TEXT,
       });
+    });
+  });
+
+  describe('closeConnection', () => {
+    it('should register subscription cleanup on destroy', () => {
+      const mockSubscription = jasmine.createSpyObj('Subscription', [
+        'unsubscribe',
+      ]);
+      const destroyRefSpy = spyOn(service['destroyRef'], 'onDestroy');
+
+      service.closeConnection(mockSubscription);
+
+      expect(destroyRefSpy).toHaveBeenCalled();
+
+      // Simulate component destruction
+      const destroyCallback = destroyRefSpy.calls.mostRecent().args[0];
+      destroyCallback();
+
+      expect(mockSubscription.unsubscribe).toHaveBeenCalled();
     });
   });
 });

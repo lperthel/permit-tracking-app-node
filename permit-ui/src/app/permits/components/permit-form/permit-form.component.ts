@@ -83,7 +83,6 @@ export class PermitFormComponent {
         this.closeResult.set(`${this.CLOSE_REASON_PREFIX}${result}`);
         this.closeModalEvent.emit();
         this.permitForm().form.reset();
-        this.handleModalSuccess(result);
       },
     });
 
@@ -92,7 +91,6 @@ export class PermitFormComponent {
       next: (reason) => {
         this.closeModalEvent.emit();
         this.permitForm().form.reset();
-        this.handleModalDismissal(reason);
       },
     });
 
@@ -103,16 +101,6 @@ export class PermitFormComponent {
 
   dismissModal(reason: string) {
     this.modalService.dismissAll(reason);
-  }
-
-  private handleModalSuccess(result: any): void {
-    // Handle successful modal completion
-    // Could trigger user notifications, analytics, etc.
-  }
-
-  private handleModalDismissal(reason: any): void {
-    // Handle modal dismissal (user cancelled)
-    // Could save draft, show helpful messages, etc.
   }
 
   onSubmit() {

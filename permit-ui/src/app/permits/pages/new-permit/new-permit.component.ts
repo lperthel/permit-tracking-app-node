@@ -37,7 +37,7 @@ export class NewPermitComponent implements OnInit {
   modalHeader = PERMIT_FORM_HEADERS.newPermit;
 
   constructor(
-    private readonly createPermitService: PermitService,
+    private readonly permitService: PermitService,
     private readonly router: Router,
     public permitForm: PermitForm
   ) {}
@@ -71,7 +71,7 @@ export class NewPermitComponent implements OnInit {
       status: this.permitForm.form.value.status! as PermitStatus,
     };
 
-    const sub = this.createPermitService.createPermit(permit).subscribe({
+    const sub = this.permitService.createPermit(permit).subscribe({
       next: (_resp) => {
         this.permitFormComponent().restError.set(this.EMPTY_STRING);
         this.permitFormComponent().dismissModal(this.SAVE_CLICK_DISMISS_REASON);
@@ -80,7 +80,7 @@ export class NewPermitComponent implements OnInit {
         this.permitFormComponent().restError.set(err.message);
       },
     });
-    this.createPermitService.closeConnection(sub);
+    this.permitService.closeConnection(sub);
   }
 
   onCancel() {
