@@ -18,6 +18,7 @@ import {
 } from '../support/cypress-form-actions';
 import { getTestSelector, selectors } from '../support/cypress-selectors';
 import { goToPermitTablePage } from '../support/permit_test_helpers';
+import { PermitStatus } from '../../src/app/permits/shared/models/permit-status.enums';
 
 // Environment configuration
 const UI_SERVER = dev_env.uiUrl;
@@ -28,7 +29,7 @@ const DELETE_TEST_PERMIT: Permit = {
   permitName: 'New Permit',
   applicantName: 'Delete Me',
   permitType: 'Construction',
-  status: 'PENDING',
+  status: PermitStatus.PENDING,
 };
 
 const UPDATE_TEST_PERMIT_BEFORE: Permit = {
@@ -37,7 +38,7 @@ const UPDATE_TEST_PERMIT_BEFORE: Permit = {
   applicantName:
     'This is a Permit added by a cypress integration Test that needs to be updated',
   permitType: 'Construction',
-  status: 'PENDING',
+  status: PermitStatus.PENDING,
 };
 
 const UPDATE_TEST_PERMIT_AFTER: Permit = {
@@ -46,7 +47,7 @@ const UPDATE_TEST_PERMIT_AFTER: Permit = {
   applicantName:
     'This is a Permit added by a cypress integration Test that has been updated',
   permitType: 'Renovation',
-  status: 'APPROVED',
+  status: PermitStatus.APPROVED,
 };
 
 describe('Permit CRUD Operations Integration Tests', () => {

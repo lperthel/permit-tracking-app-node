@@ -11,6 +11,7 @@ import {
   updatePermit,
 } from '../../../assets/constants/test-permits';
 import { UI_TEXT } from '../../../assets/constants/ui-text.constants';
+import { PermitStatus } from '../../shared/models/permit-status.enums';
 import { Permit } from '../../shared/models/permit.model';
 import {
   PermitValidationService,
@@ -61,7 +62,6 @@ describe('PermitService', () => {
   const INVALID_DATA_OBJECT = { invalid: 'data' };
   const INCOMPLETE_RESPONSE_OBJECT = { incomplete: 'response' };
   const INVALID_RESPONSE_ARRAY = [{ invalid: 'response' }];
-  const APPROVED_STATUS = 'APPROVED';
   const EMPTY_STRING = '';
   const WHITESPACE_STRING = '   ';
 
@@ -249,7 +249,7 @@ describe('PermitService', () => {
       service.createPermit(newPermit).subscribe({
         next: () => fail(SHOULD_HAVE_FAILED_VALIDATION),
         error: (error) => {
-          expect(error.message).toBe(SERVER_ERROR); // ← Change this line
+          expect(error.message).toBe(SERVER_ERROR);
         },
       });
 
@@ -292,7 +292,10 @@ describe('PermitService', () => {
 
     it('should validate input and update permit successfully', () => {
       const existingPermit = createThisPermit;
-      const updatedPermit = { ...existingPermit, status: APPROVED_STATUS };
+      const updatedPermit = {
+        ...existingPermit,
+        status: PermitStatus.APPROVED,
+      };
 
       // Set up initial state
       service.permits.set([existingPermit]);

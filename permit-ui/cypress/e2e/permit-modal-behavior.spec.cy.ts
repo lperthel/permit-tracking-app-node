@@ -5,9 +5,12 @@ import {
   PERMIT_FORM_HEADERS,
   PERMIT_FORM_MAX_LENGTHS,
 } from '../../src/app/permits/permit-form-model/permit-form-constants';
+import { PermitStatus } from '../../src/app/permits/shared/models/permit-status.enums';
+
 import { dev_env } from '../../src/environments/environment';
 import {
   clearPermitForm,
+  clearPermitFormForUpdate,
   clickModalCloseButton,
   clickNewPermitButton,
   clickSubmitButton,
@@ -101,8 +104,8 @@ describe('New Permit Modal Integration Tests', () => {
       cy.get(selectors.permitForm.inputPermitType).type('Construction');
       cy.get(selectors.permitForm.errorPermitType).should('not.exist');
 
-      // Fill status and verify error clears
-      cy.get(selectors.permitForm.inputStatus).type('PENDING');
+      // Fill status and verify error clears (use select for dropdown)
+      cy.get(selectors.permitForm.inputStatus).select(PermitStatus.PENDING);
       cy.get(selectors.permitForm.errorPermitStatus).should('not.exist');
     });
   });
@@ -215,6 +218,56 @@ describe('New Permit Modal Integration Tests', () => {
         cy.get(selectors.permitForm.errorPermitType).should('not.exist');
       });
     });
+
+    describe('Status Field', () => {
+      it('should show required error when left empty', () => {
+        clickSubmitButton();
+        cy.get(selectors.permitForm.errorPermitStatus).should(
+          'contain',
+          PERMIT_FORM_ERRORS.invalidStatus
+        );
+      });
+
+      it('should clear error when valid status is selected', () => {
+        cy.get(selectors.permitForm.inputStatus).select(
+          createThisPermit.status
+        );
+        cy.get(selectors.permitForm.errorPermitStatus).should('not.exist');
+      });
+
+      it('should accept valid status values from dropdown', () => {
+        const validStatuses = [
+          PermitStatus.SUBMITTED,
+          PermitStatus.PENDING,
+          PermitStatus.APPROVED,
+          PermitStatus.REJECTED,
+        ];
+
+        validStatuses.forEach((status) => {
+          // Select valid status directly (no need to clear with disabled option)
+          cy.get(selectors.permitForm.inputStatus).select(status);
+          // Verify no error appears
+          cy.get(selectors.permitForm.errorPermitStatus).should('not.exist');
+        });
+      });
+
+      it('should display all available status options in dropdown', () => {
+        // Verify dropdown contains all enum values (check option elements directly)
+        cy.get(selectors.permitForm.inputStatus)
+          .find('option')
+          .then(($options) => {
+            const values = [...$options]
+              .map((option) => option.value)
+              .filter((value) => value !== '');
+            expect(values).to.include(PermitStatus.SUBMITTED);
+            expect(values).to.include(PermitStatus.PENDING);
+            expect(values).to.include(PermitStatus.UNDER_REVIEW);
+            expect(values).to.include(PermitStatus.APPROVED);
+            expect(values).to.include(PermitStatus.REJECTED);
+            expect(values).to.include(PermitStatus.EXPIRED);
+          });
+      });
+    });
   });
 });
 
@@ -317,8 +370,8 @@ describe('Update Permit Modal Integration Tests', () => {
         expect($input.val()).to.equal(originalPermitType);
       });
 
-      cy.get(selectors.permitForm.inputStatus).then(($input) => {
-        expect($input.val()).to.equal(originalStatus);
+      cy.get(selectors.permitForm.inputStatus).then(($select) => {
+        expect($select.val()).to.equal(originalStatus);
       });
     });
   });
@@ -331,8 +384,8 @@ describe('Update Permit Modal Integration Tests', () => {
         .should('exist')
         .click();
 
-      // Clear all form fields
-      clearPermitForm();
+      // Clear all form fields using the update-specific clear function
+      clearPermitFormForUpdate();
 
       // Submit and verify errors appear
       clickSubmitButton();
@@ -350,8 +403,8 @@ describe('Update Permit Modal Integration Tests', () => {
         .should('exist')
         .click();
 
-      // Clear form and test permit name validation
-      clearPermitForm();
+      // Clear form and test permit name validation using update-specific clear
+      clearPermitFormForUpdate();
 
       // Test permit name validation
       cy.get(selectors.permitForm.inputPermitName).type('Valid Permit');

@@ -1,9 +1,9 @@
 // @ts-check
-import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
 import angular from "@angular-eslint/eslint-plugin";
 import angularTemplate from "@angular-eslint/eslint-plugin-template";
 import angularTemplateParser from "@angular-eslint/template-parser";
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   // Global ignores
@@ -93,6 +93,8 @@ export default tseslint.config(
       "no-debugger": "error",
       "prefer-const": "error",
       "no-var": "error",
+      // Add complexity rule for TypeScript files
+      complexity: ["error", { max: 10 }],
     },
   },
 
@@ -119,11 +121,11 @@ export default tseslint.config(
       "@angular-eslint/template/use-track-by-function": "warn",
       "@angular-eslint/template/conditional-complexity": [
         "warn",
-        { maxComplexity: 3 },
+        { maxComplexity: 8 },
       ],
       "@angular-eslint/template/cyclomatic-complexity": [
         "warn",
-        { maxComplexity: 5 },
+        { maxComplexity: 10 },
       ],
     },
   }

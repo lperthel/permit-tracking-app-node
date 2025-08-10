@@ -87,12 +87,17 @@
 
         <label for="status">Status*</label>
         <div class="input-group has-validation">
-          <input
+          <select
             id="status"
-            class="form-control"
+            class="form-select"
             formControlName="status"
             [attr.data-testid]="SELECTORS.INPUT_STATUS"
-          />
+          >
+            <option value="" disabled>Select a status...</option>
+            @for (status of permitStatusValues; track status) {
+            <option [value]="status">{{ getStatusLabel(status) }}</option>
+            }
+          </select>
         </div>
         @if(permitForm().invalidStatus){
         <div [attr.data-testid]="SELECTORS.ERROR_STATUS">

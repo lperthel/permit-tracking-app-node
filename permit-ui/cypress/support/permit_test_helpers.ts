@@ -1,4 +1,5 @@
 // ES2022 test helper functions for permit application testing
+import { PermitStatus } from '../../src/app/permits/shared/models/permit-status.enums';
 import { Permit } from '../../src/app/permits/shared/models/permit.model';
 import { dev_env } from '../../src/environments/environment';
 import { selectors } from './cypress-selectors';
@@ -11,7 +12,7 @@ export const createTestPermit = (permit: Partial<Permit>) => {
     permitName: 'Test Permit',
     applicantName: 'Test Applicant',
     permitType: 'Construction',
-    status: 'PENDING',
+    status: PermitStatus.PENDING,
     ...permit,
   };
 
@@ -56,7 +57,9 @@ export const fillPermitFormWithDefaults = () => {
   cy.get(selectors.permitForm.inputPermitName).type('Integration Test Permit');
   cy.get(selectors.permitForm.inputApplicant).type('Test Applicant Name');
   cy.get(selectors.permitForm.inputPermitType).type('Construction');
-  cy.get(selectors.permitForm.inputStatus).type('PENDING');
+
+  // For dropdown status field, select from dropdown instead of typing
+  cy.get(selectors.permitForm.inputStatus).select(PermitStatus.PENDING);
 };
 
 /**
@@ -99,7 +102,8 @@ export const createPermitThroughUI = (permit: Partial<Permit>) => {
       .type(permit.permitType);
   }
   if (permit.status) {
-    cy.get(selectors.permitForm.inputStatus).clear().type(permit.status);
+    // For dropdown status field, use select instead of type
+    cy.get(selectors.permitForm.inputStatus).select(permit.status);
   }
 
   // Note: You'll need to add submit button selector to your constants

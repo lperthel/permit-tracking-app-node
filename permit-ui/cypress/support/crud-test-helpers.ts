@@ -1,3 +1,4 @@
+import { PermitStatus } from '../../src/app/permits/shared/models/permit-status.enums';
 import { Permit } from '../../src/app/permits/shared/models/permit.model';
 import { dev_env } from '../../src/environments/environment';
 import {
@@ -19,7 +20,7 @@ export function validateRow(
   permitName: string,
   applicantName: string,
   permitType: string,
-  status: string
+  status: PermitStatus
 ) {
   const permit: Partial<Permit> = {
     permitName,
@@ -52,7 +53,7 @@ export function validateItemOnLastPage() {
     'Handcrafted Granite Chicken',
     'Lorenzo Mante',
     'Zoning',
-    'REJECTED'
+    PermitStatus.REJECTED
   );
 }
 
@@ -66,7 +67,7 @@ export function validateElementOnFirstPage() {
     'First Page Permit',
     'First page permit with detailed information for initial validation testing.',
     'Construction',
-    'PENDING'
+    PermitStatus.PENDING
   );
 }
 

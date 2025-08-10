@@ -1,4 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
+
+import { PermitStatus } from '../../permits/shared/models/permit-status.enums';
 import { Permit } from '../../permits/shared/models/permit.model';
 
 export const createThisPermit: Permit = {
@@ -6,7 +8,7 @@ export const createThisPermit: Permit = {
   permitName: 'Create New Substation',
   applicantName: 'Create a new substation by North Bethesda Metro',
   permitType: 'Electrical',
-  status: 'SUBMITTED',
+  status: PermitStatus.SUBMITTED,
 };
 
 export const updatePermit: Permit = {
@@ -14,7 +16,7 @@ export const updatePermit: Permit = {
   permitName: 'Create New Substation',
   applicantName: 'Create a new substation by Rockville - Updated',
   permitType: 'Electrical',
-  status: 'UNDER_REVIEW',
+  status: PermitStatus.UNDER_REVIEW,
 };
 
 export const deleteThisPermit: Permit = {
@@ -22,5 +24,5 @@ export const deleteThisPermit: Permit = {
   permitName: 'Delete This Permit',
   applicantName: 'Delete Me',
   permitType: 'Electrical',
-  status: 'REJECTED',
+  status: PermitStatus.REJECTED,
 };

@@ -23,22 +23,31 @@ if (existsSync(outputFile)) {
   }
 }
 
-const permitStatuses = ["SUBMITTED", "APPROVED", "REJECTED", "UNDER_REVIEW"];
+const permitStatuses = [
+  "SUBMITTED",
+  "PENDING",
+  "UNDER_REVIEW",
+  "APPROVED",
+  "REJECTED",
+  "EXPIRED",
+];
 
 const database = { permits: [] };
 
 for (let i = 1; i <= 300; i++) {
+  const permitTypeTemp = faker.helpers.arrayElement([
+    "Construction",
+    "Renovation",
+    "Electrical",
+    "Plumbing",
+    "Demolition",
+  ]);
+
   database.permits.push({
     id: uuidv4(),
-    permitName: faker.commerce.productName(), // Example: "Eco-Friendly Lamp"
+    permitName: `${permitTypeTemp} - ${faker.location.streetAddress()}, ${faker.location.city()}`,
     applicantName: faker.person.fullName().replace(/[^a-zA-Z0-9 \-.']/g, ""), // Strips invalid chars
-    permitType: faker.helpers.arrayElement([
-      "Building",
-      "Electrical",
-      "Plumbing",
-      "Occupancy",
-      "Zoning",
-    ]),
+    permitType: permitTypeTemp,
     status: faker.helpers.arrayElement(permitStatuses),
   });
 }

@@ -1,14 +1,9 @@
+import { PermitStatus } from './permit-status.enums';
+
 export interface Permit {
   id: string;
   permitName: string;
   applicantName: string;
   permitType: string;
-  status: string;
+  status: PermitStatus; // Changed from string to enum
 }
-
-export const permitStatuses = [
-  'SUBMITTED',
-  'APPROVED',
-  'REJECTED',
-  'UNDER_REVIEW',
-];

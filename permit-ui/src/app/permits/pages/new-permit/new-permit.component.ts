@@ -17,6 +17,7 @@ import {
   PERMIT_FORM_HEADERS,
 } from '../../permit-form-model/permit-form-constants';
 import { PermitForm } from '../../permit-form-model/permit-form.model';
+import { PermitStatus } from '../../shared/models/permit-status.enums';
 import { Permit } from '../../shared/models/permit.model';
 import { PermitService } from '../../shared/services/permit.service';
 
@@ -27,6 +28,11 @@ import { PermitService } from '../../shared/services/permit.service';
   styleUrl: './new-permit.component.css',
 })
 export class NewPermitComponent implements OnInit {
+  // String constants at top per coding guidelines
+  private readonly EMPTY_STRING = '';
+  private readonly SAVE_CLICK_DISMISS_REASON = 'save-click';
+  private readonly HOME_ROUTE = '/';
+
   errorMessages = PERMIT_FORM_ERRORS;
   modalHeader = PERMIT_FORM_HEADERS.newPermit;
 
@@ -38,7 +44,7 @@ export class NewPermitComponent implements OnInit {
 
   permitFormComponent =
     viewChild.required<PermitFormComponent>('permitFormElement');
-  closeResult: WritableSignal<string> = signal('');
+  closeResult: WritableSignal<string> = signal(this.EMPTY_STRING);
 
   ngOnInit(): void {
     this.permitFormComponent().openModal();
@@ -49,15 +55,12 @@ export class NewPermitComponent implements OnInit {
 
     const rawName = this.permitForm.form.value.permitName!;
     DOMPurify.sanitize(rawName);
-    const rawDescription = this.permitForm.form.value.applicantName ?? '';
+    const rawDescription =
+      this.permitForm.form.value.applicantName ?? this.EMPTY_STRING;
     DOMPurify.sanitize(rawDescription);
 
     if (this.permitForm.form.invalid) {
       return;
-    }
-
-    if (this.permitForm.form.value.permitType?.indexOf('.') == -1) {
-      this.permitForm.form.value.permitType.concat('.00');
     }
 
     const permit: Permit = {
@@ -65,13 +68,13 @@ export class NewPermitComponent implements OnInit {
       permitName: this.permitForm.form.value.permitName!,
       applicantName: this.permitForm.form.value.applicantName!,
       permitType: this.permitForm.form.value.permitType!,
-      status: this.permitForm.form.value.status!,
+      status: this.permitForm.form.value.status! as PermitStatus,
     };
 
     const sub = this.createPermitService.createPermit(permit).subscribe({
       next: (_resp) => {
-        this.permitFormComponent().restError.set('');
-        this.permitFormComponent().dismissModal('save-click');
+        this.permitFormComponent().restError.set(this.EMPTY_STRING);
+        this.permitFormComponent().dismissModal(this.SAVE_CLICK_DISMISS_REASON);
       },
       error: (err: Error) => {
         this.permitFormComponent().restError.set(err.message);
@@ -81,13 +84,14 @@ export class NewPermitComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigateByUrl('/');
+    this.router.navigateByUrl(this.HOME_ROUTE);
   }
 
   handleFormSubmission() {
     this.createPermit();
   }
+
   handleCloseModal() {
-    this.router.navigateByUrl('/');
+    this.router.navigateByUrl(this.HOME_ROUTE);
   }
 }

@@ -20,6 +20,11 @@ import { Subscription } from 'rxjs';
 import { PERMIT_FORM_SELECTORS } from '../../../assets/constants/permit-form.constants';
 import { PERMIT_FORM_ERRORS } from '../../permit-form-model/permit-form-constants';
 import { PermitForm } from '../../permit-form-model/permit-form.model';
+import {
+  PERMIT_STATUS_LABELS,
+  PERMIT_STATUS_VALUES,
+  PermitStatus,
+} from '../../shared/models/permit-status.enums';
 
 @Component({
   selector: 'app-permit-form',
@@ -33,6 +38,16 @@ export class PermitFormComponent {
   // String constants at top per coding guidelines
   private readonly MODAL_ARIA_LABEL = 'modal-basic-title';
   private readonly CLOSE_REASON_PREFIX = 'Closed with: ';
+
+  public readonly DEFAULT_STATUS_PLACEHOLDER = 'Select a status...';
+
+  // Add these properties
+  protected readonly permitStatusValues = PERMIT_STATUS_VALUES;
+
+  // Add this method to get display labels
+  protected getStatusLabel(status: PermitStatus): string {
+    return PERMIT_STATUS_LABELS[status];
+  }
 
   errorMessages = PERMIT_FORM_ERRORS;
   permitForm = input.required<PermitForm>();
