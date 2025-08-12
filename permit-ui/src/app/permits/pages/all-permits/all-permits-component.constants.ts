@@ -60,6 +60,13 @@ export class AllPermitsComponentConstants {
 
   // Test IDs for Cypress testing
   static readonly TEST_IDS = {
+    SUCCESS_ALERT: 'all-permits-success-alert',
+    LOADING_SPINNER: 'all-permits-loading-spinner',
+    LOADING_SPINNER_TEXT: 'all-permits-loading-text',
+    EMPTY_STATE_CONTAINER: 'all-permits-empty-state',
+    EMPTY_STATE_ALERT: 'all-permits-empty-alert',
+    CREATE_FIRST_PERMIT_BUTTON: 'all-permits-create-first-button',
+    REST_ERROR_ALERT: 'all-permits-rest-error',
     NEW_PERMIT_BUTTON: 'new-permit-button',
     REFRESH_PERMITS_BUTTON: 'refresh-permits-button',
     PERMITS_TABLE: 'permits-table',
