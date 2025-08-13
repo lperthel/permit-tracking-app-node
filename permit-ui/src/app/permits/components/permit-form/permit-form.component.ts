@@ -17,8 +17,10 @@ import {
   NgbModalRef,
 } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { PERMIT_FORM_SELECTORS } from '../../../assets/constants/permit-form.constants';
-import { PERMIT_FORM_ERRORS } from '../../permit-form-model/permit-form-constants';
+import {
+  PERMIT_FORM_ERRORS,
+  PERMIT_FORM_SELECTORS,
+} from '../../permit-form-model/permit-form.constants';
 import { PermitForm } from '../../permit-form-model/permit-form.model';
 import {
   PERMIT_STATUS_LABELS,

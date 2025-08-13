@@ -7,7 +7,7 @@ import { PermitFormComponent } from '../../components/permit-form/permit-form.co
 import {
   PERMIT_FORM_ERRORS,
   PERMIT_FORM_HEADERS,
-} from '../../permit-form-model/permit-form-constants';
+} from '../../permit-form-model/permit-form.constants';
 import { PermitForm } from '../../permit-form-model/permit-form.model';
 import { PermitStatus } from '../../shared/models/permit-status.enums';
 import { Permit } from '../../shared/models/permit.model';
