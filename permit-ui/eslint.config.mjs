@@ -19,6 +19,21 @@ export default tseslint.config(
       "package-lock.json",
       "coverage/**",
       ".angular/**",
+      "build/**",
+      "target/**",
+      "generated/**",
+      "*.generated.ts",
+      "*.generated.js",
+      ".nyc_output/**",
+      "cypress/videos/**",
+      "cypress/screenshots/**",
+      "cypress/downloads/**",
+      "*.min.js",
+      "*.bundle.js",
+      "src/environments/environment.prod.ts", // If auto-generated
+      "src/polyfills.ts", // If auto-generated
+      "**/*.spec.js", // Compiled spec files
+      "**/*.e2e.js", // Compiled e2e files
     ],
   },
 
@@ -97,7 +112,40 @@ export default tseslint.config(
       complexity: ["error", { max: 10 }],
     },
   },
+  {
+    files: ["cypress/**/*.ts", "cypress/**/*.js"],
+    languageOptions: {
+      parserOptions: {
+        project: "./tsconfig.json",
+        sourceType: "module",
+        ecmaVersion: 2022,
+      },
+      globals: {
+        cy: "readonly",
+        Cypress: "readonly",
+        expect: "readonly",
+        assert: "readonly",
+        console: "readonly",
+        window: "readonly",
+        document: "readonly",
+      },
+    },
+    rules: {
+      // Allow Cypress-required patterns
+      "@typescript-eslint/no-unused-expressions": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-namespace": "off", // ← KEY: Allow namespaces for Cypress
+      "@typescript-eslint/prefer-namespace-keyword": "off", // ← Allow declare global
 
+      // General test file allowances
+      "no-console": "off",
+      complexity: ["error", { max: 15 }], // Allow longer test functions
+
+      // Allow module-specific patterns
+      "import/no-unresolved": "off", // Cypress plugins might not resolve
+      "@typescript-eslint/triple-slash-reference": "off", // Allow /// references if needed
+    },
+  },
   // Angular template files configuration
   {
     files: ["**/*.html"],

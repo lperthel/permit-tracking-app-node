@@ -1,7 +1,6 @@
-// Global setup for permit application tests
-// No need to import commands - we use ES2022 functions instead
-
+import './commands';
 // Government security: Fail tests on console errors (FISMA compliance)
+
 Cypress.on('window:before:load', (win) => {
   const originalConsoleError = win.console.error;
   win.console.error = (...args) => {
