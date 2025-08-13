@@ -370,16 +370,34 @@ describe('PermitService', () => {
   });
 
   describe('deletePermit', () => {
-    it('should delete permit with valid ID', () => {
+    it('should delete permit with valid ID and update store on success', () => {
       const permitId = deleteThisPermit.id;
+
+      // Set up initial state with permits
+      service.permits.set([deleteThisPermit, createThisPermit]);
+      const initialPermits = service.permits();
+
+      // Verify initial state contains the permit
+      expect(service.permits()).toContain(deleteThisPermit);
 
       service.deletePermit(permitId).subscribe((response) => {
         expect(response).toBeNull();
+
+        // NEW: Verify permit is removed from store AFTER HTTP success
+        expect(service.permits()).not.toContain(deleteThisPermit);
+        expect(service.permits().length).toBe(initialPermits.length - 1);
       });
+
+      // Verify store is NOT updated immediately (no optimistic update)
+      expect(service.permits()).toEqual(initialPermits);
 
       const req = httpMock.expectOne(`${BASE_URL}${permitId}`);
       expect(req.request.method).toBe(HTTP_DELETE_METHOD);
+
+      // Flush the response to trigger success callback
       req.flush(null);
+
+      // After flush, the subscribe callback should have run and updated the store
     });
 
     it('should reject empty or whitespace permit ID', () => {
@@ -401,7 +419,7 @@ describe('PermitService', () => {
       httpMock.expectNone(`${BASE_URL}${WHITESPACE_STRING}`);
     });
 
-    it('should rollback optimistic delete on HTTP error', () => {
+    it('should NOT update store on HTTP error', () => {
       const permitId = deleteThisPermit.id;
 
       // Set up initial state
@@ -412,15 +430,21 @@ describe('PermitService', () => {
         next: () => fail(SHOULD_HAVE_FAILED),
         error: (error) => {
           expect(error.message).toBe(SERVER_ERROR);
+          // NEW: Store should remain unchanged (no optimistic update, no rollback needed)
           expect(service.permits()).toEqual(initialPermits);
         },
       });
+
+      // Verify store is unchanged immediately (no optimistic update)
+      expect(service.permits()).toEqual(initialPermits);
 
       const req = httpMock.expectOne(`${BASE_URL}${permitId}`);
       req.flush(SERVER_ERROR_TEXT, {
         status: ERROR_STATUS,
         statusText: INTERNAL_SERVER_ERROR_TEXT,
       });
+
+      // Store should still be unchanged after error
     });
   });
 
