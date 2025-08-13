@@ -1,4 +1,3 @@
-import { UI_TEXT } from '../../src/app/assets/constants/ui-text.constants';
 import { AllPermitsComponentConstants } from '../../src/app/permits/pages/all-permits/all-permits-component.constants';
 import { dev_env } from '../../src/environments/environment';
 import { getTestSelector, selectors } from '../support/cypress-selectors';
@@ -18,9 +17,7 @@ const LOADING_SPINNER_TEXT_SELECTOR = getTestSelector(
 const REFRESH_BUTTON_SELECTOR = getTestSelector(
   AllPermitsComponentConstants.TEST_IDS.REFRESH_PERMITS_BUTTON
 );
-const NEW_PERMIT_BUTTON_SELECTOR = getTestSelector(
-  AllPermitsComponentConstants.TEST_IDS.NEW_PERMIT_BUTTON
-);
+
 const PERMITS_TABLE_SELECTOR = getTestSelector(
   AllPermitsComponentConstants.TEST_IDS.PERMITS_TABLE
 );
@@ -47,7 +44,7 @@ describe('All Permits Page - Loading State Behavior', () => {
     // Verify loading spinner contains accessible text
     cy.get(LOADING_SPINNER_TEXT_SELECTOR).should(
       'contain.text',
-      UI_TEXT.LOADING_MESSAGE
+      AllPermitsComponentConstants.UI_TEXT.LOADING_MESSAGE
     );
 
     // Wait for request to complete
@@ -83,7 +80,7 @@ describe('All Permits Page - Loading State Behavior', () => {
 
     cy.get(LOADING_SPINNER_TEXT_SELECTOR).should(
       'contain.text',
-      UI_TEXT.LOADING_MESSAGE
+      AllPermitsComponentConstants.UI_TEXT.LOADING_MESSAGE
     );
 
     // Wait for request completion
