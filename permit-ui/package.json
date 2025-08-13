@@ -58,6 +58,7 @@
     "@angular/compiler-cli": "^19.2.14",
     "@angular/localize": "^19.2.14",
     "@cypress/schematic": "^3.0.0",
+    "cypress-plugin-tab": "^1.0.5",
     "@schematics/angular": "^19.2.15",
     "@types/dompurify": "^3.0.5",
     "@types/jasmine": "~5.1.0",
