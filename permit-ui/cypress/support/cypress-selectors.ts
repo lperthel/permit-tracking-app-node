@@ -1,8 +1,8 @@
 // Import selectors from Angular source - single source of truth
 
 import { PAGINATION } from '../../src/app/assets/constants/pagination.constants';
-import { PERMIT_FORM_SELECTORS } from '../../src/app/assets/constants/permit-form.constants';
 import { AllPermitsComponentConstants } from '../../src/app/permits/pages/all-permits/all-permits-component.constants';
+import { PERMIT_FORM_SELECTORS } from '../../src/app/permits/permit-form-model/permit-form.constants';
 
 /**
  * Helper function to get selector with data-testid prefix
