@@ -19,7 +19,6 @@ const REFRESH_BUTTON_SELECTOR = getTestSelector(
 const NEW_PERMIT_BUTTON_SELECTOR = getTestSelector(
   AllPermitsComponentConstants.TEST_IDS.NEW_PERMIT_BUTTON
 );
-const MODAL_HEADER_SELECTOR = getTestSelector('modal-header');
 
 describe('All Permits Page - Empty State Handling', () => {
   beforeEach(() => {
