@@ -142,18 +142,20 @@ export class PermitService {
       return throwError(() => new Error('Invalid permit ID provided'));
     }
 
-    const backupPermits = this.permits();
-
-    this.permits.update((oldPermits) =>
-      oldPermits.filter((permit) => permit.id !== permitId)
-    );
-
+    // DON'T update permits immediately - wait for HTTP success
     return this.httpClient
       .delete<void>(
         API_CONSTANTS.SERVER_URL + API_CONSTANTS.PERMITS_PATH + permitId,
         this.httpOptions
       )
       .pipe(
+        map((response) => {
+          // SUCCESS: Now remove the permit from the store
+          this.permits.update((oldPermits) =>
+            oldPermits.filter((permit) => permit.id !== permitId)
+          );
+          return response;
+        }),
         catchError((err) => {
           console.error(
             LOGGING_CONSTANTS.DELETE_ERROR_PREFIX,
@@ -161,7 +163,7 @@ export class PermitService {
             LOGGING_CONSTANTS.STATUS_LOG,
             err.status
           );
-          this.permits.set(backupPermits);
+          // No need to restore backup since we never changed the store
           return throwError(() => new Error(UI_TEXT.SERVER_CONNECTION_ERROR));
         })
       );

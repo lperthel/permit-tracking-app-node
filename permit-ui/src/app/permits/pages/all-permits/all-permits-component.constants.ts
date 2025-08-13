@@ -19,8 +19,6 @@ export class AllPermitsComponentConstants {
     AllPermitsComponentConstants.COLUMN_NAMES.UPDATE,
     AllPermitsComponentConstants.COLUMN_NAMES.DELETE,
   ];
-
-  // UI Text constants
   static readonly UI_TEXT = {
     ABOUT_HEADER: 'About',
     NEW_PERMIT_BUTTON: 'New Permit',
@@ -36,6 +34,7 @@ export class AllPermitsComponentConstants {
     DELETE_HEADER: 'Delete',
     UPDATE_BUTTON: 'Update',
     DELETE_BUTTON: 'Delete',
+    DELETING_BUTTON: 'Deleting...', // NEW
     EMPTY_ERROR: '',
   } as const;
 
@@ -82,6 +81,9 @@ export class AllPermitsComponentConstants {
     STATUS_CELL: (index: number) => `status-cell-${index}`,
     UPDATE_CELL: (index: number) => `update-cell-${index}`,
     DELETE_CELL: (index: number) => `delete-cell-${index}`,
+    DELETE_LOADING_SPINNER: (index: number) =>
+      `delete-loading-spinner-${index}`,
+    DELETE_PERMIT_BUTTON: (index: number) => `delete-button-${index}`,
   } as const;
 
   // Pagination settings

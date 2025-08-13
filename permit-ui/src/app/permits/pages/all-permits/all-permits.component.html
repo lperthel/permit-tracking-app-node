@@ -253,9 +253,22 @@
         <button
           class="btn btn-danger"
           (click)="onDelete(permit.id)"
+          [disabled]="isDeleting(permit.id)"
           [attr.aria-label]="ARIA_LABELS.DELETE_PERMIT(permit.permitName)"
+          [attr.data-testid]="TEST_IDS.DELETE_PERMIT_BUTTON(i)"
         >
+          @if(isDeleting(permit.id)) {
+          <span
+            class="spinner-border spinner-border-sm me-2"
+            role="status"
+            [attr.data-testid]="TEST_IDS.DELETE_LOADING_SPINNER(i)"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </span>
+          {{ UI_TEXT.DELETING_BUTTON }}
+          } @else {
           {{ UI_TEXT.DELETE_BUTTON }}
+          }
         </button>
       </td>
     </ng-container>
