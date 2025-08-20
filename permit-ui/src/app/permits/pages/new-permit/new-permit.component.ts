@@ -35,6 +35,7 @@ export class NewPermitComponent implements OnInit {
 
   errorMessages = PERMIT_FORM_ERRORS;
   modalHeader = PERMIT_FORM_HEADERS.newPermit;
+  isSubmitting = signal<boolean>(false);
 
   constructor(
     private readonly permitService: PermitService,
@@ -51,6 +52,7 @@ export class NewPermitComponent implements OnInit {
   }
 
   createPermit() {
+    // start spinner
     this.permitForm.form.markAllAsTouched();
 
     const rawName = this.permitForm.form.value.permitName!;
@@ -63,6 +65,8 @@ export class NewPermitComponent implements OnInit {
       return;
     }
 
+    this.isSubmitting.set(true);
+
     const permit: Permit = {
       id: uuidv4(),
       permitName: this.permitForm.form.value.permitName!,
@@ -73,10 +77,12 @@ export class NewPermitComponent implements OnInit {
 
     const sub = this.permitService.createPermit(permit).subscribe({
       next: (_resp) => {
+        this.isSubmitting.set(false);
         this.permitFormComponent().restError.set(this.EMPTY_STRING);
         this.permitFormComponent().dismissModal(this.SAVE_CLICK_DISMISS_REASON);
       },
       error: (err: Error) => {
+        this.isSubmitting.set(false);
         this.permitFormComponent().restError.set(err.message);
       },
     });
