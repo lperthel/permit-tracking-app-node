@@ -1,0 +1,68 @@
+{
+  "permitNameTooLong": {
+    "permitName": "This permit name is intentionally way too long to exceed the maximum length validation rule that should be enforced by the form validation logic in the Angular application and should trigger a validation error when submitted",
+    "applicantName": "Valid Applicant Name",
+    "permitType": "Construction",
+    "status": "PENDING"
+  },
+  "permitNameInvalidChars": {
+    "permitName": "Invalid@#$%^&*()Permit<>Name",
+    "applicantName": "Valid Applicant Name",
+    "permitType": "Construction",
+    "status": "PENDING"
+  },
+  "permitNameEmpty": {
+    "permitName": "",
+    "applicantName": "Valid Applicant Name",
+    "permitType": "Construction",
+    "status": "PENDING"
+  },
+  "applicantNameTooLong": {
+    "permitName": "Valid Permit Name",
+    "applicantName": "This applicant name is intentionally way too long to exceed the maximum length validation rule that should be enforced by the form validation logic in the Angular application and should trigger a validation error when submitted",
+    "permitType": "Construction",
+    "status": "PENDING"
+  },
+  "applicantNameInvalidChars": {
+    "permitName": "Valid Permit Name",
+    "applicantName": "Invalid@#$%^&*()Applicant<>Name",
+    "permitType": "Construction",
+    "status": "PENDING"
+  },
+  "applicantNameEmpty": {
+    "permitName": "Valid Permit Name",
+    "applicantName": "",
+    "permitType": "Construction",
+    "status": "PENDING"
+  },
+  "permitTypeInvalidChars": {
+    "permitName": "Valid Permit Name",
+    "applicantName": "Valid Applicant Name",
+    "permitType": "Invalid@#$%^&*()Type<>",
+    "status": "PENDING"
+  },
+  "permitTypeEmpty": {
+    "permitName": "Valid Permit Name",
+    "applicantName": "Valid Applicant Name",
+    "permitType": "",
+    "status": "PENDING"
+  },
+  "statusEmpty": {
+    "permitName": "Valid Permit Name",
+    "applicantName": "Valid Applicant Name",
+    "permitType": "Construction",
+    "status": ""
+  },
+  "allFieldsInvalid": {
+    "permitName": "Invalid@#$%^&*()Permit<>Name",
+    "applicantName": "Invalid@#$%^&*()Applicant<>Name",
+    "permitType": "Invalid@#$%^&*()Type<>",
+    "status": ""
+  },
+  "mixedValidationErrors": {
+    "permitName": "",
+    "applicantName": "This applicant name is intentionally way too long to exceed the maximum length validation rule",
+    "permitType": "Invalid@#$Type",
+    "status": "PENDING"
+  }
+}

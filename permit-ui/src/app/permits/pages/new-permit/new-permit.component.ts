@@ -53,6 +53,8 @@ export class NewPermitComponent implements OnInit {
 
   createPermit() {
     // start spinner
+    this.isSubmitting.set(true);
+
     this.permitForm.form.markAllAsTouched();
 
     const rawName = this.permitForm.form.value.permitName!;
@@ -64,8 +66,6 @@ export class NewPermitComponent implements OnInit {
     if (this.permitForm.form.invalid) {
       return;
     }
-
-    this.isSubmitting.set(true);
 
     const permit: Permit = {
       id: uuidv4(),
