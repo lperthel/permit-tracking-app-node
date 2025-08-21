@@ -1,5 +1,5 @@
 // @ts-ignore - TODO: Fix during refactor
-import { Component, input, OnInit, viewChild } from '@angular/core';
+import { Component, input, OnInit, signal, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
@@ -23,6 +23,7 @@ export class UpdatePermitComponent implements OnInit {
   errorMessages = PERMIT_FORM_ERRORS;
   modalHeader = PERMIT_FORM_HEADERS.updatePermit;
   permitId = input.required<string>();
+  isSubmitting = signal<boolean>(false);
   private permit!: Permit;
   foundPermit: Permit | undefined;
 
@@ -66,18 +67,21 @@ export class UpdatePermitComponent implements OnInit {
       permitType: this.permitForm.form.value.permitType!,
       status: this.permitForm.form.value.status! as PermitStatus,
     };
-
+    this.isSubmitting.set(true);
     const subscription = this.permitService
       .updatePermit(updatePermit)
       .subscribe({
         next: (_resp) => {
+          this.isSubmitting.set(false);
           this.permitFormComponent().restError.set('');
           this.permitFormComponent().dismissModal('save-click');
 
           this.router.navigateByUrl('/');
         },
-        error: (err: Error) =>
-          this.permitFormComponent().restError.set(err.message),
+        error: (err: Error) => {
+          this.isSubmitting.set(false);
+          this.permitFormComponent().restError.set(err.message);
+        },
       });
 
     this.permitService.closeConnection(subscription);
