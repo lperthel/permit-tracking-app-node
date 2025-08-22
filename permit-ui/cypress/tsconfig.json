@@ -1,6 +1,6 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["**/*.ts", "e2e/permit-crud-integrations.spec.cy.ts.bak"],
+  "include": ["**/*.ts"],
   "compilerOptions": {
     "target": "ES2022",
     "module": "ES2022",

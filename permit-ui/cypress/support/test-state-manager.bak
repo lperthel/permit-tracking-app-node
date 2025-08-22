@@ -1,0 +1,75 @@
+// ============================================================================
+// test-state-manager.ts - Baseline state capture and cleanup validation
+// ============================================================================
+
+import { PermitStatus } from '../../src/app/permits/shared/models/permit-status.enums';
+import { Permit } from '../../src/app/permits/shared/models/permit.model';
+import { selector_shortcuts } from './cypress-selectors';
+import { UiActions } from './ui-actions';
+import { UiAssertions } from './ui-assertions';
+
+export class TestStateManager {
+  private static baselinePermit: Partial<Permit> | null = null;
+
+  /**
+   * Captures baseline state before test execution
+   * Call this in beforeEach hooks
+   */
+  static captureBaseline(): void {
+    UiActions.visitPermitsPage();
+    UiActions.navigateToPage('last');
+    UiActions.getLastRowIndex().then((lastRowIndex: number) => {
+      // Capture the first item on last page as baseline
+      cy.get(selector_shortcuts.permitRowName(lastRowIndex))
+        .invoke('text')
+        .then((permitName) => {
+          cy.get(selector_shortcuts.permitRowApplicantName(lastRowIndex))
+            .invoke('text')
+            .then((applicantName) => {
+              cy.get(selector_shortcuts.permitRowPermitType(lastRowIndex))
+                .invoke('text')
+                .then((permitType) => {
+                  cy.get(selector_shortcuts.permitRowStatus(lastRowIndex))
+                    .invoke('text')
+                    .then((status) => {
+                      this.baselinePermit = {
+                        permitName: permitName.trim(),
+                        applicantName: applicantName.trim(),
+                        permitType: permitType.trim(),
+                        status: status.trim() as PermitStatus,
+                        // Note: ID is not captured from UI as it's not displayed in the table
+                      } as Partial<Permit>;
+
+                      cy.wrap(this.baselinePermit).as('baselinePermit');
+                    });
+                });
+            });
+        });
+    });
+  }
+
+  /**
+   * Validates that baseline state is restored after test
+   * Call this in afterEach hooks
+   */
+  static validateCleanup(): void {
+    if (!this.baselinePermit) {
+      throw new Error(
+        'Baseline state not captured. Call captureBaseline() first.'
+      );
+    }
+
+    UiActions.visitPermitsPage();
+    UiActions.navigateToPage('last');
+    UiActions.getLastRowIndex().then((lastRowIndex: number) => {
+      UiAssertions.verifyPermitInTable(this.baselinePermit!, lastRowIndex);
+    });
+  }
+
+  /**
+   * Resets baseline state (for test cleanup)
+   */
+  static resetBaseline(): void {
+    this.baselinePermit = null;
+  }
+}

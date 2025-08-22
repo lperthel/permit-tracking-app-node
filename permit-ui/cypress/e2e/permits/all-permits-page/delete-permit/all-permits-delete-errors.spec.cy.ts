@@ -34,41 +34,6 @@ describe('All Permits Page - Delete Operation Error Scenarios', () => {
     UiActions.visitPermitsPage();
   });
 
-  afterEach(() => {
-    // Simple and reliable cleanup approach
-    if (testPermitIds.length > 0) {
-      cy.log(`Cleaning up ${testPermitIds.length} test permits`);
-
-      // Visit about:blank to clear any active intercepts
-      cy.visit('about:blank');
-      cy.wait(200);
-
-      // Clean up each permit
-      testPermitIds.forEach((permitId) => {
-        if (permitId) {
-          cy.request({
-            method: 'DELETE',
-            url: `http://localhost:3000/api/permits/${permitId}`,
-            failOnStatusCode: false,
-          }).then((response) => {
-            if (response.status === 200 || response.status === 204) {
-              cy.log(`✅ Cleaned up permit ${permitId}`);
-            } else {
-              cy.log(
-                `⚠️ Could not clean up permit ${permitId} (status: ${response.status})`
-              );
-              cy.log(
-                'This is likely due to test intercepts - not a real problem'
-              );
-            }
-          });
-        }
-      });
-    }
-
-    testPermitIds = [];
-  });
-
   it('should display error message when delete operation fails with server error', () => {
     // Create test permit
     ApiActions.createPermitFromFixture(

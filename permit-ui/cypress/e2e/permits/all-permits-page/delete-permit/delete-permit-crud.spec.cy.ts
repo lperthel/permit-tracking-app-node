@@ -17,7 +17,6 @@
  * - ApiActions: Setup test permits via API for reliable test state
  * - UiActions: Centralized UI interactions and update workflows
  * - UiAssertions: Standardized verification of update operations
- * - TestStateManager: Baseline state management and cleanup validation
  * - PermitFixtures: Consistent test data for before/after scenarios
  */
 

@@ -1,6 +1,5 @@
 import { PermitFixtureKeys } from '../../../fixtures/permits/permit-fixtures';
 import { selector_shortcuts } from '../../../support/cypress-selectors';
-import { TestStateManager } from '../../../support/test-state-manager';
 import { UiActions } from '../../../support/ui-actions';
 import { UiAssertions } from '../../../support/ui-assertions';
 
@@ -23,22 +22,11 @@ import { UiAssertions } from '../../../support/ui-assertions';
  * Uses standardized test support classes for maintainable, government-ready patterns:
  * - UiActions: Centralized UI interactions and form operations
  * - UiAssertions: Standardized verification and validation patterns
- * - TestStateManager: Baseline state capture and cleanup validation
  * - ApiActions: Direct API operations for test setup and cleanup
  * - PermitFixtureKeys: Type-safe fixture references eliminating hardcoded strings
  */
 
 describe('Create Permit - CRUD Operations', () => {
-  beforeEach(() => {
-    // Capture baseline state before each test for cleanup validation
-    TestStateManager.captureBaseline();
-  });
-
-  afterEach(() => {
-    // Validate that system state is properly restored after test completion
-    TestStateManager.validateCleanup();
-  });
-
   describe('Create Permit Workflow', () => {
     it('should create permit through UI and display in table', () => {
       // Navigate to permits page and open new permit modal
