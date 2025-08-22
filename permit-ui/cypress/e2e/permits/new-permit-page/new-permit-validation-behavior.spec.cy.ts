@@ -6,7 +6,6 @@ import { PermitStatus } from '../../../../src/app/permits/shared/models/permit-s
 import {
   InvalidPermitFixtureKeys,
   PermitFixtureKeys,
-  PermitFixtures,
 } from '../../../fixtures/permits/permit-fixtures';
 import { getTestSelector } from '../../../support/cypress-selectors';
 import { UiActions } from '../../../support/ui-actions';
@@ -32,7 +31,7 @@ import { UiAssertions } from '../../../support/ui-assertions';
  * Uses new test support classes for maintainable, government-ready test patterns:
  * - UiActions: Centralized UI interactions
  * - UiAssertions: Standardized verification patterns
- * - PermitFixtures: Consistent test data management
+ * - PermitFixtures: Consistent test data management (accessed via UiActions)
  * - PermitFixtureKeys: Type-safe fixture references
  */
 
@@ -100,57 +99,36 @@ describe('New Permit Modal - Validation', () => {
       });
 
       it('should reject permit names exceeding maximum length', () => {
-        PermitFixtures.getInvalidPermitFormData(
+        UiActions.fillPermitFormFromInvalidFixture(
           InvalidPermitFixtureKeys.PERMIT_NAME_TOO_LONG
-        ).then((data) => {
-          UiActions.fillPermitForm(
-            data.permitName,
-            data.applicantName,
-            data.permitType,
-            data.status as PermitStatus
-          );
-          UiActions.clickSubmitButton();
-          UiAssertions.verifyFormError(
-            'permitName',
-            PERMIT_FORM_ERRORS.invalidPermitName
-          );
-        });
+        );
+        UiActions.clickSubmitButton();
+        UiAssertions.verifyFormError(
+          'permitName',
+          PERMIT_FORM_ERRORS.invalidPermitName
+        );
       });
 
       it('should reject permit names with invalid characters', () => {
-        PermitFixtures.getInvalidPermitFormData(
+        UiActions.fillPermitFormFromInvalidFixture(
           InvalidPermitFixtureKeys.PERMIT_NAME_INVALID_CHARS
-        ).then((data) => {
-          UiActions.fillPermitForm(
-            data.permitName,
-            data.applicantName,
-            data.permitType,
-            data.status as PermitStatus
-          );
-          UiActions.clickSubmitButton();
-          UiAssertions.verifyFormError(
-            'permitName',
-            PERMIT_FORM_ERRORS.invalidPermitName
-          );
-        });
+        );
+        UiActions.clickSubmitButton();
+        UiAssertions.verifyFormError(
+          'permitName',
+          PERMIT_FORM_ERRORS.invalidPermitName
+        );
       });
 
       it('should reject empty permit names', () => {
-        PermitFixtures.getInvalidPermitFormData(
+        UiActions.fillPermitFormFromInvalidFixture(
           InvalidPermitFixtureKeys.PERMIT_NAME_EMPTY
-        ).then((data) => {
-          UiActions.fillPermitForm(
-            data.permitName,
-            data.applicantName,
-            data.permitType,
-            data.status as PermitStatus
-          );
-          UiActions.clickSubmitButton();
-          UiAssertions.verifyFormError(
-            'permitName',
-            PERMIT_FORM_ERRORS.invalidPermitName
-          );
-        });
+        );
+        UiActions.clickSubmitButton();
+        UiAssertions.verifyFormError(
+          'permitName',
+          PERMIT_FORM_ERRORS.invalidPermitName
+        );
       });
     });
 
@@ -163,57 +141,36 @@ describe('New Permit Modal - Validation', () => {
       });
 
       it('should reject applicant names exceeding maximum length', () => {
-        PermitFixtures.getInvalidPermitFormData(
+        UiActions.fillPermitFormFromInvalidFixture(
           InvalidPermitFixtureKeys.APPLICANT_NAME_TOO_LONG
-        ).then((data) => {
-          UiActions.fillPermitForm(
-            data.permitName,
-            data.applicantName,
-            data.permitType,
-            data.status as PermitStatus
-          );
-          UiActions.clickSubmitButton();
-          UiAssertions.verifyFormError(
-            'applicantName',
-            PERMIT_FORM_ERRORS.invalidApplicantName
-          );
-        });
+        );
+        UiActions.clickSubmitButton();
+        UiAssertions.verifyFormError(
+          'applicantName',
+          PERMIT_FORM_ERRORS.invalidApplicantName
+        );
       });
 
       it('should reject applicant names with invalid characters', () => {
-        PermitFixtures.getInvalidPermitFormData(
+        UiActions.fillPermitFormFromInvalidFixture(
           InvalidPermitFixtureKeys.APPLICANT_NAME_INVALID_CHARS
-        ).then((data) => {
-          UiActions.fillPermitForm(
-            data.permitName,
-            data.applicantName,
-            data.permitType,
-            data.status as PermitStatus
-          );
-          UiActions.clickSubmitButton();
-          UiAssertions.verifyFormError(
-            'applicantName',
-            PERMIT_FORM_ERRORS.invalidApplicantName
-          );
-        });
+        );
+        UiActions.clickSubmitButton();
+        UiAssertions.verifyFormError(
+          'applicantName',
+          PERMIT_FORM_ERRORS.invalidApplicantName
+        );
       });
 
       it('should reject empty applicant names', () => {
-        PermitFixtures.getInvalidPermitFormData(
+        UiActions.fillPermitFormFromInvalidFixture(
           InvalidPermitFixtureKeys.APPLICANT_NAME_EMPTY
-        ).then((data) => {
-          UiActions.fillPermitForm(
-            data.permitName,
-            data.applicantName,
-            data.permitType,
-            data.status as PermitStatus
-          );
-          UiActions.clickSubmitButton();
-          UiAssertions.verifyFormError(
-            'applicantName',
-            PERMIT_FORM_ERRORS.invalidApplicantName
-          );
-        });
+        );
+        UiActions.clickSubmitButton();
+        UiAssertions.verifyFormError(
+          'applicantName',
+          PERMIT_FORM_ERRORS.invalidApplicantName
+        );
       });
     });
 
@@ -226,39 +183,25 @@ describe('New Permit Modal - Validation', () => {
       });
 
       it('should reject permit types with invalid characters', () => {
-        PermitFixtures.getInvalidPermitFormData(
+        UiActions.fillPermitFormFromInvalidFixture(
           InvalidPermitFixtureKeys.PERMIT_TYPE_INVALID_CHARS
-        ).then((data) => {
-          UiActions.fillPermitForm(
-            data.permitName,
-            data.applicantName,
-            data.permitType,
-            data.status as PermitStatus
-          );
-          UiActions.clickSubmitButton();
-          UiAssertions.verifyFormError(
-            'permitType',
-            PERMIT_FORM_ERRORS.invalidPermitType
-          );
-        });
+        );
+        UiActions.clickSubmitButton();
+        UiAssertions.verifyFormError(
+          'permitType',
+          PERMIT_FORM_ERRORS.invalidPermitType
+        );
       });
 
       it('should reject empty permit types', () => {
-        PermitFixtures.getInvalidPermitFormData(
+        UiActions.fillPermitFormFromInvalidFixture(
           InvalidPermitFixtureKeys.PERMIT_TYPE_EMPTY
-        ).then((data) => {
-          UiActions.fillPermitForm(
-            data.permitName,
-            data.applicantName,
-            data.permitType,
-            data.status as PermitStatus
-          );
-          UiActions.clickSubmitButton();
-          UiAssertions.verifyFormError(
-            'permitType',
-            PERMIT_FORM_ERRORS.invalidPermitType
-          );
-        });
+        );
+        UiActions.clickSubmitButton();
+        UiAssertions.verifyFormError(
+          'permitType',
+          PERMIT_FORM_ERRORS.invalidPermitType
+        );
       });
     });
 
@@ -297,21 +240,14 @@ describe('New Permit Modal - Validation', () => {
       });
 
       it('should require status selection', () => {
-        PermitFixtures.getInvalidPermitFormData(
+        UiActions.fillPermitFormFromInvalidFixture(
           InvalidPermitFixtureKeys.STATUS_EMPTY
-        ).then((data) => {
-          UiActions.fillPermitForm(
-            data.permitName,
-            data.applicantName,
-            data.permitType,
-            data.status as PermitStatus
-          );
-          UiActions.clickSubmitButton();
-          UiAssertions.verifyFormError(
-            'status',
-            PERMIT_FORM_ERRORS.invalidStatus
-          );
-        });
+        );
+        UiActions.clickSubmitButton();
+        UiAssertions.verifyFormError(
+          'status',
+          PERMIT_FORM_ERRORS.invalidStatus
+        );
       });
     });
   });
