@@ -44,10 +44,11 @@
           />
         </div>
         @if(permitForm().invalidPermitName){
-        <div [attr.data-testid]="SELECTORS.ERROR_PERMIT_NAME">
-          <p class="lp-control-error">
-            {{ errorMessages.invalidPermitName }}
-          </p>
+        <div
+          class="lp-control-error"
+          [attr.data-testid]="SELECTORS.ERROR_PERMIT_NAME"
+        >
+          {{ errorMessages.invalidPermitName }}
         </div>
         }
 
@@ -61,10 +62,11 @@
           />
         </div>
         @if(permitForm().invalidApplicantName){
-        <div [attr.data-testid]="SELECTORS.ERROR_APPLICANT_NAME">
-          <p class="lp-control-error">
-            {{ errorMessages.invalidApplicantName }}
-          </p>
+        <div
+          class="lp-control-error"
+          [attr.data-testid]="SELECTORS.ERROR_APPLICANT_NAME"
+        >
+          {{ errorMessages.invalidApplicantName }}
         </div>
         }
 
@@ -78,10 +80,11 @@
           />
         </div>
         @if(permitForm().invalidPermitType){
-        <div [attr.data-testid]="SELECTORS.ERROR_PERMIT_TYPE">
-          <p class="lp-control-error">
-            {{ errorMessages.invalidPermitType }}
-          </p>
+        <div
+          class="lp-control-error"
+          [attr.data-testid]="SELECTORS.ERROR_PERMIT_TYPE"
+        >
+          {{ errorMessages.invalidPermitType }}
         </div>
         }
 
@@ -100,10 +103,11 @@
           </select>
         </div>
         @if(permitForm().invalidStatus){
-        <div [attr.data-testid]="SELECTORS.ERROR_STATUS">
-          <p class="lp-control-error">
-            {{ errorMessages.invalidStatus }}
-          </p>
+        <div
+          class="lp-control-error"
+          [attr.data-testid]="SELECTORS.ERROR_STATUS"
+        >
+          {{ errorMessages.invalidStatus }}
         </div>
         }
       </div>
@@ -114,8 +118,15 @@
         type="submit"
         class="btn btn-outline-secondary"
         [attr.data-testid]="SELECTORS.SUBMIT_BUTTON"
+        [disabled]="isLoading()"
       >
-        Submit
+        @if (isLoading()) {
+        <span
+          class="spinner-border spinner-border-sm me-2"
+          role="status"
+          aria-hidden="true"
+        ></span>
+        Submitting... } @else { Submit }
       </button>
     </div>
   </form>

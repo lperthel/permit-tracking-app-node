@@ -54,6 +54,7 @@ export class PermitFormComponent {
   errorMessages = PERMIT_FORM_ERRORS;
   permitForm = input.required<PermitForm>();
   formHeader = input.required<string>();
+  isLoading = input<boolean>(false);
 
   public closeModalEvent = output<void>();
   @Output() public formSubmission = new EventEmitter<void>();
@@ -95,7 +96,6 @@ export class PermitFormComponent {
         this.permitForm().form.reset();
       },
     });
-
     // Register cleanup for all subscriptions
     this.closeConnection(modalClosed);
     this.closeConnection(modalDismissed);
