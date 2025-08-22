@@ -76,6 +76,20 @@ describe('New Permit Modal - Validation', () => {
     });
   });
 
+  describe('Form State Management', () => {
+    it('should preserve error states until corrected', () => {
+      // Trigger validation error
+      UiActions.clickSubmitButton();
+      UiAssertions.verifyFormError('permitName');
+
+      // Fill only permit name
+      UiActions.fillPermitForm('Valid Name', '', '', PermitStatus.PENDING);
+
+      // Verify permit name error clears
+      UiAssertions.verifyNoFormError('permitName');
+    });
+  });
+
   describe('Form Validation - Field-Specific Rules', () => {
     describe('Permit Name Validation', () => {
       it('should accept valid permit names', () => {
@@ -299,6 +313,15 @@ describe('New Permit Modal - Validation', () => {
           );
         });
       });
+    });
+  });
+
+  describe('Professional UX Standards', () => {
+    it('should provide clear visual feedback for validation', () => {
+      UiActions.clickSubmitButton();
+
+      // Verify validation styling
+      UiAssertions.verifyValidationStyling();
     });
   });
 });
