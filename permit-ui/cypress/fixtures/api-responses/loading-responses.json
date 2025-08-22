@@ -1,0 +1,85 @@
+{
+  "slowCreatePermit": {
+    "delay": 2000,
+    "statusCode": 201,
+    "body": {
+      "id": "created-permit-123",
+      "permitName": "Slow Created Permit",
+      "applicantName": "Slow Applicant",
+      "permitType": "Construction",
+      "status": "PENDING"
+    }
+  },
+  "slowUpdatePermit": {
+    "delay": 2000,
+    "statusCode": 200,
+    "body": {
+      "id": "updated-permit-123",
+      "permitName": "Slow Updated Permit",
+      "applicantName": "Slow Applicant",
+      "permitType": "Construction",
+      "status": "APPROVED"
+    }
+  },
+  "slowDeletePermit": {
+    "delay": 2000,
+    "statusCode": 204,
+    "body": {}
+  },
+  "slowGetPermits": {
+    "delay": 2000,
+    "statusCode": 200,
+    "body": [
+      {
+        "id": "slow-permit-1",
+        "permitName": "Slow Load Permit 1",
+        "applicantName": "Slow Applicant 1",
+        "permitType": "Construction",
+        "status": "PENDING"
+      },
+      {
+        "id": "slow-permit-2",
+        "permitName": "Slow Load Permit 2",
+        "applicantName": "Slow Applicant 2",
+        "permitType": "Electrical",
+        "status": "APPROVED"
+      }
+    ]
+  },
+  "slowGetPermitsEmpty": {
+    "delay": 1500,
+    "statusCode": 200,
+    "body": []
+  },
+  "timeoutCreate": {
+    "delay": 30000,
+    "statusCode": 408,
+    "body": {
+      "error": "Request timeout"
+    }
+  },
+  "timeoutUpdate": {
+    "delay": 30000,
+    "statusCode": 408,
+    "body": {
+      "error": "Request timeout"
+    }
+  },
+  "timeoutGetPermitsEmpty": {
+    "delay": 5000,
+    "statusCode": 200,
+    "body": []
+  },
+  "extremelySlowResponse": {
+    "delay": 60000,
+    "statusCode": 200,
+    "body": {
+      "message": "This took forever"
+    }
+  },
+  "extremelySlowEmptyResponse": {
+    "delay": 60000,
+    "statusCode": 200,
+    "body": []
+  }
+}
