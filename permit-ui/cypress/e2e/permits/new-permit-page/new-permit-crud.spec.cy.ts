@@ -1,5 +1,5 @@
 import { PermitFixtureKeys } from '../../../fixtures/permits/permit-fixtures';
-import { selectors } from '../../../support/cypress-selectors';
+import { selector_shortcuts } from '../../../support/cypress-selectors';
 import { TestStateManager } from '../../../support/test-state-manager';
 import { UiActions } from '../../../support/ui-actions';
 import { UiAssertions } from '../../../support/ui-assertions';
@@ -78,16 +78,16 @@ describe('Create Permit - CRUD Operations', () => {
       // Get the last row index and capture permit data
       UiActions.getLastRowIndex().then((lastRowIndex) => {
         // Capture the permit data for verification after refresh
-        cy.get(selectors.permitRowName(lastRowIndex))
+        cy.get(selector_shortcuts.permitRowName(lastRowIndex))
           .invoke('text')
           .then((permitName) => {
-            cy.get(selectors.permitRowApplicantName(lastRowIndex))
+            cy.get(selector_shortcuts.permitRowApplicantName(lastRowIndex))
               .invoke('text')
               .then((applicantName) => {
-                cy.get(selectors.permitRowPermitType(lastRowIndex))
+                cy.get(selector_shortcuts.permitRowPermitType(lastRowIndex))
                   .invoke('text')
                   .then((permitType) => {
-                    cy.get(selectors.permitRowStatus(lastRowIndex))
+                    cy.get(selector_shortcuts.permitRowStatus(lastRowIndex))
                       .invoke('text')
                       .then((status) => {
                         createdPermitData = {

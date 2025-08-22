@@ -3,7 +3,10 @@ import {
   PERMIT_FORM_SELECTORS,
 } from '../../../../src/app/permits/permit-form-model/permit-form.constants';
 import { ApiIntercepts } from '../../../support/api-intercepts';
-import { getTestSelector, selectors } from '../../../support/cypress-selectors';
+import {
+  getTestSelector,
+  selector_shortcuts,
+} from '../../../support/cypress-selectors';
 import { UiActions } from '../../../support/ui-actions';
 import { UiAssertions } from '../../../support/ui-assertions';
 
@@ -98,35 +101,32 @@ describe('Update Permit Modal - Behavior', () => {
       UiActions.clickModalCloseButton();
 
       // Capture table data
-      cy.get(selectors.permitRowName(0))
+      cy.get(selector_shortcuts.permitRowName(0))
         .invoke('text')
         .then((permitName) => {
-          cy.get(selectors.permitRowApplicantName(0))
+          cy.get(selector_shortcuts.permitRowApplicantName(0))
             .invoke('text')
             .then((applicantName) => {
-              cy.get(selectors.permitRowPermitType(0))
+              cy.get(selector_shortcuts.permitRowPermitType(0))
                 .invoke('text')
                 .then((permitType) => {
-                  cy.get(selectors.permitRowStatus(0))
+                  cy.get(selector_shortcuts.permitRowStatus(0))
                     .invoke('text')
                     .then((status) => {
                       // Now open modal again
                       UiActions.clickUpdatePermitButton(0);
 
                       // Verify form matches captured data
-                      cy.get(selectors.permitForm.inputPermitName).should(
-                        'have.value',
-                        permitName.trim()
-                      );
-                      cy.get(selectors.permitForm.inputApplicant).should(
-                        'have.value',
-                        applicantName.trim()
-                      );
-                      cy.get(selectors.permitForm.inputPermitType).should(
-                        'have.value',
-                        permitType.trim()
-                      );
-                      cy.get(selectors.permitForm.inputStatus).should(
+                      cy.get(
+                        selector_shortcuts.permitForm.inputPermitName
+                      ).should('have.value', permitName.trim());
+                      cy.get(
+                        selector_shortcuts.permitForm.inputApplicant
+                      ).should('have.value', applicantName.trim());
+                      cy.get(
+                        selector_shortcuts.permitForm.inputPermitType
+                      ).should('have.value', permitType.trim());
+                      cy.get(selector_shortcuts.permitForm.inputStatus).should(
                         'have.value',
                         status.trim()
                       );
@@ -138,7 +138,7 @@ describe('Update Permit Modal - Behavior', () => {
 
     it('should restore original data when modal is reopened', () => {
       // Modify existing data
-      cy.get(selectors.permitForm.inputPermitName)
+      cy.get(selector_shortcuts.permitForm.inputPermitName)
         .clear()
         .type('Modified Name');
 
@@ -147,7 +147,7 @@ describe('Update Permit Modal - Behavior', () => {
       UiActions.clickUpdatePermitButton(0);
 
       // Verify form is restored to original permit data (not cleared like new permit)
-      cy.get(selectors.permitForm.inputPermitName).should(
+      cy.get(selector_shortcuts.permitForm.inputPermitName).should(
         'not.contain.value',
         'Modified Name'
       );
@@ -158,7 +158,7 @@ describe('Update Permit Modal - Behavior', () => {
     it('should show loading states during form submission', () => {
       // Form should already be populated with existing permit data
       // Just modify one field to trigger an update
-      cy.get(selectors.permitForm.inputPermitName)
+      cy.get(selector_shortcuts.permitForm.inputPermitName)
         .clear()
         .type('Updated Permit Name');
 

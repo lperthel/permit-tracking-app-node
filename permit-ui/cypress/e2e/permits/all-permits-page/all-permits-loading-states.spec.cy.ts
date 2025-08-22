@@ -1,6 +1,9 @@
 import { AllPermitsComponentConstants } from '../../../../src/app/permits/pages/all-permits/all-permits-component.constants';
 import { ApiIntercepts } from '../../../support/api-intercepts';
-import { getTestSelector, selectors } from '../../../support/cypress-selectors';
+import {
+  getTestSelector,
+  selector_shortcuts,
+} from '../../../support/cypress-selectors';
 import { UiActions } from '../../../support/ui-actions';
 import { UiAssertions } from '../../../support/ui-assertions';
 
@@ -72,7 +75,7 @@ describe('All Permits Page - Loading State Behavior', () => {
     UiAssertions.verifyLoadingState();
 
     // Verify other UI elements remain accessible during loading
-    cy.get(selectors.table).should('be.visible');
+    cy.get(selector_shortcuts.table).should('be.visible');
     cy.get(
       getTestSelector(AllPermitsComponentConstants.TEST_IDS.NEW_PERMIT_BUTTON)
     ).should('be.visible');

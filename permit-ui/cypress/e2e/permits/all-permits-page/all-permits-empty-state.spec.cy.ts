@@ -1,7 +1,10 @@
 import { AllPermitsComponentConstants } from '../../../../src/app/permits/pages/all-permits/all-permits-component.constants';
 import { PERMIT_FORM_SELECTORS } from '../../../../src/app/permits/permit-form-model/permit-form.constants';
 import { ApiIntercepts } from '../../../support/api-intercepts';
-import { getTestSelector, selectors } from '../../../support/cypress-selectors';
+import {
+  getTestSelector,
+  selector_shortcuts,
+} from '../../../support/cypress-selectors';
 import { UiActions } from '../../../support/ui-actions';
 import { UiAssertions } from '../../../support/ui-assertions';
 
@@ -41,11 +44,13 @@ describe('All Permits Page - Empty State Handling', () => {
       .and('not.be.disabled');
 
     // Verify main "New Permit" button is still available
-    cy.get(selectors.createButton).should('be.visible').and('not.be.disabled');
+    cy.get(selector_shortcuts.createButton)
+      .should('be.visible')
+      .and('not.be.disabled');
 
     // Verify table headers are rendered but no data rows
-    cy.get(selectors.table).should('be.visible');
-    cy.get(`${selectors.table} tbody tr`).should('have.length', 0);
+    cy.get(selector_shortcuts.table).should('be.visible');
+    cy.get(`${selector_shortcuts.table} tbody tr`).should('have.length', 0);
   });
 
   it('should not show empty state while loading', () => {
@@ -156,6 +161,9 @@ describe('All Permits Page - Empty State Handling', () => {
       .and('not.be.empty');
 
     // Verify table now has data rows
-    cy.get(`${selectors.table} tbody tr`).should('have.length.greaterThan', 0);
+    cy.get(`${selector_shortcuts.table} tbody tr`).should(
+      'have.length.greaterThan',
+      0
+    );
   });
 });

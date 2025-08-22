@@ -8,7 +8,7 @@ import {
   PermitFixtureKeys,
   PermitFixtures,
 } from '../fixtures/permits/permit-fixtures';
-import { selectors } from './cypress-selectors';
+import { selector_shortcuts } from './cypress-selectors';
 import { UiActions } from './ui-actions';
 
 export class PermitWorkflows {
@@ -19,22 +19,22 @@ export class PermitWorkflows {
     UiActions.clickNewPermitButton();
 
     if (permit.permitName) {
-      cy.get(selectors.permitForm.inputPermitName)
+      cy.get(selector_shortcuts.permitForm.inputPermitName)
         .clear()
         .type(permit.permitName);
     }
     if (permit.applicantName) {
-      cy.get(selectors.permitForm.inputApplicant)
+      cy.get(selector_shortcuts.permitForm.inputApplicant)
         .clear()
         .type(permit.applicantName);
     }
     if (permit.permitType) {
-      cy.get(selectors.permitForm.inputPermitType)
+      cy.get(selector_shortcuts.permitForm.inputPermitType)
         .clear()
         .type(permit.permitType);
     }
     if (permit.status) {
-      cy.get(selectors.permitForm.inputStatus).select(permit.status);
+      cy.get(selector_shortcuts.permitForm.inputStatus).select(permit.status);
     }
 
     UiActions.clickSubmitButton();
@@ -58,25 +58,27 @@ export class PermitWorkflows {
    * Complete permit update workflow
    */
   static updatePermit(rowIndex: number, updatedData: Partial<Permit>): void {
-    cy.get(selectors.permitRowUpdate(rowIndex)).click();
+    cy.get(selector_shortcuts.permitRowUpdate(rowIndex)).click();
 
     if (updatedData.permitName) {
-      cy.get(selectors.permitForm.inputPermitName)
+      cy.get(selector_shortcuts.permitForm.inputPermitName)
         .clear()
         .type(updatedData.permitName);
     }
     if (updatedData.applicantName) {
-      cy.get(selectors.permitForm.inputApplicant)
+      cy.get(selector_shortcuts.permitForm.inputApplicant)
         .clear()
         .type(updatedData.applicantName);
     }
     if (updatedData.permitType) {
-      cy.get(selectors.permitForm.inputPermitType)
+      cy.get(selector_shortcuts.permitForm.inputPermitType)
         .clear()
         .type(updatedData.permitType);
     }
     if (updatedData.status) {
-      cy.get(selectors.permitForm.inputStatus).select(updatedData.status);
+      cy.get(selector_shortcuts.permitForm.inputStatus).select(
+        updatedData.status
+      );
     }
 
     UiActions.clickSubmitButton();
@@ -86,6 +88,6 @@ export class PermitWorkflows {
    * Complete permit deletion workflow
    */
   static deletePermit(rowIndex: number): void {
-    cy.get(selectors.permitRowDelete(rowIndex)).click();
+    cy.get(selector_shortcuts.permitRowDelete(rowIndex)).click();
   }
 }

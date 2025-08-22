@@ -3,7 +3,10 @@ import { PERMIT_FORM_SELECTORS } from '../../../../src/app/permits/permit-form-m
 import { PermitStatus } from '../../../../src/app/permits/shared/models/permit-status.enums';
 import { PermitFixtureKeys } from '../../../fixtures/permits/permit-fixtures';
 import { ApiIntercepts } from '../../../support/api-intercepts';
-import { getTestSelector, selectors } from '../../../support/cypress-selectors';
+import {
+  getTestSelector,
+  selector_shortcuts,
+} from '../../../support/cypress-selectors';
 import { UiActions } from '../../../support/ui-actions';
 
 /*
@@ -61,8 +64,14 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_HEADER)).should('exist');
 
     // Verify form data is preserved (check a few key fields)
-    cy.get(selectors.permitForm.inputPermitName).should('not.have.value', '');
-    cy.get(selectors.permitForm.inputApplicant).should('not.have.value', '');
+    cy.get(selector_shortcuts.permitForm.inputPermitName).should(
+      'not.have.value',
+      ''
+    );
+    cy.get(selector_shortcuts.permitForm.inputApplicant).should(
+      'not.have.value',
+      ''
+    );
 
     // Verify submit button is still functional for retry
     cy.get(getTestSelector(PERMIT_FORM_SELECTORS.SUBMIT_BUTTON)).should(
@@ -98,8 +107,14 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     );
 
     // Verify form data preservation during network error
-    cy.get(selectors.permitForm.inputPermitName).should('not.have.value', '');
-    cy.get(selectors.permitForm.inputApplicant).should('not.have.value', '');
+    cy.get(selector_shortcuts.permitForm.inputPermitName).should(
+      'not.have.value',
+      ''
+    );
+    cy.get(selector_shortcuts.permitForm.inputApplicant).should(
+      'not.have.value',
+      ''
+    );
 
     // Verify modal remains open for user recovery
     cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_HEADER)).should('exist');
@@ -127,7 +142,7 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
 
     // Verify form remains accessible during timeout
     cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_HEADER)).should('exist');
-    cy.get(selectors.permitForm.inputPermitName).should('be.visible');
+    cy.get(selector_shortcuts.permitForm.inputPermitName).should('be.visible');
 
     // Verify modal close button remains functional during timeout
     UiActions.clickModalCloseButton();
@@ -170,7 +185,7 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     );
 
     // Verify we're back on main page (successful creation)
-    cy.get(selectors.table).should('be.visible');
+    cy.get(selector_shortcuts.table).should('be.visible');
   });
 
   it('should preserve form data during multiple consecutive creation failures', () => {
@@ -203,19 +218,19 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     cy.get(REST_ERROR_SELECTOR).should('be.visible');
 
     // Verify data persists after first failure
-    cy.get(selectors.permitForm.inputPermitName).should(
+    cy.get(selector_shortcuts.permitForm.inputPermitName).should(
       'have.value',
       testData.permitName
     );
-    cy.get(selectors.permitForm.inputApplicant).should(
+    cy.get(selector_shortcuts.permitForm.inputApplicant).should(
       'have.value',
       testData.applicantName
     );
-    cy.get(selectors.permitForm.inputPermitType).should(
+    cy.get(selector_shortcuts.permitForm.inputPermitType).should(
       'have.value',
       testData.permitType
     );
-    cy.get(selectors.permitForm.inputStatus).should(
+    cy.get(selector_shortcuts.permitForm.inputStatus).should(
       'have.value',
       testData.status
     );
@@ -225,11 +240,11 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     cy.wait('@persistentFailure');
 
     // Verify data still persists after second failure
-    cy.get(selectors.permitForm.inputPermitName).should(
+    cy.get(selector_shortcuts.permitForm.inputPermitName).should(
       'have.value',
       testData.permitName
     );
-    cy.get(selectors.permitForm.inputApplicant).should(
+    cy.get(selector_shortcuts.permitForm.inputApplicant).should(
       'have.value',
       testData.applicantName
     );
@@ -308,8 +323,8 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_HEADER)).should('exist');
 
     // Verify form fields remain visible during loading
-    cy.get(selectors.permitForm.inputPermitName).should('be.visible');
-    cy.get(selectors.permitForm.inputApplicant).should('be.visible');
+    cy.get(selector_shortcuts.permitForm.inputPermitName).should('be.visible');
+    cy.get(selector_shortcuts.permitForm.inputApplicant).should('be.visible');
 
     // Wait for completion
     cy.wait('@delayedSuccess');
@@ -318,7 +333,7 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_HEADER)).should(
       'not.exist'
     );
-    cy.get(selectors.table).should('be.visible');
+    cy.get(selector_shortcuts.table).should('be.visible');
   });
 
   it('should clear error messages on successful form submission after previous failures', () => {
@@ -348,6 +363,6 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_HEADER)).should(
       'not.exist'
     );
-    cy.get(selectors.table).should('be.visible');
+    cy.get(selector_shortcuts.table).should('be.visible');
   });
 });
