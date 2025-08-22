@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { PERMIT_STATUS_VALUES } from '../models/permit-status.enums';
 import { Permit } from '../models/permit.model';
 
 export class ValidationError extends Error {
@@ -30,13 +31,6 @@ export class PermitValidationService {
     'applicantName',
     'permitType',
     'status',
-  ] as const;
-
-  public static readonly VALID_STATUSES = [
-    'SUBMITTED',
-    'APPROVED',
-    'REJECTED',
-    'UNDER_REVIEW',
   ] as const;
 
   // Logging messages
@@ -158,7 +152,7 @@ export class PermitValidationService {
    * @returns true if status is valid
    */
   isValidStatus(status: string): boolean {
-    return PermitValidationService.VALID_STATUSES.includes(status as any);
+    return PERMIT_STATUS_VALUES.includes(status as any);
   }
 
   /**

@@ -236,7 +236,7 @@ export class UiActions {
         permitData.permitName || '',
         permitData.applicantName || '',
         permitData.permitType || '',
-        (permitData.status as PermitStatus) || PermitStatus.PENDING
+        (permitData.status as PermitStatus) || ''
       );
     });
   }

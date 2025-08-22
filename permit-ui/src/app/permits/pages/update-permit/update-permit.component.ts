@@ -57,7 +57,10 @@ export class UpdatePermitComponent implements OnInit {
   }
 
   updatePermit() {
+    this.isSubmitting.set(true);
+
     if (this.permitForm.form.invalid) {
+      this.isSubmitting.set(false);
       return;
     }
     const updatePermit: Permit = {
@@ -67,7 +70,7 @@ export class UpdatePermitComponent implements OnInit {
       permitType: this.permitForm.form.value.permitType!,
       status: this.permitForm.form.value.status! as PermitStatus,
     };
-    this.isSubmitting.set(true);
+
     const subscription = this.permitService
       .updatePermit(updatePermit)
       .subscribe({

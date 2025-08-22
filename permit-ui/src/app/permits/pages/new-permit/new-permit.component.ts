@@ -64,6 +64,7 @@ export class NewPermitComponent implements OnInit {
     DOMPurify.sanitize(rawDescription);
 
     if (this.permitForm.form.invalid) {
+      this.isSubmitting.set(false);
       return;
     }
 
