@@ -60,10 +60,10 @@ describe('Update Permit Modal - Behavior', () => {
       );
 
       // Verify all form fields exist with proper labels
-      UiAssertions.verifyFormFieldExists('permitName');
-      UiAssertions.verifyFormFieldExists('applicantName');
-      UiAssertions.verifyFormFieldExists('permitType');
-      UiAssertions.verifyFormFieldExists('status');
+      UiAssertions.verifyPermitFormFieldExists('permitName');
+      UiAssertions.verifyPermitFormFieldExists('applicantName');
+      UiAssertions.verifyPermitFormFieldExists('permitType');
+      UiAssertions.verifyPermitFormFieldExists('status');
 
       // Verify submit button
       cy.get(getTestSelector(PERMIT_FORM_SELECTORS.SUBMIT_BUTTON)).should(

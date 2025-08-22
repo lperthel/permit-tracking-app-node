@@ -61,7 +61,7 @@ describe('All Permits Page - Empty State Handling', () => {
     UiActions.clickRefreshButton();
 
     // While loading, empty state should not appear yet
-    UiAssertions.verifyLoadingState();
+    UiAssertions.verifyAllPermitsLoadingState();
 
     const EMPTY_STATE_SELECTOR = getTestSelector(
       AllPermitsComponentConstants.TEST_IDS.EMPTY_STATE_ALERT
@@ -147,7 +147,7 @@ describe('All Permits Page - Empty State Handling', () => {
     cy.wait('@populatedState');
 
     // Verify empty state disappears and data appears
-    UiAssertions.verifyNoError();
+    UiAssertions.verifyAllPermitsNoError();
     const EMPTY_STATE_SELECTOR = getTestSelector(
       AllPermitsComponentConstants.TEST_IDS.EMPTY_STATE_ALERT
     );

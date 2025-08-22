@@ -36,7 +36,7 @@ describe('All Permits Page - Network Error Scenarios', () => {
     cy.wait('@networkError');
 
     // Verify error alert appears with proper messaging
-    UiAssertions.verifyErrorMessage(UI_TEXT.SERVER_CONNECTION_ERROR);
+    UiAssertions.verifyAllPermitsErrorMessage(UI_TEXT.SERVER_CONNECTION_ERROR);
 
     // Verify table is still accessible (graceful degradation)
     cy.get(
@@ -62,7 +62,7 @@ describe('All Permits Page - Network Error Scenarios', () => {
     cy.wait('@serverError');
 
     // Verify error alert displays with proper accessibility
-    UiAssertions.verifyErrorMessage(UI_TEXT.SERVER_CONNECTION_ERROR);
+    UiAssertions.verifyAllPermitsErrorMessage(UI_TEXT.SERVER_CONNECTION_ERROR);
 
     // Verify user can attempt recovery
     UiAssertions.verifyButtonEnabled(
@@ -83,7 +83,7 @@ describe('All Permits Page - Network Error Scenarios', () => {
     cy.wait('@notFoundError');
 
     // Verify error handling for 404
-    UiAssertions.verifyErrorMessage(UI_TEXT.SERVER_CONNECTION_ERROR);
+    UiAssertions.verifyAllPermitsErrorMessage(UI_TEXT.SERVER_CONNECTION_ERROR);
 
     // Verify graceful degradation - app still functional
     cy.get(

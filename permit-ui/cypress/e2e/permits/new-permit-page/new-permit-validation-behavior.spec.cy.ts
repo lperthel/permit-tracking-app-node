@@ -72,7 +72,7 @@ describe('New Permit Modal - Validation', () => {
       UiActions.fillPermitFormFromFixture(PermitFixtureKeys.CREATE_THIS_PERMIT);
 
       // Verify all errors are cleared
-      UiAssertions.verifyNoFormErrors();
+      UiAssertions.verifyNoPermitFormErrors();
     });
   });
 
@@ -86,7 +86,7 @@ describe('New Permit Modal - Validation', () => {
       UiActions.fillPermitForm('Valid Name', '', '', PermitStatus.PENDING);
 
       // Verify permit name error clears
-      UiAssertions.verifyNoFormError('permitName');
+      UiAssertions.verifyNoPermitFormError('permitName');
     });
   });
 
@@ -96,7 +96,7 @@ describe('New Permit Modal - Validation', () => {
         UiActions.fillPermitFormFromFixture(
           PermitFixtureKeys.CREATE_THIS_PERMIT
         );
-        UiAssertions.verifyNoFormError('permitName');
+        UiAssertions.verifyNoPermitFormError('permitName');
       });
 
       it('should reject permit names exceeding maximum length', () => {
@@ -159,7 +159,7 @@ describe('New Permit Modal - Validation', () => {
         UiActions.fillPermitFormFromFixture(
           PermitFixtureKeys.CREATE_THIS_PERMIT
         );
-        UiAssertions.verifyNoFormError('applicantName');
+        UiAssertions.verifyNoPermitFormError('applicantName');
       });
 
       it('should reject applicant names exceeding maximum length', () => {
@@ -222,7 +222,7 @@ describe('New Permit Modal - Validation', () => {
         UiActions.fillPermitFormFromFixture(
           PermitFixtureKeys.CREATE_THIS_PERMIT
         );
-        UiAssertions.verifyNoFormError('permitType');
+        UiAssertions.verifyNoPermitFormError('permitType');
       });
 
       it('should reject permit types with invalid characters', () => {
@@ -280,7 +280,7 @@ describe('New Permit Modal - Validation', () => {
             'Construction',
             status
           );
-          UiAssertions.verifyNoFormError('status');
+          UiAssertions.verifyNoPermitFormError('status');
           UiActions.clearPermitForm();
         });
       });

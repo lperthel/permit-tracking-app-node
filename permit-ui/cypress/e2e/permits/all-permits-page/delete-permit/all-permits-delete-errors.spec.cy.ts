@@ -93,7 +93,7 @@ describe('All Permits Page - Delete Operation Error Scenarios', () => {
         cy.wait('@deleteServerError');
 
         // Verify error and permit still exists
-        UiAssertions.verifyErrorMessage('Could not delete');
+        UiAssertions.verifyAllPermitsErrorMessage('Could not delete');
         cy.contains('td', permitName).should('exist');
 
         UiAssertions.verifyButtonEnabled(
@@ -180,7 +180,7 @@ describe('All Permits Page - Delete Operation Error Scenarios', () => {
         cy.wait('@deleteNetworkError');
 
         // Verify error handling and data restoration
-        UiAssertions.verifyErrorMessage('Could not delete');
+        UiAssertions.verifyAllPermitsErrorMessage('Could not delete');
         cy.contains('td', permitName).should('exist');
 
         // Verify app remains functional
@@ -212,14 +212,14 @@ describe('All Permits Page - Delete Operation Error Scenarios', () => {
       // Delete first permit
       UiActions.deletePermitByIndex(0);
       cy.wait('@deleteFailure');
-      UiAssertions.verifyErrorMessage('Could not delete');
+      UiAssertions.verifyAllPermitsErrorMessage('Could not delete');
 
       // Delete second permit
       UiActions.deletePermitByIndex(1);
       cy.wait('@deleteFailure');
 
       // Verify error shows both failures
-      UiAssertions.verifyErrorMessage('Could not delete 2 permits:');
+      UiAssertions.verifyAllPermitsErrorMessage('Could not delete 2 permits:');
 
       UiAssertions.verifyButtonEnabled(
         `[data-testid="${AllPermitsComponentConstants.TEST_IDS.REFRESH_PERMITS_BUTTON}"]`

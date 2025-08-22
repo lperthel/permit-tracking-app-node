@@ -33,7 +33,7 @@ describe('All Permits Page - Loading State Behavior', () => {
 
     // Verify loading state appears
     UiActions.waitForLoadingSpinner();
-    UiAssertions.verifyLoadingState();
+    UiAssertions.verifyAllPermitsLoadingState();
 
     // Wait for request to complete
     cy.wait('@slowRequest');
@@ -51,8 +51,8 @@ describe('All Permits Page - Loading State Behavior', () => {
 
     // Verify loading state with accessibility
     UiActions.waitForLoadingSpinner();
-    UiAssertions.verifyLoadingAccessibility();
-    UiAssertions.verifyLoadingState();
+    UiAssertions.verifyAllPermitsLoadingAccessibility();
+    UiAssertions.verifyAllPermitsLoadingState();
 
     // Wait for request completion (should be ~1.5 seconds)
     cy.wait('@slowLoad');
@@ -72,7 +72,7 @@ describe('All Permits Page - Loading State Behavior', () => {
     UiActions.clickRefreshButton();
 
     // Verify loading state
-    UiAssertions.verifyLoadingState();
+    UiAssertions.verifyAllPermitsLoadingState();
 
     // Verify other UI elements remain accessible during loading
     cy.get(selector_shortcuts.table).should('be.visible');
