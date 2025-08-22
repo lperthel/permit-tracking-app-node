@@ -35,11 +35,11 @@ export const PERMIT_FORM_SELECTORS = {
 export const PERMIT_FORM_ERRORS = {
   // Updated to match Java DTO validation messages and field names
   invalidPermitName:
-    'Permit name is required, must be at most 100 characters, and can only contain letters, numbers, spaces, dashes, apostrophes, and periods',
+    'Permit name is required, must be at most 100 characters, and can only contain letters, numbers, spaces, dashes, apostrophes, commas, and periods',
   invalidApplicantName:
-    'Applicant name is required, must be at most 100 characters, and can only contain letters, numbers, spaces, dashes, apostrophes, and periods',
+    'Applicant name is required, must be at most 100 characters, and can only contain letters, numbers, spaces, dashes, apostrophes,commas, and periods',
   invalidPermitType:
-    'Permit type is required, must be at most 50 characters, and can only contain letters, numbers, spaces, dashes, apostrophes, and periods',
+    'Permit type is required, must be at most 50 characters, and can only contain letters, numbers, spaces, dashes, apostrophes, commas, and periods',
   invalidStatus: 'Status is required and must be a valid permit status',
 };
 export const PERMIT_FORM_HEADERS = {
@@ -59,15 +59,15 @@ export const PERMIT_FORM_CONSTRAINTS = {
  */
 
 export const PERMIT_FORM_PATTERNS = {
-  PERMIT_NAME: /^[a-zA-Z0-9 \-.']+$/,
-  APPLICANT_NAME: /^[a-zA-Z0-9 \-.']+$/,
-  PERMIT_TYPE: /^[a-zA-Z0-9 \-.']+$/,
+  PERMIT_NAME: /^[a-zA-Z0-9 \-.,']+$/,
+  APPLICANT_NAME: /^[a-zA-Z0-9 \-.,']+$/,
+  PERMIT_TYPE: /^[a-zA-Z0-9 \-.,']+$/,
 };
 /**
  * Maximum length constraints from Java DTO
  */
 export const PERMIT_FORM_MAX_LENGTHS = {
-  PERMIT_NAME: 100,
+  PERMIT_NAME: 150,
   APPLICANT_NAME: 100,
   PERMIT_TYPE: 50,
 };
