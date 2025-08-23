@@ -21,8 +21,8 @@
  */
 
 import { PermitFixtureKeys } from '../../../../fixtures/permits/permit-fixtures';
-import { ApiActions } from '../../../../support/api-actions';
-import { UiActions } from '../../../../support/ui-actions';
+import { ApiActions } from '../../../../support/api/api-actions';
+import { UiActions } from '../../../../support/ui/ui-actions';
 
 describe('Update Permit - CRUD Operations', () => {
   let testPermitIds: string[] = [];

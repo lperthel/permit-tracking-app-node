@@ -15,10 +15,10 @@
 
 import { UI_TEXT } from '../../../../src/app/assets/constants/ui-text.constants';
 import { AllPermitsComponentConstants } from '../../../../src/app/permits/pages/all-permits/all-permits-component.constants';
-import { ApiIntercepts } from '../../../support/api-intercepts';
-import { getTestSelector } from '../../../support/cypress-selectors';
-import { UiActions } from '../../../support/ui-actions';
-import { UiAssertions } from '../../../support/ui-assertions';
+import { ApiIntercepts } from '../../../support/api/api-intercepts';
+import { UiActions } from '../../../support/ui/ui-actions';
+import { getTestSelector } from '../../../support/ui/cypress-selectors';
+import { UiAssertions } from '../../../support/ui/ui-assertions';
 
 describe('All Permits Page - Network Error Scenarios', () => {
   beforeEach(() => {

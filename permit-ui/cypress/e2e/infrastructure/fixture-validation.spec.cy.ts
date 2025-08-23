@@ -1,4 +1,3 @@
-import { ApiResponseFixtures } from '../../fixtures/api-responses/api-response-fixtures';
 import {
   PermitFixtures,
   ValidPermitFixtureKeys,

@@ -2,9 +2,9 @@ import {
   PERMIT_FORM_ERRORS,
   PERMIT_FORM_SELECTORS,
 } from '../../../../src/app/permits/permit-form-model/permit-form.constants';
-import { getTestSelector } from '../../../support/cypress-selectors';
-import { UiActions } from '../../../support/ui-actions';
-import { UiAssertions } from '../../../support/ui-assertions';
+import { UiActions } from '../../../support/ui/ui-actions';
+import { getTestSelector } from '../../../support/ui/cypress-selectors';
+import { UiAssertions } from '../../../support/ui/ui-assertions';
 
 /*
  * OVERVIEW:

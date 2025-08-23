@@ -2,14 +2,14 @@
 // ui-assertions.ts - All UI verification and validation
 // ============================================================================
 
-import { AllPermitsComponentConstants } from '../../src/app/permits/pages/all-permits/all-permits-component.constants';
-import { PERMIT_FORM_SELECTORS } from '../../src/app/permits/permit-form-model/permit-form.constants';
-import { PermitStatus } from '../../src/app/permits/shared/models/permit-status.enums';
-import { Permit } from '../../src/app/permits/shared/models/permit.model';
+import { AllPermitsComponentConstants } from '../../../src/app/permits/pages/all-permits/all-permits-component.constants';
+import { PERMIT_FORM_SELECTORS } from '../../../src/app/permits/permit-form-model/permit-form.constants';
+import { PermitStatus } from '../../../src/app/permits/shared/models/permit-status.enums';
+import { Permit } from '../../../src/app/permits/shared/models/permit.model';
 import {
   PermitFixtureKeys,
   PermitFixtures,
-} from '../fixtures/permits/permit-fixtures';
+} from '../../fixtures/permits/permit-fixtures';
 import { getTestSelector, selector_shortcuts } from './cypress-selectors';
 import { UiActions } from './ui-actions';
 

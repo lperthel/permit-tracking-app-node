@@ -2,6 +2,13 @@
 // api-response-fixtures.ts - API Response Mocking and Network Simulation
 // ============================================================================
 
+import {
+  ApiErrorType,
+  HttpMethod,
+  LoadingResponseKey,
+  SuccessResponseKey,
+} from './api-enums';
+
 /**
  * API Response Fixture Helper for Network Behavior Simulation
  *
@@ -13,7 +20,6 @@
  * - Backend: Currently Faker (json-server) during Spring Boot transition
  * - API URLs: Point to dev_env.apiUrl (Faker endpoint)
  * - Future: Will support both Faker and Spring Boot API endpoints
- *
  *
  * FIXTURE STRUCTURE:
  * api-responses/
@@ -104,11 +110,11 @@ export class ApiResponseFixtures {
    * @returns Promise resolving to complete API response mock
    *
    * @example
-   * ApiResponseFixtures.getSuccessResponse('createPermit').then(response => {
+   * ApiResponseFixtures.getSuccessResponse(SuccessResponseKey.CREATE_PERMIT).then(response => {
    *   // response = { statusCode: 201, body: { id: "...", permitName: "..." } }
    * });
    */
-  static getSuccessResponse(responseName: keyof SuccessResponses) {
+  static getSuccessResponse(responseName: SuccessResponseKey) {
     return this.loadSuccessResponses().then(
       (responses) => responses[responseName]
     );
@@ -121,11 +127,11 @@ export class ApiResponseFixtures {
    * @returns Promise resolving to complete API error response mock
    *
    * @example
-   * ApiResponseFixtures.getErrorResponse('serverError').then(response => {
+   * ApiResponseFixtures.getErrorResponse(ApiErrorType.SERVER_ERROR).then(response => {
    *   // response = { statusCode: 500, body: { error: "Internal Server Error", message: "..." } }
    * });
    */
-  static getErrorResponse(responseName: keyof ErrorResponses) {
+  static getErrorResponse(responseName: ApiErrorType) {
     return this.loadErrorResponses().then(
       (responses) => responses[responseName]
     );
@@ -138,11 +144,11 @@ export class ApiResponseFixtures {
    * @returns Promise resolving to complete API response mock with delay
    *
    * @example
-   * ApiResponseFixtures.getLoadingResponse('slowCreatePermit').then(response => {
+   * ApiResponseFixtures.getLoadingResponse(LoadingResponseKey.SLOW_CREATE_PERMIT).then(response => {
    *   // response = { delay: 2000, statusCode: 201, body: { ... } }
    * });
    */
-  static getLoadingResponse(responseName: keyof LoadingResponses) {
+  static getLoadingResponse(responseName: LoadingResponseKey) {
     return this.loadLoadingResponses().then(
       (responses) => responses[responseName]
     );
@@ -164,13 +170,13 @@ export class ApiResponseFixtures {
    * @param alias - Optional alias for the intercept (for cy.wait('@alias'))
    *
    * @example
-   * ApiResponseFixtures.interceptWithSuccess('POST', '*[/]permits', 'createPermit', 'createRequest');
+   * ApiResponseFixtures.interceptWithSuccess(HttpMethod.POST, '*[*]/permits', SuccessResponseKey.CREATE_PERMIT, 'createRequest');
    * Later in test: cy.wait('@createRequest');
    */
   static interceptWithSuccess(
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+    method: HttpMethod,
     url: string,
-    responseName: keyof SuccessResponses,
+    responseName: SuccessResponseKey,
     alias?: string
   ) {
     return this.getSuccessResponse(responseName).then((response) => {
@@ -194,13 +200,13 @@ export class ApiResponseFixtures {
    * @param alias - Optional alias for the intercept
    *
    * @example
-   * ApiResponseFixtures.interceptWithError('POST', '**[/]permits', 'serverError', 'errorRequest');
+   * ApiResponseFixtures.interceptWithError(HttpMethod.POST, '*[*]/permits', ApiErrorType.SERVER_ERROR, 'errorRequest');
    * // Test error handling: cy.wait('@errorRequest'); cy.get('[role="alert"]').should('be.visible');
    */
   static interceptWithError(
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+    method: HttpMethod,
     url: string,
-    responseName: keyof ErrorResponses,
+    responseName: ApiErrorType,
     alias?: string
   ) {
     return this.getErrorResponse(responseName).then((response) => {
@@ -226,14 +232,14 @@ export class ApiResponseFixtures {
    * @param alias - Optional alias for the intercept
    *
    * @example
-   * ApiResponseFixtures.interceptWithLoading('GET', '**[/]permits', 'slowGetPermits', 'slowRequest');
+   * ApiResponseFixtures.interceptWithLoading(HttpMethod.GET, '*[*]/permits', LoadingResponseKey.SLOW_GET_PERMITS, 'slowRequest');
    * // Test loading state: cy.get('[data-testid="loading-spinner"]').should('be.visible');
    * // cy.wait('@slowRequest'); cy.get('[data-testid="loading-spinner"]').should('not.exist');
    */
   static interceptWithLoading(
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+    method: HttpMethod,
     url: string,
-    responseName: keyof LoadingResponses,
+    responseName: LoadingResponseKey,
     alias?: string
   ) {
     return this.getLoadingResponse(responseName).then((response) => {
@@ -272,12 +278,12 @@ export class ApiResponseFixtures {
  * - emptyPermitsList: 200 OK with empty array (empty state testing)
  */
 export interface SuccessResponses {
-  createPermit: ApiResponse;
-  updatePermit: ApiResponse;
-  deletePermit: ApiResponse;
-  getPermitsList: ApiResponse;
-  getSinglePermit: ApiResponse;
-  emptyPermitsList: ApiResponse;
+  [SuccessResponseKey.CREATE_PERMIT]: ApiResponse;
+  [SuccessResponseKey.UPDATE_PERMIT]: ApiResponse;
+  [SuccessResponseKey.DELETE_PERMIT]: ApiResponse;
+  [SuccessResponseKey.GET_PERMITS_LIST]: ApiResponse;
+  [SuccessResponseKey.GET_SINGLE_PERMIT]: ApiResponse;
+  [SuccessResponseKey.EMPTY_PERMITS_LIST]: ApiResponse;
 }
 
 /**
@@ -295,28 +301,15 @@ export interface SuccessResponses {
  * - networkError: Network connection failure (special handling)
  * - notFound: 404 Resource not found
  * - badRequest: 400 Invalid request data
- * - unauthorized: 401 Authentication required
- * - forbidden: 403 Insufficient permissions
- * - unprocessableEntity: 422 Validation failed
- * - badGateway: 502 Upstream server error
  * - serviceUnavailable: 503 Service temporarily unavailable
- * - createPermitConflict: 409 Duplicate permit name
- * - updatePermitNotFound: 404 Cannot update non-existent permit
- * - deletePermitNotFound: 404 Cannot delete non-existent permit
  */
 export interface ErrorResponses {
-  serverError: ApiResponse;
-  networkError: NetworkErrorResponse;
-  notFound: ApiResponse;
-  badRequest: ApiResponse;
-  unauthorized: ApiResponse;
-  forbidden: ApiResponse;
-  unprocessableEntity: ApiResponse;
-  badGateway: ApiResponse;
-  serviceUnavailable: ApiResponse;
-  createPermitConflict: ApiResponse;
-  updatePermitNotFound: ApiResponse;
-  deletePermitNotFound: ApiResponse;
+  [ApiErrorType.SERVER_ERROR]: ApiResponse;
+  [ApiErrorType.NETWORK_ERROR]: NetworkErrorResponse;
+  [ApiErrorType.NOT_FOUND]: ApiResponse;
+  [ApiErrorType.BAD_REQUEST]: ApiResponse;
+  [ApiErrorType.BAD_GATEWAY]: ApiResponse;
+  [ApiErrorType.SERVICE_UNAVAILABLE]: ApiResponse;
 }
 
 /**
@@ -339,16 +332,16 @@ export interface ErrorResponses {
  * These scenarios test application behavior under different network conditions.
  */
 export interface LoadingResponses {
-  slowCreatePermit: ApiResponseWithDelay;
-  slowUpdatePermit: ApiResponseWithDelay;
-  slowDeletePermit: ApiResponseWithDelay;
-  slowGetPermits: ApiResponseWithDelay;
-  slowGetPermitsEmpty: ApiResponseWithDelay;
-  timeoutCreate: ApiResponseWithDelay;
-  timeoutUpdate: ApiResponseWithDelay;
-  timeoutGetPermitsEmpty: ApiResponseWithDelay;
-  extremelySlowResponse: ApiResponseWithDelay;
-  extremelySlowEmptyResponse: ApiResponseWithDelay;
+  [LoadingResponseKey.SLOW_CREATE_PERMIT]: ApiResponseWithDelay;
+  [LoadingResponseKey.SLOW_UPDATE_PERMIT]: ApiResponseWithDelay;
+  [LoadingResponseKey.SLOW_DELETE_PERMIT]: ApiResponseWithDelay;
+  [LoadingResponseKey.SLOW_GET_PERMITS]: ApiResponseWithDelay;
+  [LoadingResponseKey.SLOW_GET_PERMITS_EMPTY]: ApiResponseWithDelay;
+  [LoadingResponseKey.TIMEOUT_CREATE]: ApiResponseWithDelay;
+  [LoadingResponseKey.TIMEOUT_UPDATE]: ApiResponseWithDelay;
+  [LoadingResponseKey.TIMEOUT_GET_PERMITS_EMPTY]: ApiResponseWithDelay;
+  [LoadingResponseKey.EXTREMELY_SLOW_RESPONSE]: ApiResponseWithDelay;
+  [LoadingResponseKey.EXTREMELY_SLOW_EMPTY_RESPONSE]: ApiResponseWithDelay;
 }
 
 /**
@@ -399,30 +392,23 @@ export type ErrorResponse = ApiResponse | NetworkErrorResponse;
  * USAGE EXAMPLES AND PATTERNS:
  *
  * // 1. Simple success intercept
- * ApiResponseFixtures.interceptWithSuccess('GET', '**[/]permits', 'getPermitsList');
+ * ApiResponseFixtures.interceptWithSuccess(HttpMethod.GET, '*[*]/permits', SuccessResponseKey.GET_PERMITS_LIST);
  *
  * // 2. Error testing with alias
- * ApiResponseFixtures.interceptWithError('POST', '**[/]permits', 'serverError', 'errorRequest');
+ * ApiResponseFixtures.interceptWithError(HttpMethod.POST, '*[*]/permits', ApiErrorType.SERVER_ERROR, 'errorRequest');
  * cy.wait('@errorRequest');
  * cy.get('[role="alert"]').should('contain', 'Internal Server Error');
  *
- * // 3. Loading state testing
- * ApiResponseFixtures.interceptWithLoading('GET', '**[/]permits', 'slowGetPermits', 'slowRequest');
+ * // 3. Service unavailable testing
+ * ApiResponseFixtures.interceptWithError(HttpMethod.GET, '*[*]/permits', ApiErrorType.SERVICE_UNAVAILABLE, 'maintenanceRequest');
+ * cy.wait('@maintenanceRequest');
+ * cy.get('[role="alert"]').should('contain', 'Service temporarily unavailable');
+ *
+ * // 4. Loading state testing
+ * ApiResponseFixtures.interceptWithLoading(HttpMethod.GET, '*[*]/permits', LoadingResponseKey.SLOW_GET_PERMITS, 'slowRequest');
  * cy.get('[data-testid="loading-spinner"]').should('be.visible');
  * cy.wait('@slowRequest');
  * cy.get('[data-testid="loading-spinner"]').should('not.exist');
- *
- * // 4. Direct fixture access for complex scenarios
- * ApiResponseFixtures.getErrorResponse('badRequest').then(response => {
- *   cy.intercept('POST', '**[/]permits', {
- *     statusCode: response.statusCode,
- *     body: response.body
- *   }).as('validationError');
- * });
- *
- * // 5. Empty state testing
- * ApiResponseFixtures.interceptWithSuccess('GET', '**[/]permits', 'emptyPermitsList');
- * cy.get('[data-testid="empty-state-alert"]').should('be.visible');
  *
  * TESTING BEST PRACTICES:
  * - Always test both success and error scenarios
@@ -431,6 +417,7 @@ export type ErrorResponse = ApiResponse | NetworkErrorResponse;
  * - Test timeout scenarios for mission-critical operations
  * - Validate error messages don't expose sensitive information
  * - Test network failure recovery mechanisms
+ * - Test maintenance window scenarios with 503 errors
  *
  * MAINTENANCE NOTES:
  * - Keep fixture JSON files in sync with these TypeScript interfaces

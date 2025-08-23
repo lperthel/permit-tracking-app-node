@@ -1,9 +1,9 @@
 import { AllPermitsComponentConstants } from '../../../../../src/app/permits/pages/all-permits/all-permits-component.constants';
 import { PermitFixtureKeys } from '../../../../fixtures/permits/permit-fixtures';
-import { ApiActions } from '../../../../support/api-actions';
-import { ApiIntercepts } from '../../../../support/api-intercepts';
-import { UiActions } from '../../../../support/ui-actions';
-import { UiAssertions } from '../../../../support/ui-assertions';
+import { ApiActions } from '../../../../support/api/api-actions';
+import { ApiIntercepts } from '../../../../support/api/api-intercepts';
+import { UiActions } from '../../../../support/ui/ui-actions';
+import { UiAssertions } from '../../../../support/ui/ui-assertions';
 
 /*
  * OVERVIEW:

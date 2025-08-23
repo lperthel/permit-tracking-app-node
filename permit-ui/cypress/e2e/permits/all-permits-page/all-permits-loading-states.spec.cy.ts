@@ -1,11 +1,11 @@
 import { AllPermitsComponentConstants } from '../../../../src/app/permits/pages/all-permits/all-permits-component.constants';
-import { ApiIntercepts } from '../../../support/api-intercepts';
+import { ApiIntercepts } from '../../../support/api/api-intercepts';
+import { UiActions } from '../../../support/ui/ui-actions';
 import {
   getTestSelector,
   selector_shortcuts,
-} from '../../../support/cypress-selectors';
-import { UiActions } from '../../../support/ui-actions';
-import { UiAssertions } from '../../../support/ui-assertions';
+} from '../../../support/ui/cypress-selectors';
+import { UiAssertions } from '../../../support/ui/ui-assertions';
 
 /*
  * OVERVIEW:

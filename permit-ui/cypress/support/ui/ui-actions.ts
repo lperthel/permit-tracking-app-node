@@ -1,15 +1,15 @@
 // ============================================================================
 // ui-actions.ts - All UI interactions (forms, buttons, navigation)
 // ============================================================================
-import { AllPermitsComponentConstants } from '../../src/app/permits/pages/all-permits/all-permits-component.constants';
-import { PERMIT_FORM_SELECTORS } from '../../src/app/permits/permit-form-model/permit-form.constants';
-import { PermitStatus } from '../../src/app/permits/shared/models/permit-status.enums';
-import { dev_env } from '../../src/environments/environment';
+import { AllPermitsComponentConstants } from '../../../src/app/permits/pages/all-permits/all-permits-component.constants';
+import { PERMIT_FORM_SELECTORS } from '../../../src/app/permits/permit-form-model/permit-form.constants';
+import { PermitStatus } from '../../../src/app/permits/shared/models/permit-status.enums';
+import { dev_env } from '../../../src/environments/environment';
 import {
   InvalidPermitFixtureKeys,
   PermitFixtureKeys,
   PermitFixtures,
-} from '../fixtures/permits/permit-fixtures';
+} from '../../fixtures/permits/permit-fixtures';
 import { getTestSelector, selector_shortcuts } from './cypress-selectors';
 
 export class UiActions {

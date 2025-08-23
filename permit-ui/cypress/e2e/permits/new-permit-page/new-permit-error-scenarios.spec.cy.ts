@@ -2,12 +2,12 @@ import { UI_TEXT } from '../../../../src/app/assets/constants/ui-text.constants'
 import { PERMIT_FORM_SELECTORS } from '../../../../src/app/permits/permit-form-model/permit-form.constants';
 import { PermitStatus } from '../../../../src/app/permits/shared/models/permit-status.enums';
 import { PermitFixtureKeys } from '../../../fixtures/permits/permit-fixtures';
-import { ApiIntercepts } from '../../../support/api-intercepts';
+import { ApiIntercepts } from '../../../support/api/api-intercepts';
+import { UiActions } from '../../../support/ui/ui-actions';
 import {
   getTestSelector,
   selector_shortcuts,
-} from '../../../support/cypress-selectors';
-import { UiActions } from '../../../support/ui-actions';
+} from '../../../support/ui/cypress-selectors';
 
 /*
  * OVERVIEW:

@@ -8,8 +8,8 @@ import {
   PermitFixtureKeys,
   PermitFixtures,
 } from '../fixtures/permits/permit-fixtures';
-import { selector_shortcuts } from './cypress-selectors';
-import { UiActions } from './ui-actions';
+import { selector_shortcuts } from './ui/cypress-selectors';
+import { UiActions } from './ui/ui-actions';
 
 export class PermitWorkflows {
   /**

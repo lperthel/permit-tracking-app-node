@@ -1,6 +1,6 @@
 import { AllPermitsComponentConstants } from '../../../../src/app/permits/pages/all-permits/all-permits-component.constants';
-import { selector_shortcuts } from '../../../support/cypress-selectors';
-import { UiActions } from '../../../support/ui-actions';
+import { UiActions } from '../../../support/ui/ui-actions';
+import { selector_shortcuts } from '../../../support/ui/cypress-selectors';
 
 // Constants defined at top of file as per coding guidelines
 const EXPECTED_COLUMN_COUNT = 6;

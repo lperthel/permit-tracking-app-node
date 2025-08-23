@@ -2,13 +2,13 @@
 // api-actions.ts - All CRUD API operations (create, delete, etc.)
 // ============================================================================
 
-import { PermitStatus } from '../../src/app/permits/shared/models/permit-status.enums';
-import { Permit } from '../../src/app/permits/shared/models/permit.model';
-import { dev_env } from '../../src/environments/environment';
+import { PermitStatus } from '../../../src/app/permits/shared/models/permit-status.enums';
+import { Permit } from '../../../src/app/permits/shared/models/permit.model';
+import { dev_env } from '../../../src/environments/environment';
 import {
   PermitFixtureKeys,
   PermitFixtures,
-} from '../fixtures/permits/permit-fixtures';
+} from '../../fixtures/permits/permit-fixtures';
 
 export class ApiActions {
   /**
