@@ -2,6 +2,7 @@ import {
   PERMIT_FORM_HEADERS,
   PERMIT_FORM_SELECTORS,
 } from '../../../../src/app/permits/permit-form-model/permit-form.constants';
+import { ApiLoadingType, ApiOperation } from '../../../support/api/api-enums';
 import { ApiIntercepts } from '../../../support/api/api-intercepts';
 import {
   getTestSelector,
@@ -162,10 +163,10 @@ describe('Update Permit Modal - Behavior', () => {
         .clear()
         .type('Updated Permit Name');
 
-      // Set up slow API response to observe loading state
+      // Set up slow API response to observe loading state using new enum-based API
       ApiIntercepts.interceptLoading(
-        'update', // Changed from 'create' to 'update'
-        'slow',
+        ApiOperation.UPDATE,
+        ApiLoadingType.SLOW,
         'slowUpdateForLoadingTest'
       );
 

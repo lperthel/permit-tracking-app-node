@@ -147,7 +147,7 @@ export class UiActions {
   /**
    * Wait for loading spinner to appear
    */
-  static waitForLoadingSpinner(): void {
+  static waitForAllPermitsLoadingSpinner(): void {
     const LOADING_SPINNER_SELECTOR = getTestSelector(
       AllPermitsComponentConstants.TEST_IDS.LOADING_SPINNER
     );
@@ -157,7 +157,7 @@ export class UiActions {
   /**
    * Wait for loading to complete (spinner disappears)
    */
-  static waitForLoadingToComplete(): void {
+  static waitForAllPermitsLoadingToComplete(): void {
     const LOADING_SPINNER_SELECTOR = getTestSelector(
       AllPermitsComponentConstants.TEST_IDS.LOADING_SPINNER
     );

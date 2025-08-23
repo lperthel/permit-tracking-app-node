@@ -1,5 +1,6 @@
 import { AllPermitsComponentConstants } from '../../../../src/app/permits/pages/all-permits/all-permits-component.constants';
 import { PERMIT_FORM_SELECTORS } from '../../../../src/app/permits/permit-form-model/permit-form.constants';
+import { ApiLoadingType, ApiOperation } from '../../../support/api/api-enums';
 import { ApiIntercepts } from '../../../support/api/api-intercepts';
 import {
   getTestSelector,
@@ -15,8 +16,8 @@ describe('All Permits Page - Empty State Handling', () => {
   });
 
   it('should display empty state when no permits exist', () => {
-    // Intercept and return empty array using helper
-    ApiIntercepts.interceptSuccess('empty', 'emptyResponse');
+    // Intercept and return empty array using new enum-based API
+    ApiIntercepts.interceptSuccess(ApiOperation.EMPTY, 'emptyResponse');
 
     // Trigger refresh to get empty state
     UiActions.clickRefreshButton();
@@ -25,7 +26,7 @@ describe('All Permits Page - Empty State Handling', () => {
     cy.wait('@emptyResponse');
 
     // Verify loading completes and empty state appears
-    UiActions.waitForLoadingToComplete();
+    UiActions.waitForAllPermitsLoadingToComplete();
     UiAssertions.verifyEmptyState();
 
     // Verify empty state has proper accessibility
@@ -55,8 +56,12 @@ describe('All Permits Page - Empty State Handling', () => {
   });
 
   it('should not show empty state while loading', () => {
-    // Use the new empty loading response
-    ApiIntercepts.interceptLoading('get', 'slowEmpty', 'delayedEmpty');
+    // Use the new empty loading response with enum-based API
+    ApiIntercepts.interceptLoading(
+      ApiOperation.GET,
+      ApiLoadingType.SLOW_EMPTY,
+      'delayedEmpty'
+    );
 
     // Trigger refresh
     UiActions.clickRefreshButton();
@@ -71,13 +76,13 @@ describe('All Permits Page - Empty State Handling', () => {
 
     // After loading completes, empty state should appear
     cy.wait('@delayedEmpty');
-    UiActions.waitForLoadingToComplete();
+    UiActions.waitForAllPermitsLoadingToComplete();
     UiAssertions.verifyEmptyState();
   });
 
   it('should allow navigation to create permit from empty state', () => {
-    // Set up empty state using helper
-    ApiIntercepts.interceptSuccess('empty', 'emptyState');
+    // Set up empty state using new enum-based API
+    ApiIntercepts.interceptSuccess(ApiOperation.EMPTY, 'emptyState');
 
     UiActions.clickRefreshButton();
     cy.wait('@emptyState');
@@ -97,8 +102,8 @@ describe('All Permits Page - Empty State Handling', () => {
   });
 
   it('should show empty state with proper accessibility features', () => {
-    // Set up empty state using helper
-    ApiIntercepts.interceptSuccess('empty', 'emptyState');
+    // Set up empty state using new enum-based API
+    ApiIntercepts.interceptSuccess(ApiOperation.EMPTY, 'emptyState');
 
     UiActions.clickRefreshButton();
     cy.wait('@emptyState');
@@ -131,8 +136,8 @@ describe('All Permits Page - Empty State Handling', () => {
   });
 
   it('should transition from empty state to populated when data loads', () => {
-    // Start with empty state using helper
-    ApiIntercepts.interceptSuccess('empty', 'emptyState');
+    // Start with empty state using new enum-based API
+    ApiIntercepts.interceptSuccess(ApiOperation.EMPTY, 'emptyState');
 
     UiActions.clickRefreshButton();
     cy.wait('@emptyState');
@@ -140,8 +145,8 @@ describe('All Permits Page - Empty State Handling', () => {
     // Verify empty state appears
     UiAssertions.verifyEmptyState();
 
-    // Change intercept to return data using helper
-    ApiIntercepts.interceptSuccess('getList', 'populatedState');
+    // Change intercept to return data using new enum-based API
+    ApiIntercepts.interceptSuccess(ApiOperation.GET_LIST, 'populatedState');
 
     // Refresh again
     UiActions.clickRefreshButton();

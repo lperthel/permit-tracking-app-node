@@ -15,9 +15,14 @@
 
 import { UI_TEXT } from '../../../../src/app/assets/constants/ui-text.constants';
 import { AllPermitsComponentConstants } from '../../../../src/app/permits/pages/all-permits/all-permits-component.constants';
+import {
+  ApiErrorType,
+  ApiLoadingType,
+  ApiOperation,
+} from '../../../support/api/api-enums';
 import { ApiIntercepts } from '../../../support/api/api-intercepts';
-import { UiActions } from '../../../support/ui/ui-actions';
 import { getTestSelector } from '../../../support/ui/cypress-selectors';
+import { UiActions } from '../../../support/ui/ui-actions';
 import { UiAssertions } from '../../../support/ui/ui-assertions';
 
 describe('All Permits Page - Network Error Scenarios', () => {
@@ -26,8 +31,12 @@ describe('All Permits Page - Network Error Scenarios', () => {
   });
 
   it('should display error message when API server is unreachable (network error)', () => {
-    // Intercept with server error using helper
-    ApiIntercepts.interceptError('get', 'serverError', 'networkError');
+    // Intercept with server error using new enum-based API
+    ApiIntercepts.interceptError(
+      ApiOperation.GET,
+      ApiErrorType.SERVER_ERROR,
+      'networkError'
+    );
 
     // Trigger refresh to cause network error
     UiActions.clickRefreshButton();
@@ -52,8 +61,12 @@ describe('All Permits Page - Network Error Scenarios', () => {
   });
 
   it('should display error message when API returns 500 server error', () => {
-    // Intercept and return server error using helper
-    ApiIntercepts.interceptError('get', 'serverError', 'serverError');
+    // Intercept and return server error using new enum-based API
+    ApiIntercepts.interceptError(
+      ApiOperation.GET,
+      ApiErrorType.SERVER_ERROR,
+      'serverError'
+    );
 
     // Trigger refresh to cause server error
     UiActions.clickRefreshButton();
@@ -73,8 +86,12 @@ describe('All Permits Page - Network Error Scenarios', () => {
   });
 
   it('should display error message when API returns 404 not found', () => {
-    // Intercept and return 404 error using helper
-    ApiIntercepts.interceptError('get', 'notFound', 'notFoundError');
+    // Intercept and return 404 error using new enum-based API
+    ApiIntercepts.interceptError(
+      ApiOperation.GET,
+      ApiErrorType.NOT_FOUND,
+      'notFoundError'
+    );
 
     // Trigger refresh to cause 404 error
     UiActions.clickRefreshButton();
@@ -94,8 +111,12 @@ describe('All Permits Page - Network Error Scenarios', () => {
   });
 
   it('should handle API timeout scenarios gracefully', () => {
-    // Intercept with very long delay using helper
-    ApiIntercepts.interceptLoading('get', 'extremelySlow', 'timeoutRequest');
+    // Intercept with very long delay using new enum-based API
+    ApiIntercepts.interceptLoading(
+      ApiOperation.GET,
+      ApiLoadingType.EXTREMELY_SLOW,
+      'timeoutRequest'
+    );
 
     // Trigger refresh
     UiActions.clickRefreshButton();

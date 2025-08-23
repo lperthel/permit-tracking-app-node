@@ -1,6 +1,6 @@
 import {
+  PermitFixtureKeys,
   PermitFixtures,
-  ValidPermitFixtureKeys,
 } from '../../fixtures/permits/permit-fixtures';
 
 describe('Fixture Data Validation', () => {
@@ -30,14 +30,14 @@ describe('Fixture Data Validation', () => {
 
   it('should generate unique IDs for permits', () => {
     // Verify that getValidPermit generates unique IDs
-    PermitFixtures.getValidPermit(
-      ValidPermitFixtureKeys.CREATE_THIS_PERMIT
-    ).then((permit1) => {
-      PermitFixtures.getValidPermit('createThisPermit').then((permit2) => {
-        // Same permit data but different IDs
-        expect(permit1.id).to.not.equal(permit2.id);
-        expect(permit1.permitName).to.equal(permit2.permitName);
-      });
-    });
+    PermitFixtures.getValidPermit(PermitFixtureKeys.CREATE_THIS_PERMIT).then(
+      (permit1) => {
+        PermitFixtures.getValidPermit('createThisPermit').then((permit2) => {
+          // Same permit data but different IDs
+          expect(permit1.id).to.not.equal(permit2.id);
+          expect(permit1.permitName).to.equal(permit2.permitName);
+        });
+      }
+    );
   });
 });

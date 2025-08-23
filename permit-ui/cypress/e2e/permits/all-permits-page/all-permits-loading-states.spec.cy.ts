@@ -1,10 +1,11 @@
 import { AllPermitsComponentConstants } from '../../../../src/app/permits/pages/all-permits/all-permits-component.constants';
+import { ApiLoadingType, ApiOperation } from '../../../support/api/api-enums';
 import { ApiIntercepts } from '../../../support/api/api-intercepts';
-import { UiActions } from '../../../support/ui/ui-actions';
 import {
   getTestSelector,
   selector_shortcuts,
 } from '../../../support/ui/cypress-selectors';
+import { UiActions } from '../../../support/ui/ui-actions';
 import { UiAssertions } from '../../../support/ui/ui-assertions';
 
 /*
@@ -25,32 +26,40 @@ describe('All Permits Page - Loading State Behavior', () => {
   });
 
   it('should show and hide loading spinner during network requests', () => {
-    // Use slowEmpty for consistent testing
-    ApiIntercepts.interceptLoading('get', 'slowEmpty', 'slowRequest');
+    // Use slowEmpty for consistent testing with new enum-based API
+    ApiIntercepts.interceptLoading(
+      ApiOperation.GET,
+      ApiLoadingType.SLOW_EMPTY,
+      'slowRequest'
+    );
 
     // Trigger refresh
     UiActions.clickRefreshButton();
 
     // Verify loading state appears
-    UiActions.waitForLoadingSpinner();
+    UiActions.waitForAllPermitsLoadingSpinner();
     UiAssertions.verifyAllPermitsLoadingState();
 
     // Wait for request to complete
     cy.wait('@slowRequest');
 
     // Verify loading spinner disappears
-    UiActions.waitForLoadingToComplete();
+    UiActions.waitForAllPermitsLoadingToComplete();
   });
 
   it('should show loading spinner with proper accessibility attributes', () => {
-    //Make a slow loading request
-    ApiIntercepts.interceptLoading('get', 'slowEmpty', 'slowLoad');
+    // Make a slow loading request with new enum-based API
+    ApiIntercepts.interceptLoading(
+      ApiOperation.GET,
+      ApiLoadingType.SLOW_EMPTY,
+      'slowLoad'
+    );
 
     // Trigger slow request
     UiActions.clickRefreshButton();
 
     // Verify loading state with accessibility
-    UiActions.waitForLoadingSpinner();
+    UiActions.waitForAllPermitsLoadingSpinner();
     UiAssertions.verifyAllPermitsLoadingAccessibility();
     UiAssertions.verifyAllPermitsLoadingState();
 
@@ -58,15 +67,19 @@ describe('All Permits Page - Loading State Behavior', () => {
     cy.wait('@slowLoad');
 
     // Verify loading clears and data loads
-    UiActions.waitForLoadingToComplete();
+    UiActions.waitForAllPermitsLoadingToComplete();
     cy.get(
       getTestSelector(AllPermitsComponentConstants.TEST_IDS.PERMITS_TABLE)
     ).should('be.visible');
   });
 
   it('should maintain UI responsiveness during loading', () => {
-    // Use slowEmpty for consistent behavior
-    ApiIntercepts.interceptLoading('get', 'slowEmpty', 'moderateDelay');
+    // Use slowEmpty for consistent behavior with new enum-based API
+    ApiIntercepts.interceptLoading(
+      ApiOperation.GET,
+      ApiLoadingType.SLOW_EMPTY,
+      'moderateDelay'
+    );
 
     // Trigger refresh
     UiActions.clickRefreshButton();
@@ -84,6 +97,6 @@ describe('All Permits Page - Loading State Behavior', () => {
     cy.wait('@moderateDelay');
 
     // Verify loading completes
-    UiActions.waitForLoadingToComplete();
+    UiActions.waitForAllPermitsLoadingToComplete();
   });
 });

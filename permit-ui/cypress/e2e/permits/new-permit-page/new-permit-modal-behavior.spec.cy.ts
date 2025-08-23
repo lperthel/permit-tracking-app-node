@@ -3,9 +3,10 @@ import {
   PERMIT_FORM_SELECTORS,
 } from '../../../../src/app/permits/permit-form-model/permit-form.constants';
 import { PermitFixtureKeys } from '../../../fixtures/permits/permit-fixtures';
+import { ApiLoadingType, ApiOperation } from '../../../support/api/api-enums';
 import { ApiIntercepts } from '../../../support/api/api-intercepts';
-import { UiActions } from '../../../support/ui/ui-actions';
 import { getTestSelector } from '../../../support/ui/cypress-selectors';
+import { UiActions } from '../../../support/ui/ui-actions';
 import { UiAssertions } from '../../../support/ui/ui-assertions';
 
 /*
@@ -104,10 +105,10 @@ describe('New Permit Modal - Behavior and Validation', () => {
     it('should show loading states during form submission', () => {
       UiActions.fillPermitFormFromFixture(PermitFixtureKeys.CREATE_THIS_PERMIT);
 
-      // Set up slow API response to observe loading state
+      // Set up slow API response to observe loading state using new enum-based API
       ApiIntercepts.interceptLoading(
-        'create',
-        'slow',
+        ApiOperation.CREATE,
+        ApiLoadingType.SLOW,
         'slowCreateForLoadingTest'
       );
 

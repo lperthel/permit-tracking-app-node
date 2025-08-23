@@ -2,12 +2,17 @@ import { UI_TEXT } from '../../../../src/app/assets/constants/ui-text.constants'
 import { PERMIT_FORM_SELECTORS } from '../../../../src/app/permits/permit-form-model/permit-form.constants';
 import { PermitStatus } from '../../../../src/app/permits/shared/models/permit-status.enums';
 import { PermitFixtureKeys } from '../../../fixtures/permits/permit-fixtures';
+import {
+  ApiErrorType,
+  ApiLoadingType,
+  ApiOperation,
+} from '../../../support/api/api-enums';
 import { ApiIntercepts } from '../../../support/api/api-intercepts';
-import { UiActions } from '../../../support/ui/ui-actions';
 import {
   getTestSelector,
   selector_shortcuts,
 } from '../../../support/ui/cypress-selectors';
+import { UiActions } from '../../../support/ui/ui-actions';
 
 /*
  * OVERVIEW:
@@ -41,8 +46,12 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     // Fill form with fixture data
     UiActions.fillPermitFormFromFixture(PermitFixtureKeys.CREATE_THIS_PERMIT);
 
-    // Intercept permit creation request and force server error
-    ApiIntercepts.interceptError('create', 'serverError', 'createServerError');
+    // Intercept permit creation request and force server error using new enum-based API
+    ApiIntercepts.interceptError(
+      ApiOperation.CREATE,
+      ApiErrorType.SERVER_ERROR,
+      'createServerError'
+    );
 
     // Submit form
     UiActions.clickSubmitButton();
@@ -83,10 +92,10 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     // Fill form with fixture data
     UiActions.fillPermitFormFromFixture(PermitFixtureKeys.CREATE_THIS_PERMIT);
 
-    // Intercept permit creation request and force network error
+    // Intercept permit creation request and force network error using new enum-based API
     ApiIntercepts.interceptError(
-      'create',
-      'networkError',
+      ApiOperation.CREATE,
+      ApiErrorType.NETWORK_ERROR,
       'createNetworkError'
     );
 
@@ -126,11 +135,15 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
   });
 
   it('should handle permit creation timeout scenarios gracefully', () => {
-    // Fill form; with fixture data
+    // Fill form with fixture data
     UiActions.fillPermitFormFromFixture(PermitFixtureKeys.TIMEOUT_TEST_PERMIT);
 
-    // Intercept permit creation request with loading delay
-    ApiIntercepts.interceptLoading('create', 'slow', 'createTimeout');
+    // Intercept permit creation request with loading delay using new enum-based API
+    ApiIntercepts.interceptLoading(
+      ApiOperation.CREATE,
+      ApiLoadingType.SLOW,
+      'createTimeout'
+    );
 
     // Submit form
     UiActions.clickSubmitButton();
@@ -155,8 +168,12 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     // Fill form with fixture data
     UiActions.fillPermitFormFromFixture(PermitFixtureKeys.CREATE_THIS_PERMIT);
 
-    // First request fails
-    ApiIntercepts.interceptError('create', 'serverError', 'firstFailure');
+    // First request fails using new enum-based API
+    ApiIntercepts.interceptError(
+      ApiOperation.CREATE,
+      ApiErrorType.SERVER_ERROR,
+      'firstFailure'
+    );
 
     // Submit form
     UiActions.clickSubmitButton();
@@ -172,8 +189,8 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
       UI_TEXT.SERVER_CONNECTION_ERROR
     );
 
-    // Set up successful retry
-    ApiIntercepts.interceptSuccess('create', 'successfulRetry');
+    // Set up successful retry using new enum-based API
+    ApiIntercepts.interceptSuccess(ApiOperation.CREATE, 'successfulRetry');
 
     // Retry the operation
     UiActions.clickSubmitButton();
@@ -205,8 +222,12 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
       testData.status
     );
 
-    // Set up server error for all requests
-    ApiIntercepts.interceptError('create', 'serverError', 'persistentFailure');
+    // Set up server error for all requests using new enum-based API
+    ApiIntercepts.interceptError(
+      ApiOperation.CREATE,
+      ApiErrorType.SERVER_ERROR,
+      'persistentFailure'
+    );
 
     // First submission failure
     UiActions.clickSubmitButton();
@@ -265,15 +286,18 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     );
 
     const errorTypes = [
-      'badRequest',
-      'forbidden',
-      'notFound',
-      'serverError',
+      ApiErrorType.BAD_REQUEST,
+      ApiErrorType.NOT_FOUND,
+      ApiErrorType.SERVER_ERROR,
     ] as const;
 
     errorTypes.forEach((errorType, index) => {
-      // Set up error with specific type using helper
-      ApiIntercepts.interceptError('create', errorType, `error${errorType}`);
+      // Set up error with specific type using new enum-based API
+      ApiIntercepts.interceptError(
+        ApiOperation.CREATE,
+        errorType,
+        `error${errorType}`
+      );
 
       // Submit form
       UiActions.clickSubmitButton();
@@ -308,8 +332,12 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     // Fill form with fixture data
     UiActions.fillPermitFormFromFixture(PermitFixtureKeys.CREATE_THIS_PERMIT);
 
-    // Intercept with delay to observe loading behavior
-    ApiIntercepts.interceptLoading('create', 'slow', 'delayedSuccess');
+    // Intercept with delay to observe loading behavior using new enum-based API
+    ApiIntercepts.interceptLoading(
+      ApiOperation.CREATE,
+      ApiLoadingType.SLOW,
+      'delayedSuccess'
+    );
 
     // Submit form
     UiActions.clickSubmitButton();
@@ -340,8 +368,12 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     // Fill form with fixture data
     UiActions.fillPermitFormFromFixture(PermitFixtureKeys.CREATE_THIS_PERMIT);
 
-    // First request fails
-    ApiIntercepts.interceptError('create', 'serverError', 'initialError');
+    // First request fails using new enum-based API
+    ApiIntercepts.interceptError(
+      ApiOperation.CREATE,
+      ApiErrorType.SERVER_ERROR,
+      'initialError'
+    );
 
     UiActions.clickSubmitButton();
     cy.wait('@initialError');
@@ -352,8 +384,8 @@ describe('New Permit Page - Error Scenarios and Recovery', () => {
     );
     cy.get(REST_ERROR_SELECTOR).should('be.visible');
 
-    // Set up successful request
-    ApiIntercepts.interceptSuccess('create', 'clearingSuccess');
+    // Set up successful request using new enum-based API
+    ApiIntercepts.interceptSuccess(ApiOperation.CREATE, 'clearingSuccess');
 
     // Submit again (should succeed)
     UiActions.clickSubmitButton();

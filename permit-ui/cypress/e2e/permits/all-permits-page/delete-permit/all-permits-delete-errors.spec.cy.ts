@@ -1,6 +1,11 @@
 import { AllPermitsComponentConstants } from '../../../../../src/app/permits/pages/all-permits/all-permits-component.constants';
 import { PermitFixtureKeys } from '../../../../fixtures/permits/permit-fixtures';
 import { ApiActions } from '../../../../support/api/api-actions';
+import {
+  ApiErrorType,
+  ApiLoadingType,
+  ApiOperation,
+} from '../../../../support/api/api-enums';
 import { ApiIntercepts } from '../../../../support/api/api-intercepts';
 import { UiActions } from '../../../../support/ui/ui-actions';
 import { UiAssertions } from '../../../../support/ui/ui-assertions';
@@ -12,18 +17,13 @@ import { UiAssertions } from '../../../../support/ui/ui-assertions';
  * ensuring government users receive clear error messaging and can recover from failed delete operations
  * without losing data or application functionality.
  *
- * GOVERNMENT REQUIREMENTS TESTED:
+ * REQUIREMENTS TESTED:
  * ===============================
  * • Data Protection: Failed deletes don't corrupt permit data or application state
  * • User Experience: Clear error messaging for delete operation failures
  * • Resilience: Application remains functional after delete operation errors
  * • Error Recovery: Users can retry failed operations or continue with other tasks
  *
- * TEST ISOLATION STRATEGY:
- * ========================
- * Each test creates its own test data via API, performs the test operation,
- * and attempts cleanup. Cleanup may not work perfectly due to test intercepts,
- * but this is acceptable for error scenario testing.
  */
 
 describe('All Permits Page - Delete Operation Error Scenarios', () => {
@@ -46,10 +46,10 @@ describe('All Permits Page - Delete Operation Error Scenarios', () => {
 
       // Get permit name for verification
       UiActions.getPermitNameFromRow(0).then((permitName) => {
-        // Set up delete error
+        // Set up delete error using new enum-based API
         ApiIntercepts.interceptError(
-          'delete',
-          'serverError',
+          ApiOperation.DELETE,
+          ApiErrorType.SERVER_ERROR,
           'deleteServerError'
         );
 
@@ -85,7 +85,12 @@ describe('All Permits Page - Delete Operation Error Scenarios', () => {
       const DELETE_BUTTON_TEXT =
         AllPermitsComponentConstants.UI_TEXT.DELETE_BUTTON;
 
-      ApiIntercepts.interceptLoading('delete', 'slow', 'deleteTimeout');
+      // Set up loading intercept using new enum-based API
+      ApiIntercepts.interceptLoading(
+        ApiOperation.DELETE,
+        ApiLoadingType.SLOW,
+        'deleteTimeout'
+      );
 
       // Verify initial state and trigger delete
       cy.get(DELETE_BUTTON_SELECTOR)
@@ -133,10 +138,10 @@ describe('All Permits Page - Delete Operation Error Scenarios', () => {
 
       // Get permit name for verification
       UiActions.getPermitNameFromRow(0).then((permitName) => {
-        // Set up network error
+        // Set up network error using new enum-based API
         ApiIntercepts.interceptError(
-          'delete',
-          'networkError',
+          ApiOperation.DELETE,
+          ApiErrorType.NETWORK_ERROR,
           'deleteNetworkError'
         );
 
@@ -171,8 +176,12 @@ describe('All Permits Page - Delete Operation Error Scenarios', () => {
       UiActions.clickRefreshButton();
       UiActions.waitForTableLoad();
 
-      // Set up delete error for all requests
-      ApiIntercepts.interceptError('delete', 'serverError', 'deleteFailure');
+      // Set up delete error for all requests using new enum-based API
+      ApiIntercepts.interceptError(
+        ApiOperation.DELETE,
+        ApiErrorType.SERVER_ERROR,
+        'deleteFailure'
+      );
 
       // Delete first permit
       UiActions.deletePermitByIndex(0);
