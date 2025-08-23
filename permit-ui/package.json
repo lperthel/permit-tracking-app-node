@@ -17,7 +17,7 @@
     "cypress:run": "cypress run",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "e2e:headless": "cypress run --headless",
+    "e2e:headless": "mkdir -p cypress/logs cypress/reports && cypress run --headless --reporter json --reporter-options 'output=cypress/reports/results.json' 2>&1 | tee \"cypress/logs/console-$(date +%Y%m%d-%H%M%S).log\"",
     "e2e:ci": "cypress run --browser chrome --headless --reporter spec --record false",
     "e2e:chrome": "cypress run --browser chrome --headless",
     "e2e:firefox": "cypress run --browser firefox --headless",
