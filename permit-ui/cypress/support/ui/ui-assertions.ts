@@ -165,6 +165,16 @@ export class UiAssertions {
   }
 
   /**
+   * Verifies specific error text does NOT appear in error messages
+   */
+  static verifyAllPermitsErrorMessageDoesNotContain(message: string): void {
+    const ERROR_ALERT_SELECTOR = getTestSelector(
+      AllPermitsComponentConstants.TEST_IDS.REST_ERROR_ALERT
+    );
+    cy.get(ERROR_ALERT_SELECTOR).should('not.contain.text', message);
+  }
+
+  /**
    * Verifies form validation errors have proper ARIA attributes
    */
   static verifyValidationErrorAccessibility(): void {
