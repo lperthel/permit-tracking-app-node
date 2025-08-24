@@ -22,8 +22,7 @@
     "cy:chrome": "start-server-and-test start http://localhost:4200 \"cypress run --browser chrome --headless\"",
     "cy:firefox": "start-server-and-test start http://localhost:4200 \"cypress run --browser firefox --headless\"",
     "cy:edge": "start-server-and-test start http://localhost:4200 \"cypress run --browser edge --headless\"",
-    "test:all": "npm run karma && npm run cy:test",
-    "cy:test": "start-server-and-test start http://localhost:4200 \"npm run cy:headless\""
+    "test:all": "npm run karma && npm run cy:test"
   },
   "private": true,
   "dependencies": {

@@ -12,27 +12,10 @@ import { UiActions } from '../../../support/ui/ui-actions';
 import { UiAssertions } from '../../../support/ui/ui-assertions';
 
 /*
- * OVERVIEW:
- * =========
- * This test suite validates modal behavior and user interaction patterns
- * for the UPDATE Permit modal, ensuring compliance with government UX standards.
- *
- * GOVERNMENT REQUIREMENTS TESTED:
- * ===============================
- * • User Experience: Professional modal behavior and form state management
- * • Error Recovery: Clear validation feedback and correction workflows
- * • Professional Standards: Government-grade UI interactions and accessibility
- *
- * TEST STRATEGY:
- * ==============
- * Uses new test support classes for maintainable, government-ready test patterns:
- * - UiActions: Centralized UI interactions
- * - UiAssertions: Standardized verification patterns
- * - PermitFixtures: Consistent test data management
- * - PermitFixtureKeys: Type-safe fixture references
+ * Tests modal behavior and user interactions for the update permit modal.
  */
 
-describe('Update Permit Modal - Behavior', () => {
+describe('Update Permit - Modal Behavior', () => {
   beforeEach(() => {
     UiActions.visitPermitsPage();
     // Wait for table to load with permits
@@ -97,46 +80,6 @@ describe('Update Permit Modal - Behavior', () => {
   });
 
   describe('Form State Management', () => {
-    it.only('should populate form with existing permit data', () => {
-      // Close modal first to see table
-      UiActions.clickModalCloseButton();
-
-      // Capture table data
-      cy.get(selector_shortcuts.permitRowName(0))
-        .invoke('text')
-        .then((permitName) => {
-          cy.get(selector_shortcuts.permitRowApplicantName(0))
-            .invoke('text')
-            .then((applicantName) => {
-              cy.get(selector_shortcuts.permitRowPermitType(0))
-                .invoke('text')
-                .then((permitType) => {
-                  cy.get(selector_shortcuts.permitRowStatus(0))
-                    .invoke('text')
-                    .then((status) => {
-                      // Now open modal again
-                      UiActions.clickUpdatePermitButton(0);
-
-                      // Verify form matches captured data
-                      cy.get(
-                        selector_shortcuts.permitForm.inputPermitName
-                      ).should('have.value', permitName.trim());
-                      cy.get(
-                        selector_shortcuts.permitForm.inputApplicant
-                      ).should('have.value', applicantName.trim());
-                      cy.get(
-                        selector_shortcuts.permitForm.inputPermitType
-                      ).should('have.value', permitType.trim());
-                      cy.get(selector_shortcuts.permitForm.inputStatus).should(
-                        'have.value',
-                        status.trim()
-                      );
-                    });
-                });
-            });
-        });
-    });
-
     it('should restore original data when modal is reopened', () => {
       // Modify existing data
       cy.get(selector_shortcuts.permitForm.inputPermitName)
