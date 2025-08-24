@@ -13,7 +13,7 @@
     "faker": "json-server --watch ./server/database.json",
     "generate": "node ./server/generateData.mjs",
     "gs": "npm run generate && npm run faker",
-    "cy:open": "cypress open --env CYPRESS_RECORD_KEY=0c154c63-3213-42a7-af73-2fed43ef7fe8",
+    "cy:open": "start-server-and-test start http://localhost:4200 \"cypress open --env CYPRESS_RECORD_KEY=0c154c63-3213-42a7-af73-2fed43ef7fe8\"",
     "lint": "ng lint",
     "cy:run": "start-server-and-test start http://localhost:4200 \"npx cypress run --record --key 0c154c63-3213-42a7-af73-2fed43ef7fe8\"",
     "cy:gui": "start-server-and-test start http://localhost:4200 \"npx cypress run --record --key 0c154c63-3213-42a7-af73-2fed43ef7fe8 --headed\"",
