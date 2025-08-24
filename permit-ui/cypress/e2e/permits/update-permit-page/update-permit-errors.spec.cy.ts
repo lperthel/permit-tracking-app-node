@@ -95,7 +95,7 @@ describe('Update Permit - Error Handling', () => {
         );
 
         // Verify application remains responsive
-        UiAssertions.verifyButtonEnabled('[data-testid="submit-button"]');
+        UiAssertions.verifySubmitButtonEnabled();
       });
     });
   });
@@ -134,7 +134,7 @@ describe('Update Permit - Error Handling', () => {
         );
 
         // Verify user can retry the operation
-        UiAssertions.verifyButtonEnabled('[data-testid="submit-button"]');
+        UiAssertions.verifySubmitButtonEnabled();
       });
     });
   });

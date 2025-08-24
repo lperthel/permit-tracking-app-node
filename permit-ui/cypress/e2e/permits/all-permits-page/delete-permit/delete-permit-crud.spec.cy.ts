@@ -44,11 +44,7 @@ describe('Update Permit - CRUD Operations', () => {
       // Clean up each permit
       testPermitIds.forEach((permitId) => {
         if (permitId) {
-          cy.request({
-            method: 'DELETE',
-            url: `http://localhost:3000/api/permits/${permitId}`,
-            failOnStatusCode: false,
-          }).then((response) => {
+          ApiActions.deletePermit(permitId).then((response) => {
             if (response.status === 200 || response.status === 204) {
               cy.log(`✅ Cleaned up permit ${permitId}`);
             } else {

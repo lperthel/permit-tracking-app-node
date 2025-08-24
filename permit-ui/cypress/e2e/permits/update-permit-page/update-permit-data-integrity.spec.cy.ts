@@ -196,8 +196,8 @@ describe('Update Permit - Data Integrity', () => {
           UiActions.clearFormField('permitName');
           UiActions.clearFormField('applicantName');
           
-          cy.get('[data-testid="input-permit-name"]').type('Partially Updated Name');
-          cy.get('[data-testid="input-applicant-name"]').type('Partially Updated Applicant');
+          UiActions.typeInPermitNameField('Partially Updated Name');
+          UiActions.typeInApplicantNameField('Partially Updated Applicant');
           
           UiActions.clickSubmitButton();
           cy.wait(1000);

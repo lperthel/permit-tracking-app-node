@@ -217,12 +217,9 @@ describe('New Permit Modal - Validation', () => {
         ];
 
         validStatuses.forEach((status) => {
-          UiActions.fillPermitForm(
-            'Test Permit',
-            'Test Applicant',
-            'Construction',
-            status
-          );
+          UiActions.fillPermitFormFromFixture(PermitFixtureKeys.CREATE_THIS_PERMIT);
+          // Override the status to test each valid status
+          UiActions.selectStatus(status);
           UiAssertions.verifyNoPermitFormError('status');
           UiActions.clearPermitForm();
         });

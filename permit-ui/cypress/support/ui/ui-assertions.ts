@@ -96,6 +96,10 @@ export class UiAssertions {
     cy.get(buttonSelector).should('not.be.disabled');
   }
 
+  static verifySubmitButtonEnabled(): void {
+    cy.get(getTestSelector(PERMIT_FORM_SELECTORS.SUBMIT_BUTTON)).should('not.be.disabled');
+  }
+
   /**
    * Gets table row count
    */

@@ -278,4 +278,23 @@ export class UiActions {
       cy.get(fieldSelectors[field]).clear();
     }
   }
+
+  /**
+   * Types text into specific form fields
+   */
+  static typeInPermitNameField(value: string): void {
+    cy.get(selector_shortcuts.permitForm.inputPermitName).type(value);
+  }
+
+  static typeInApplicantNameField(value: string): void {
+    cy.get(selector_shortcuts.permitForm.inputApplicant).type(value);
+  }
+
+  static typeInPermitTypeField(value: string): void {
+    cy.get(selector_shortcuts.permitForm.inputPermitType).type(value);
+  }
+
+  static selectStatus(status: string): void {
+    cy.get(selector_shortcuts.permitForm.inputStatus).select(status);
+  }
 }
