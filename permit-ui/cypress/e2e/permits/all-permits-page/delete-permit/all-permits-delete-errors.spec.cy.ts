@@ -162,42 +162,44 @@ describe('All Permits Page - Delete Operation Error Scenarios', () => {
   });
 
   it('should handle multiple consecutive delete failures gracefully', () => {
-    // Create two test permits
-    const permit1 = ApiActions.createPermitFromFixture(
+    // Create first test permit
+    ApiActions.createPermitFromFixture(
       PermitFixtureKeys.DELETE_TEST_PERMIT
-    );
-    const permit2 = ApiActions.createPermitFromFixture(
-      PermitFixtureKeys.ERROR_SCENARIO_PERMIT
-    );
+    ).then((permit1Id) => {
+      testPermitIds.push(permit1Id);
 
-    Promise.all([permit1, permit2]).then((permitIds) => {
-      testPermitIds.push(...permitIds);
+      // Create second test permit
+      ApiActions.createPermitFromFixture(
+        PermitFixtureKeys.ERROR_SCENARIO_PERMIT
+      ).then((permit2Id) => {
+        testPermitIds.push(permit2Id);
 
-      UiActions.clickRefreshButton();
-      UiActions.waitForTableLoad();
+        UiActions.clickRefreshButton();
+        UiActions.waitForTableLoad();
 
-      // Set up delete error for all requests using new enum-based API
-      ApiIntercepts.interceptError(
-        ApiOperation.DELETE,
-        ApiErrorType.SERVER_ERROR,
-        'deleteFailure'
-      );
+        // Set up delete error for all requests using new enum-based API
+        ApiIntercepts.interceptError(
+          ApiOperation.DELETE,
+          ApiErrorType.SERVER_ERROR,
+          'deleteFailure'
+        );
 
-      // Delete first permit
-      UiActions.deletePermitByIndex(0);
-      cy.wait('@deleteFailure');
-      UiAssertions.verifyAllPermitsErrorMessage('Could not delete');
+        // Delete first permit
+        UiActions.deletePermitByIndex(0);
+        cy.wait('@deleteFailure');
+        UiAssertions.verifyAllPermitsErrorMessage('Could not delete');
 
-      // Delete second permit
-      UiActions.deletePermitByIndex(1);
-      cy.wait('@deleteFailure');
+        // Delete second permit
+        UiActions.deletePermitByIndex(1);
+        cy.wait('@deleteFailure');
 
-      // Verify error shows both failures
-      UiAssertions.verifyAllPermitsErrorMessage('Could not delete 2 permits:');
+        // Verify error shows both failures
+        UiAssertions.verifyAllPermitsErrorMessage('Could not delete 2 permits:');
 
-      UiAssertions.verifyButtonEnabled(
-        `[data-testid="${AllPermitsComponentConstants.TEST_IDS.REFRESH_PERMITS_BUTTON}"]`
-      );
+        UiAssertions.verifyButtonEnabled(
+          `[data-testid="${AllPermitsComponentConstants.TEST_IDS.REFRESH_PERMITS_BUTTON}"]`
+        );
+      });
     });
   });
 });
