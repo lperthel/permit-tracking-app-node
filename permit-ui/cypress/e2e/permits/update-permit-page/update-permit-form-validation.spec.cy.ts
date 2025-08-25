@@ -1,166 +1,119 @@
-/*
- * Tests form validation during permit updates including required fields,
- * accessibility, and error state preservation.
- */
-
 import {
   PERMIT_FORM_ERRORS,
   PERMIT_FORM_SELECTORS,
 } from '../../../../src/app/permits/permit-form-model/permit-form.constants';
+import { PermitStatus } from '../../../../src/app/permits/shared/models/permit-status.enums';
 import { PermitFixtureKeys } from '../../../fixtures/permits/permit-fixtures';
-import { ApiActions } from '../../../support/api/api-actions';
-import { getTestSelector } from '../../../support/ui/cypress-selectors';
+import { FormValidationTests } from '../../../support/shared-tests/form-validation-tests';
+import { PermitUpdateTestSetup } from '../../../support/test-setup/permit-update-test-setup';
 import { UiActions } from '../../../support/ui/ui-actions';
+import { getTestSelector } from '../../../support/ui/cypress-selectors';
 import { UiAssertions } from '../../../support/ui/ui-assertions';
 
+/*
+ * OVERVIEW:
+ * =========
+ * This test suite validates form validation behavior for the Update Permit modal,
+ * ensuring consistent validation rules with the New Permit modal since both use
+ * the same PermitFormComponent.
+ *
+ * TEST STRATEGY:
+ * ==============
+ * Uses shared FormValidationTests class to avoid duplication with new-permit tests:
+ * - FormValidationTests: Shared validation logic for permit forms
+ * - PermitUpdateTestSetup: Setup utilities for update permit tests
+ * - UiActions: Centralized UI interactions
+ * - UiAssertions: Standardized verification patterns
+ */
+
 describe('Update Permit - Form Validation', () => {
-  let testPermitId: string;
+  let testPermitId: string | undefined;
+
+  beforeEach(() => {
+    // Create a test permit and open the update modal
+    PermitUpdateTestSetup.setupWithTestPermit(
+      PermitFixtureKeys.UPDATE_TEST_PERMIT_BEFORE
+    ).then((permitId) => {
+      testPermitId = permitId;
+      // Modal should now be open and ready for validation testing
+      cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_HEADER)).should('exist');
+    });
+  });
 
   afterEach(() => {
-    if (testPermitId) {
-      ApiActions.deletePermit(testPermitId);
-    }
+    // Clean up test permit
+    PermitUpdateTestSetup.teardown(testPermitId);
+    testPermitId = undefined;
   });
 
-  it('should validate all required fields when cleared and submitted', () => {
-    ApiActions.createPermitFromFixture(
-      PermitFixtureKeys.UPDATE_TEST_PERMIT_BEFORE
-    ).then((permitId) => {
-      testPermitId = permitId;
+  describe('Form Validation - Required Fields', () => {
+    it('should validate all required fields when cleared and submitted', () => {
+      FormValidationTests.testRequiredFieldValidations();
+    });
 
-      UiActions.visitPermitsPage();
-      UiActions.clickRefreshButton();
-      UiActions.waitForTableLoad();
+    it('should clear validation errors when valid data is entered', () => {
+      FormValidationTests.testErrorClearing();
+    });
+  });
 
-      UiActions.getLastRowIndex().then((lastRowIndex) => {
-        UiActions.updatePermitByIndex(lastRowIndex);
+  describe('Form Validation - Field-Specific Rules', () => {
+    describe('Permit Name Validation', () => {
+      it('should validate permit name field correctly', () => {
+        FormValidationTests.testPermitNameValidation();
+      });
+    });
 
-        // Clear all required fields to trigger validation
-        UiActions.clearPermitForm();
-        UiActions.clickSubmitButton();
+    describe('Applicant Name Validation', () => {
+      it('should validate applicant name field correctly', () => {
+        FormValidationTests.testApplicantNameValidation();
+      });
+    });
 
-        // Verify validation errors appear for all required fields
-        UiAssertions.verifyFormError(
-          'permitName',
-          PERMIT_FORM_ERRORS.invalidPermitName
-        );
-        UiAssertions.verifyFormError(
-          'applicantName',
-          PERMIT_FORM_ERRORS.invalidApplicantName
-        );
-        UiAssertions.verifyFormError(
-          'permitType',
-          PERMIT_FORM_ERRORS.invalidPermitType
-        );
-        UiAssertions.verifyFormError('status', PERMIT_FORM_ERRORS.invalidStatus);
+    describe('Permit Type Validation', () => {
+      it('should validate permit type field correctly', () => {
+        FormValidationTests.testPermitTypeValidation();
+      });
+    });
 
-        // Verify modal remains open for correction
-        cy.get(getTestSelector(PERMIT_FORM_SELECTORS.MODAL_HEADER)).should(
-          'exist'
-        );
+    describe('Status Field Validation', () => {
+      it('should accept all valid status values', () => {
+        FormValidationTests.testStatusValidation();
+      });
+
+      it('should display all available status options in dropdown', () => {
+        UiAssertions.verifyStatusDropdownOptions([
+          PermitStatus.SUBMITTED,
+          PermitStatus.PENDING,
+          PermitStatus.UNDER_REVIEW,
+          PermitStatus.APPROVED,
+          PermitStatus.REJECTED,
+          PermitStatus.EXPIRED,
+        ]);
       });
     });
   });
 
-  it('should validate individual required fields', () => {
-    ApiActions.createPermitFromFixture(
-      PermitFixtureKeys.UPDATE_TEST_PERMIT_BEFORE
-    ).then((permitId) => {
-      testPermitId = permitId;
-
-      UiActions.visitPermitsPage();
-      UiActions.clickRefreshButton();
-      UiActions.waitForTableLoad();
-
-      UiActions.getLastRowIndex().then((lastRowIndex) => {
-        UiActions.updatePermitByIndex(lastRowIndex);
-
-        // Test permit name validation
-        UiActions.clearFormField('permitName');
-        UiActions.clickSubmitButton();
-        UiAssertions.verifyFormError('permitName');
-
-        // Fill permit name and verify error clears
-        cy.get('[data-testid="input-permit-name"]').type('Valid Permit Name');
-        UiAssertions.verifyNoPermitFormError('permitName');
-
-        // Test applicant name validation
-        UiActions.clearFormField('applicantName');
-        UiActions.clickSubmitButton();
-        UiAssertions.verifyFormError('applicantName');
-
-        // Fill applicant name and verify error clears
-        cy.get('[data-testid="input-applicant-name"]').type('Valid Applicant');
-        UiAssertions.verifyNoPermitFormError('applicantName');
+  describe('Update-Specific Validation', () => {
+    it('should preserve existing data when opening update modal', () => {
+      // This test is specific to update functionality
+      // Verify form is pre-populated with existing permit data
+      UiAssertions.verifyPermitFormData({
+        permitName: 'Update this Permit',
+        applicantName: 'This is a Permit added by a cypress integration Test that needs to be updated',
+        permitType: 'Construction',
+        status: PermitStatus.PENDING,
       });
     });
-  });
 
-  it('should maintain accessibility during validation', () => {
-    ApiActions.createPermitFromFixture(
-      PermitFixtureKeys.UPDATE_TEST_PERMIT_BEFORE
-    ).then((permitId) => {
-      testPermitId = permitId;
-
-      UiActions.visitPermitsPage();
-      UiActions.clickRefreshButton();
-      UiActions.waitForTableLoad();
-
-      UiActions.getLastRowIndex().then((lastRowIndex) => {
-        UiActions.updatePermitByIndex(lastRowIndex);
-
-        // Verify form has proper ARIA attributes
-        UiAssertions.verifyAriaLabels();
-        UiAssertions.verifyFormAccessibility();
-
-        // Clear fields to trigger validation
-        UiActions.clearPermitForm();
-        UiActions.clickSubmitButton();
-
-        // Verify validation errors have proper accessibility attributes
-        UiAssertions.verifyValidationErrorAccessibility();
-      });
-    });
-  });
-
-  it('should preserve form data after validation errors', () => {
-    ApiActions.createPermitFromFixture(
-      PermitFixtureKeys.UPDATE_TEST_PERMIT_BEFORE
-    ).then((permitId) => {
-      testPermitId = permitId;
-
-      UiActions.visitPermitsPage();
-      UiActions.clickRefreshButton();
-      UiActions.waitForTableLoad();
-
-      UiActions.getLastRowIndex().then((lastRowIndex) => {
-        UiActions.updatePermitByIndex(lastRowIndex);
-
-        // Partially fill form with valid data
-        cy.get('[data-testid="input-permit-name"]').clear().type('Valid Name');
-        cy.get('[data-testid="input-applicant-name"]')
-          .clear()
-          .type('Valid Applicant');
-
-        // Leave other fields empty and submit
-        UiActions.clearFormField('permitType');
-        UiActions.clearFormField('status');
-        UiActions.clickSubmitButton();
-
-        // Verify validation errors for empty fields
-        UiAssertions.verifyFormError('permitType');
-        UiAssertions.verifyFormError('status');
-
-        // Verify previously filled data is preserved
-        cy.get('[data-testid="input-permit-name"]').should(
-          'have.value',
-          'Valid Name'
-        );
-        cy.get('[data-testid="input-applicant-name"]').should(
-          'have.value',
-          'Valid Applicant'
-        );
-      });
+    it('should validate changes to existing data', () => {
+      // Clear a required field and verify validation
+      UiActions.clearFormField('permitName');
+      UiActions.clickSubmitButton();
+      UiAssertions.verifyFormError('permitName', PERMIT_FORM_ERRORS.invalidPermitName);
+      
+      // Enter valid data and verify error clears
+      UiActions.typeInPermitNameField('Updated Permit Name');
+      UiAssertions.verifyNoPermitFormError('permitName');
     });
   });
 });

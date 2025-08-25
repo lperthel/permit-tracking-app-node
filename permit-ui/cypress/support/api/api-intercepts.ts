@@ -244,4 +244,20 @@ export class ApiIntercepts {
       alias
     );
   }
+
+  /**
+   * Clears an existing intercept by overriding it with a pass-through
+   *
+   * @param httpMethod - The HTTP method to clear (GET, POST, PUT, DELETE, PATCH)
+   * @param alias - The alias of the intercept to clear
+   *
+   * @example
+   * ApiIntercepts.clearIntercept(HttpMethod.PUT, 'updateErrorFirst');
+   * ApiIntercepts.interceptSuccess(ApiOperation.UPDATE, 'updateSuccess');
+   */
+  static clearIntercept(httpMethod: HttpMethod, alias: string): void {
+    cy.intercept(httpMethod, '**/permits/**', (req) => {
+      req.continue();
+    }).as(`${alias}_cleared`);
+  }
 }

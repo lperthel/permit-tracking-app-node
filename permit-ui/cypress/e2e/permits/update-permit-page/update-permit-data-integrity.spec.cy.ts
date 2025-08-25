@@ -3,7 +3,10 @@
  * referential integrity, concurrent updates, and database consistency.
  */
 
-import { PermitFixtureKeys, PermitFixtures } from '../../../fixtures/permits/permit-fixtures';
+import {
+  PermitFixtureKeys,
+  PermitFixtures,
+} from '../../../fixtures/permits/permit-fixtures';
 import { ApiActions } from '../../../support/api/api-actions';
 import { UiActions } from '../../../support/ui/ui-actions';
 import { UiAssertions } from '../../../support/ui/ui-assertions';
@@ -35,15 +38,23 @@ describe('Update Permit - Data Integrity', () => {
       UiActions.clickRefreshButton();
       UiActions.waitForTableLoad();
 
+      // Navigate to last page where new permits are added
+      UiActions.navigateToPage('last');
+      UiActions.waitForTableLoad();
+
       UiActions.getLastRowIndex().then((lastRowIndex) => {
         UiActions.updatePermitByIndex(lastRowIndex);
         UiActions.fillPermitFormFromFixture(
           PermitFixtureKeys.UPDATE_TEST_PERMIT_AFTER
         );
         UiActions.clickSubmitButton();
-        cy.wait(1000);
 
-        // Verify permit still exists with same ID but updated data
+        // Wait for UI to update and refresh to ensure backend persistence
+        cy.wait(2000);
+        UiActions.clickRefreshButton();
+        UiActions.waitForTableLoad();
+
+        // Now verify permit still exists with same ID but updated data
         ApiActions.getPermit(permitId).then((updatedPermit) => {
           expect(updatedPermit.id).to.equal(permitId);
 
@@ -52,7 +63,9 @@ describe('Update Permit - Data Integrity', () => {
             PermitFixtureKeys.UPDATE_TEST_PERMIT_AFTER
           ).then((afterData) => {
             expect(updatedPermit.permitName).to.equal(afterData.permitName);
-            expect(updatedPermit.applicantName).to.equal(afterData.applicantName);
+            expect(updatedPermit.applicantName).to.equal(
+              afterData.applicantName
+            );
             expect(updatedPermit.permitType).to.equal(afterData.permitType);
             expect(updatedPermit.status).to.equal(afterData.status);
           });
@@ -73,6 +86,10 @@ describe('Update Permit - Data Integrity', () => {
       UiActions.clickRefreshButton();
       UiActions.waitForTableLoad();
 
+      // Navigate to last page where new permits are added
+      UiActions.navigateToPage('last');
+      UiActions.waitForTableLoad();
+
       UiActions.getLastRowIndex().then((lastRowIndex) => {
         UiActions.updatePermitByIndex(lastRowIndex);
         UiActions.fillPermitFormFromFixture(
@@ -87,7 +104,9 @@ describe('Update Permit - Data Integrity', () => {
             PermitFixtureKeys.UPDATE_TEST_PERMIT_AFTER
           ).then((expectedData) => {
             expect(fetchedPermit.permitName).to.equal(expectedData.permitName);
-            expect(fetchedPermit.applicantName).to.equal(expectedData.applicantName);
+            expect(fetchedPermit.applicantName).to.equal(
+              expectedData.applicantName
+            );
             expect(fetchedPermit.permitType).to.equal(expectedData.permitType);
             expect(fetchedPermit.status).to.equal(expectedData.status);
           });
@@ -106,6 +125,10 @@ describe('Update Permit - Data Integrity', () => {
       // Navigate to UI and open update modal
       UiActions.visitPermitsPage();
       UiActions.clickRefreshButton();
+      UiActions.waitForTableLoad();
+
+      // Navigate to last page where new permits are added
+      UiActions.navigateToPage('last');
       UiActions.waitForTableLoad();
 
       UiActions.getLastRowIndex().then((lastRowIndex) => {
@@ -129,7 +152,7 @@ describe('Update Permit - Data Integrity', () => {
           // (Implementation depends on your conflict resolution strategy)
           UiActions.clickRefreshButton();
           UiActions.waitForTableLoad();
-          
+
           // Verify permit exists and has consistent data
           UiActions.getPermitNameFromRow(0).should('exist');
         });
@@ -148,6 +171,10 @@ describe('Update Permit - Data Integrity', () => {
       UiActions.clickRefreshButton();
       UiActions.waitForTableLoad();
 
+      // Navigate to last page where new permits are added
+      UiActions.navigateToPage('last');
+      UiActions.waitForTableLoad();
+
       UiActions.getLastRowIndex().then((lastRowIndex) => {
         UiActions.updatePermitByIndex(lastRowIndex);
         UiActions.fillPermitFormFromFixture(
@@ -162,6 +189,10 @@ describe('Update Permit - Data Integrity', () => {
 
         // Verify updated data still appears correctly
         UiActions.clickRefreshButton();
+        UiActions.waitForTableLoad();
+
+        // Navigate to last page again after reload (app resets to first page)
+        UiActions.navigateToPage('last');
         UiActions.waitForTableLoad();
 
         UiActions.getLastRowIndex().then((refreshedLastRowIndex) => {
@@ -189,23 +220,29 @@ describe('Update Permit - Data Integrity', () => {
         UiActions.clickRefreshButton();
         UiActions.waitForTableLoad();
 
+        // Navigate to last page where new permits are added
+        UiActions.navigateToPage('last');
+        UiActions.waitForTableLoad();
+
         UiActions.getLastRowIndex().then((lastRowIndex) => {
           UiActions.updatePermitByIndex(lastRowIndex);
 
           // Update only permit name and applicant name
           UiActions.clearFormField('permitName');
           UiActions.clearFormField('applicantName');
-          
+
           UiActions.typeInPermitNameField('Partially Updated Name');
           UiActions.typeInApplicantNameField('Partially Updated Applicant');
-          
+
           UiActions.clickSubmitButton();
           cy.wait(1000);
 
           // Verify API shows partial update with unchanged fields preserved
           ApiActions.getPermit(permitId).then((updatedPermit) => {
             expect(updatedPermit.permitName).to.equal('Partially Updated Name');
-            expect(updatedPermit.applicantName).to.equal('Partially Updated Applicant');
+            expect(updatedPermit.applicantName).to.equal(
+              'Partially Updated Applicant'
+            );
             expect(updatedPermit.permitType).to.equal(originalData.permitType);
             expect(updatedPermit.status).to.equal(originalData.status);
           });

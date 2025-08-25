@@ -12,11 +12,15 @@ export class PermitUpdateTestSetup {
    */
   static setupModalForUpdate(
     fixtureKey: PermitFixtureKeys = PermitFixtureKeys.UPDATE_TEST_PERMIT_BEFORE,
-    permitIndex: number = 0
+    permitIndex = 0
   ): Cypress.Chainable<string> {
     return ApiActions.createPermitFromFixture(fixtureKey).then((permitId) => {
       UiActions.visitPermitsPage();
       UiActions.clickRefreshButton();
+      UiActions.waitForTableLoad();
+
+      // Navigate to last page where new permits are added
+      UiActions.navigateToPage('last');
       UiActions.waitForTableLoad();
 
       if (permitIndex === -1) {
@@ -33,20 +37,14 @@ export class PermitUpdateTestSetup {
   }
 
   /**
-   * Sets up update modal with existing permit (no API creation)
+   * Teardown method for afterEach hooks
+   * Safely deletes test permit if it was created
    */
-  static setupExistingPermitModal(permitIndex: number = 0): void {
-    UiActions.visitPermitsPage();
-    UiActions.waitForTableLoad();
-    UiActions.updatePermitByIndex(permitIndex);
-  }
-
-  /**
-   * Standard cleanup for test permits
-   */
-  static cleanupTestPermit(permitId: string): void {
+  static teardown(permitId: string | undefined): void {
     if (permitId) {
+      // Use deletePermit which already handles errors gracefully
       ApiActions.deletePermit(permitId);
+      cy.log(`Cleaning up test permit: ${permitId}`);
     }
   }
 

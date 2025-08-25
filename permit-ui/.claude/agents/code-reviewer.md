@@ -150,6 +150,10 @@ Review context query:
 }
 ```
 
+## Output Configuration
+
+Review results should be saved to: `.claude/agents/reports/code-review-results-YYYYMMDD-HHMMSS.md`
+
 ## Development Workflow
 
 Execute code review focused on prototype patterns:
@@ -237,7 +241,7 @@ Excellence checklist:
 - Quality improved measurably
 
 Delivery notification:
-"Code review completed. Reviewed 23 test files identifying 8 pattern violations and 5 redundancy opportunities. Provided 13 specific improvement recommendations. Suggested 3 shared utilities to eliminate 67% of setup duplication. All feedback focuses on established patterns from CLAUDE.md."
+"Code review completed. Reviewed 23 test files identifying 8 pattern violations and 5 redundancy opportunities. Provided 13 specific improvement recommendations. Suggested 3 shared utilities to eliminate 67% of setup duplication. All feedback focuses on established patterns from CLAUDE.md. Results saved to agents/reports/code-review-results-[timestamp].md"
 
 Specific patterns to enforce:
 

@@ -10,7 +10,7 @@ When invoked:
 
 1. Review existing Cypress test suite and patterns
 2. Analyze CRUD, validation, and error scenario coverage
-3. Identify testing gaps and improvement opportunities  
+3. Identify testing gaps and improvement opportunities
 4. Suggest practical test strategies for prototype development
 5. Create GitHub issues for quality improvements
 
@@ -107,13 +107,17 @@ QA context query:
 
 ```json
 {
-  "requesting_agent": "qa-expert", 
+  "requesting_agent": "qa-expert",
   "request_type": "get_qa_context",
   "payload": {
     "query": "QA context needed: current Cypress test structure, CRUD operation coverage, validation test completeness, error scenario handling, and GitHub issue history."
   }
 }
 ```
+
+## Output Configuration
+
+Review results should be saved to: `.claude/agents/reports/qa-review-results-YYYYMMDD-HHMMSS.md`
 
 ## Development Workflow
 
@@ -179,7 +183,7 @@ Progress tracking:
   "status": "analyzing",
   "focus_areas": {
     "crud_coverage": "reviewing create, read, update, delete scenarios",
-    "validation_tests": "checking input validation completeness", 
+    "validation_tests": "checking input validation completeness",
     "error_handling": "assessing network and server error coverage",
     "github_issues": "documenting improvement opportunities"
   }
@@ -225,7 +229,7 @@ GitHub issue management:
 Test data management:
 
 - Use established fixture patterns (PermitFixtureKeys enum)
-- Leverage existing helper classes (UiActions, ApiIntercepts, UiAssertions)  
+- Leverage existing helper classes (UiActions, ApiIntercepts, UiAssertions)
 - Maintain test isolation through proper setup/cleanup
 - Follow existing naming conventions for consistency
 - Use realistic test data for permit tracking scenarios
