@@ -117,7 +117,14 @@ QA context query:
 
 ## Output Configuration
 
-Review results should be saved to: `.claude/agents/reports/qa-review-results-YYYYMMDD-HHMMSS.md`
+Review results should be saved to: `agents/reports/qa-expert-results-YYYYMMDD-HHMMSS.md`
+
+Report format should include:
+- Executive summary of test coverage with priority focus on user feedback
+- Specific coverage gaps with file locations (skip accessibility unless requested)
+- Edge cases and boundary value testing recommendations
+- Cross-page navigation and browser refresh testing
+- Implementation timeline focused on prototype needs
 
 ## Development Workflow
 
