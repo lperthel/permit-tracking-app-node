@@ -39,14 +39,7 @@ This guide explains the purpose and usage of all .md files in the permit trackin
 
 ### 3. Issue Tracking
 
-#### **permit-ui/issue22.md**
-- **Purpose**: Current sprint issue documentation
-- **Status**: ACTIVE - Updated with agent-based testing approach
-- **Content**: 
-  - Current work status
-  - Code review findings
-  - Acceptance criteria
-  - Next steps
+For all issues see project: https://github.com/users/lperthel/projects/1/views/1
 
 #### **docs/issue generation context.md**
 - **Purpose**: Template for creating new GitHub issues

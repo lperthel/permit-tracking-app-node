@@ -84,34 +84,6 @@ If you change any variable in .env:
   
   Re‑run your shell script. The updated values will be loaded automatically.
 
-
-## Backend (Spring Boot)
-### Setup and Run Backend
-```
-cd permit-api-app
-
-# 1. Setup local PostgreSQL
-./scripts/setup-postgres-mac.sh      # macOS
-
-# 2. Install homebrew and maven
-./scripts/install_mvn_mac.sh      # macOS
-
-# 2. Build and verify
-./scripts/verify.sh
-
-# 3. Run backend
-./scripts/run_backend.sh
-```
-Backend runs at: http://localhost:8080
-
-### Running Backend Tests
-
-#### Unit tests
-```./scripts/test.sh```
-
-#### Integration tests (includes MockMvc and ITs)
-```./scripts/verify.sh```
-
 ## Frontend (Angular 19)
 ### Setup and Run
 
@@ -143,7 +115,34 @@ Frontend runs at: ```http://localhost:4200```
 #### Integration tests (Cypress)
 ```ng e2e```
 
-Note: Faker server must be running for Cypress Intergation Tests
+Note: Faker server must be running for Cypress Intergation and E2E Tests
+
+## Backend (Spring Boot)
+### Setup and Run Backend
+```
+cd permit-api-app
+
+# 1. Setup local PostgreSQL
+./scripts/setup-postgres-mac.sh      # macOS
+
+# 2. Install homebrew and maven
+./scripts/install_mvn_mac.sh      # macOS
+
+# 2. Build and verify
+./scripts/verify.sh
+
+# 3. Run backend
+./scripts/run_backend.sh
+```
+Backend runs at: http://localhost:8080
+
+### Running Backend Tests
+
+#### Unit tests
+```./scripts/test.sh```
+
+#### Integration tests (includes MockMvc and ITs)
+```./scripts/verify.sh```
 
 ## Tech Highlights
 
@@ -169,12 +168,4 @@ Portfolio‑Ready Practices
 
 ## Next Steps
 
-Update Postman scripts to work with new controller
-
-Change Angular to conform to Permit model object
-
-Integrate OWASP dependency Check
-
-Add CI/CD pipelines to automate testing and deployment
-
-Deploy backend to AWS ECS + RDS and frontend to S3 + CloudFront
+See project Page: https://github.com/users/lperthel/projects/1/views/1
