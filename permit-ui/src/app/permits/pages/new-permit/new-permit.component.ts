@@ -41,7 +41,7 @@ export class NewPermitComponent implements OnInit {
     private readonly permitService: PermitService,
     private readonly router: Router,
     public permitForm: PermitForm
-  ) {}
+  ) { }
 
   permitFormComponent =
     viewChild.required<PermitFormComponent>('permitFormElement');
@@ -77,7 +77,7 @@ export class NewPermitComponent implements OnInit {
     };
 
     const sub = this.permitService.createPermit(permit).subscribe({
-      next: (_resp) => {
+      next: (_permit: Permit) => {
         this.isSubmitting.set(false);
         this.permitFormComponent().restError.set(this.EMPTY_STRING);
         this.permitFormComponent().dismissModal(this.SAVE_CLICK_DISMISS_REASON);

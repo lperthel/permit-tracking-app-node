@@ -34,7 +34,7 @@ export class UpdatePermitComponent implements OnInit {
     private readonly permitService: PermitService,
     private readonly router: Router,
     public permitForm: PermitForm
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.foundPermit = this.permitService
@@ -74,7 +74,7 @@ export class UpdatePermitComponent implements OnInit {
     const subscription = this.permitService
       .updatePermit(updatePermit)
       .subscribe({
-        next: (_resp) => {
+        next: (_updatedPermit: Permit) => {
           this.isSubmitting.set(false);
           this.permitFormComponent().restError.set('');
           this.permitFormComponent().dismissModal('save-click');

@@ -57,7 +57,8 @@ export class PermitValidationService {
     if (!data || typeof data !== PermitValidationService.OBJECT_TYPE) {
       return false;
     }
-
+    //Use record as a typesafe way to check the contents of data
+    //We are currently validating so record could have invalid data/fields
     const dataRecord = data as Record<string, unknown>;
 
     return PermitValidationService.REQUIRED_PERMIT_FIELDS.every(
@@ -107,7 +108,6 @@ export class PermitValidationService {
       if (this.isValidPermit(item)) {
         validPermits.push(item);
       } else {
-        // Audit log: record validation failure without exposing sensitive data
         console.warn(
           PermitValidationService.INVALID_DATA_LOG_PREFIX,
           `${PermitValidationService.ITEM_INDEX_LOG_PREFIX} ${index}`
@@ -115,7 +115,6 @@ export class PermitValidationService {
       }
     });
 
-    // Government compliance: log data quality metrics
     const filteredCount = originalCount - validPermits.length;
     if (filteredCount > 0) {
       console.warn(

@@ -28,33 +28,34 @@ export class PermitService {
     private readonly httpClient: HttpClient,
     private readonly destroyRef: DestroyRef,
     private readonly validator: PermitValidationService // ✅ Inject validation service
-  ) {}
+  ) { }
 
   createPermit(permit: Permit): Observable<Permit> {
     return new Observable<Permit>((observer) => {
       try {
-        this.validator.validateInputPermit(permit); // ← Sync validation
-        observer.next(permit); // ← Emit the permit if valid
-        observer.complete(); // ← Signal completion
+        this.validator.validateInputPermit(permit); // Validate the passed permit
+        observer.next(permit); // Emit the permit to the inner observable
+        observer.complete(); // Signal completion
       } catch (error) {
-        observer.error(error); // ← Emit ValidationError if invalid
+        observer.error(error); // Emit ValidationError if invalid
       }
     }).pipe(
-      switchMap(() => {
+      switchMap((permit: Permit) => { //map each emitted permit to a new observable and automatically subscribe to it
         const backupPermits = this.permits();
         this.permits.update((permits) => [...permits, permit]);
 
-        return this.httpClient
+        return this.httpClient  //automatically subscribe to
           .post<Permit>(
             API_CONSTANTS.SERVER_URL + API_CONSTANTS.PERMITS_PATH,
             JSON.stringify(permit),
             this.httpOptions
           )
-          .pipe(
+          .pipe( //We're looking at the response and will trickle up the result
             map((response) =>
+              //this returns the validated permit and will be acted on in the subscriber
               this.validator.validateSinglePermitResponse(response)
             ),
-            catchError((err) => {
+            catchError((_err) => {
               this.permits.set(backupPermits);
               return throwError(
                 () => new Error(UI_TEXT.SERVER_CONNECTION_ERROR)
@@ -75,7 +76,6 @@ export class PermitService {
         // Validate and filter response data
         map((data) => this.validator.validateAndFilterPermits(data)),
         catchError((err) => {
-          console.log(`>>>>caught error ${err}`);
           console.error(LOGGING_CONSTANTS.FETCH_ERROR_PREFIX, err.status);
 
           // Let ValidationError pass through, convert others to server error
@@ -91,14 +91,14 @@ export class PermitService {
   updatePermit(newPermit: Permit): Observable<Permit> {
     return new Observable<Permit>((observer) => {
       try {
-        this.validator.validateInputPermit(newPermit);
-        observer.next(newPermit);
+        this.validator.validateInputPermit(newPermit); //validate the passed permit
+        observer.next(newPermit); //emit the permit
         observer.complete();
       } catch (error) {
         observer.error(error);
       }
     }).pipe(
-      switchMap(() => {
+      switchMap((newPermit: Permit) => {//map each emitted permit to a new observable
         const backupPermits = this.permits();
 
         this.permits.update((permits) => {
@@ -107,16 +107,17 @@ export class PermitService {
           });
         });
 
-        return this.httpClient
+        return this.httpClient //automatically subscribed to
           .put<any>(
             API_CONSTANTS.SERVER_URL +
-              API_CONSTANTS.PERMITS_PATH +
-              newPermit.id,
+            API_CONSTANTS.PERMITS_PATH +
+            newPermit.id,
             JSON.stringify(newPermit),
             this.httpOptions
           )
           .pipe(
-            map((response) =>
+            map((response) => //We're looking at the response and will trickle up the result
+              //this returns the validated permit and will be acted on in the subscriber
               this.validator.validateSinglePermitResponse(response)
             ),
             catchError((err) => {
@@ -126,7 +127,7 @@ export class PermitService {
                 LOGGING_CONSTANTS.STATUS_LOG,
                 err.status
               );
-              this.permits.set(backupPermits);
+              this.permits.set(backupPermits); //rollback the update if it fails
               return throwError(
                 () => new Error(UI_TEXT.SERVER_CONNECTION_ERROR)
               );
