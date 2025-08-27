@@ -93,6 +93,54 @@ describe('Update Permit - Form Validation', () => {
     });
   });
 
+  describe('Boundary Value Testing', () => {
+    it('should accept permit names at exactly max length characters', () => {
+      FormValidationTests.testPermitNameBoundaryAccept();
+    });
+
+    it('should reject permit names exceeding max length characters', () => {
+      FormValidationTests.testPermitNameBoundaryReject();
+    });
+
+    it('should accept applicant names at exactly max length characters', () => {
+      FormValidationTests.testApplicantNameBoundaryAccept();
+    });
+
+    it('should reject applicant names exceeding max length characters', () => {
+      FormValidationTests.testApplicantNameBoundaryReject();
+    });
+
+    it('should accept permit types at exactly max length characters', () => {
+      FormValidationTests.testPermitTypeBoundaryAccept();
+    });
+
+    it('should reject permit types exceeding max length characters', () => {
+      FormValidationTests.testPermitTypeBoundaryReject();
+    });
+  });
+
+  describe('Edge Case Testing', () => {
+    it('should handle single character inputs', () => {
+      FormValidationTests.testSingleCharacterInputs();
+    });
+
+    it('should handle whitespace-only inputs', () => {
+      FormValidationTests.testWhitespaceOnlyInputs();
+    });
+
+    it('should handle fields with leading and trailing spaces', () => {
+      FormValidationTests.testLeadingTrailingSpaces();
+    });
+
+    it('should handle special characters within limits', () => {
+      FormValidationTests.testSpecialCharacters();
+    });
+
+    it('should handle Unicode characters within limits', () => {
+      FormValidationTests.testUnicodeCharacters();
+    });
+  });
+
   describe('Update-Specific Validation', () => {
     it('should preserve existing data when opening update modal', () => {
       // This test is specific to update functionality

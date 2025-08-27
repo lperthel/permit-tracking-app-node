@@ -3,7 +3,10 @@
 // ============================================================================
 
 import { PermitFixtureKeys } from '../../fixtures/permits/permit-fixtures';
-import { PERMIT_FORM_ERRORS } from '../../../src/app/permits/permit-form-model/permit-form.constants';
+import { 
+  PERMIT_FORM_ERRORS, 
+  PERMIT_FORM_CONSTRAINTS
+} from '../../../src/app/permits/permit-form-model/permit-form.constants';
 import { PermitStatus } from '../../../src/app/permits/shared/models/permit-status.enums';
 import { UiActions } from '../ui/ui-actions';
 import { UiAssertions } from '../ui/ui-assertions';
@@ -132,44 +135,246 @@ export class FormValidationTests {
   }
 
   /**
-   * Run complete validation test suite
-   * Call this from either new-permit or update-permit validation tests
+   * Test permit name at exactly max length characters
    */
-  static runCompleteValidationSuite(): void {
-    describe('Required Field Validation', () => {
-      it('should show validation errors for all required fields when form is empty', () => {
-        this.testRequiredFieldValidations();
-      });
-    });
-
-    describe('Permit Name Validation', () => {
-      it('should validate permit name field', () => {
-        this.testPermitNameValidation();
-      });
-    });
-
-    describe('Applicant Name Validation', () => {
-      it('should validate applicant name field', () => {
-        this.testApplicantNameValidation();
-      });
-    });
-
-    describe('Permit Type Validation', () => {
-      it('should validate permit type field', () => {
-        this.testPermitTypeValidation();
-      });
-    });
-
-    describe('Status Validation', () => {
-      it('should accept all valid status values', () => {
-        this.testStatusValidation();
-      });
-    });
-
-    describe('Error Clearing', () => {
-      it('should clear validation errors when valid data is entered', () => {
-        this.testErrorClearing();
-      });
-    });
+  static testPermitNameBoundaryAccept(): void {
+    const exactlyMaxChars = 'A'.repeat(PERMIT_FORM_CONSTRAINTS.permitNameMaxLength);
+    
+    UiActions.typeInPermitNameField(exactlyMaxChars);
+    UiActions.typeInApplicantNameField('Valid Applicant');
+    UiActions.typeInPermitTypeField('Valid Type');
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should not show validation error for permit name
+    UiAssertions.verifyNoPermitFormError('permitName');
   }
+
+  /**
+   * Test permit name exceeding max length characters
+   */
+  static testPermitNameBoundaryReject(): void {
+    const overMaxChars = 'A'.repeat(PERMIT_FORM_CONSTRAINTS.permitNameMaxLength + 1);
+    
+    UiActions.typeInPermitNameField(overMaxChars);
+    UiActions.typeInApplicantNameField('Valid Applicant');
+    UiActions.typeInPermitTypeField('Valid Type');
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should show validation error for permit name
+    UiAssertions.verifyFormError('permitName', PERMIT_FORM_ERRORS.invalidPermitName);
+  }
+
+  /**
+   * Test applicant name at exactly max length characters
+   */
+  static testApplicantNameBoundaryAccept(): void {
+    const exactlyMaxChars = 'B'.repeat(PERMIT_FORM_CONSTRAINTS.applicantNameMaxLength);
+    
+    UiActions.typeInPermitNameField('Valid Permit');
+    UiActions.typeInApplicantNameField(exactlyMaxChars);
+    UiActions.typeInPermitTypeField('Valid Type');
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should not show validation error for applicant name
+    UiAssertions.verifyNoPermitFormError('applicantName');
+  }
+
+  /**
+   * Test applicant name exceeding max length characters
+   */
+  static testApplicantNameBoundaryReject(): void {
+    const overMaxChars = 'B'.repeat(PERMIT_FORM_CONSTRAINTS.applicantNameMaxLength + 1);
+    
+    UiActions.typeInPermitNameField('Valid Permit');
+    UiActions.typeInApplicantNameField(overMaxChars);
+    UiActions.typeInPermitTypeField('Valid Type');
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should show validation error for applicant name
+    UiAssertions.verifyFormError('applicantName', PERMIT_FORM_ERRORS.invalidApplicantName);
+  }
+
+  /**
+   * Test permit type at exactly max length characters
+   */
+  static testPermitTypeBoundaryAccept(): void {
+    const exactlyMaxChars = 'C'.repeat(PERMIT_FORM_CONSTRAINTS.permitTypeMaxLength);
+    
+    UiActions.typeInPermitNameField('Valid Permit');
+    UiActions.typeInApplicantNameField('Valid Applicant');
+    UiActions.typeInPermitTypeField(exactlyMaxChars);
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should not show validation error for permit type
+    UiAssertions.verifyNoPermitFormError('permitType');
+  }
+
+  /**
+   * Test permit type exceeding max length characters
+   */
+  static testPermitTypeBoundaryReject(): void {
+    const overMaxChars = 'C'.repeat(PERMIT_FORM_CONSTRAINTS.permitTypeMaxLength + 1);
+    
+    UiActions.typeInPermitNameField('Valid Permit');
+    UiActions.typeInApplicantNameField('Valid Applicant');
+    UiActions.typeInPermitTypeField(overMaxChars);
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should show validation error for permit type
+    UiAssertions.verifyFormError('permitType', PERMIT_FORM_ERRORS.invalidPermitType);
+  }
+
+  /**
+   * Test single character inputs
+   */
+  static testSingleCharacterInputs(): void {
+    UiActions.typeInPermitNameField('A');
+    UiActions.typeInApplicantNameField('B');
+    UiActions.typeInPermitTypeField('C');
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should accept single character inputs
+    UiAssertions.verifyNoPermitFormErrors();
+  }
+
+  /**
+   * Test whitespace-only inputs
+   */
+  static testWhitespaceOnlyInputs(): void {
+    UiActions.typeInPermitNameField('   ');
+    UiActions.typeInApplicantNameField('   ');
+    UiActions.typeInPermitTypeField('   ');
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should show validation errors for whitespace-only inputs
+    UiAssertions.verifyFormError('permitName', PERMIT_FORM_ERRORS.invalidPermitName);
+    UiAssertions.verifyFormError('applicantName', PERMIT_FORM_ERRORS.invalidApplicantName);
+    UiAssertions.verifyFormError('permitType', PERMIT_FORM_ERRORS.invalidPermitType);
+  }
+
+  /**
+   * Test fields with leading and trailing spaces
+   */
+  static testLeadingTrailingSpaces(): void {
+    UiActions.typeInPermitNameField('  Valid Permit  ');
+    UiActions.typeInApplicantNameField('  Valid Applicant  ');
+    UiActions.typeInPermitTypeField('  Valid Type  ');
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should accept inputs with leading/trailing spaces (trimmed)
+    UiAssertions.verifyNoPermitFormErrors();
+  }
+
+  /**
+   * Test special characters within limits
+   */
+  static testSpecialCharacters(): void {
+    const specialCharsPermit = "Test-Permit's & Co. (2024)";
+    const specialCharsApplicant = "O'Connor, Smith & Associates";
+    const specialCharsType = "Commercial-Retail Type";
+    
+    UiActions.typeInPermitNameField(specialCharsPermit);
+    UiActions.typeInApplicantNameField(specialCharsApplicant);
+    UiActions.typeInPermitTypeField(specialCharsType);
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should accept valid special characters
+    UiAssertions.verifyNoPermitFormErrors();
+  }
+
+  /**
+   * Test Unicode characters within limits
+   */
+  static testUnicodeCharacters(): void {
+    UiActions.typeInPermitNameField('Café Résumé Naïve Permit');
+    UiActions.typeInApplicantNameField('José María González');
+    UiActions.typeInPermitTypeField('Bâtiment Commercial');
+    UiActions.selectStatus('PENDING');
+    
+    UiActions.clickSubmitButton();
+    
+    // Should accept Unicode characters
+    UiAssertions.verifyNoPermitFormErrors();
+  }
+
+  /**
+   * Performance-optimized: Test field boundary for any field
+   * Consolidates accept and reject tests in one method
+   */
+  static testFieldBoundary(fieldName: 'permitName' | 'applicantName' | 'permitType', maxLength: number): void {
+    // Test acceptance at max length
+    const exactlyMaxChars = 'A'.repeat(maxLength);
+    const overMaxChars = 'A'.repeat(maxLength + 1);
+    
+    // First test: should accept at max length
+    UiActions.clearPermitForm();
+    
+    if (fieldName === 'permitName') {
+      UiActions.typeInPermitNameField(exactlyMaxChars);
+      UiActions.typeInApplicantNameField('Valid Applicant');
+      UiActions.typeInPermitTypeField('Valid Type');
+    } else if (fieldName === 'applicantName') {
+      UiActions.typeInPermitNameField('Valid Permit');
+      UiActions.typeInApplicantNameField(exactlyMaxChars);
+      UiActions.typeInPermitTypeField('Valid Type');
+    } else {
+      UiActions.typeInPermitNameField('Valid Permit');
+      UiActions.typeInApplicantNameField('Valid Applicant');
+      UiActions.typeInPermitTypeField(exactlyMaxChars);
+    }
+    
+    UiActions.selectStatus('PENDING');
+    UiActions.clickSubmitButton();
+    UiAssertions.verifyNoPermitFormError(fieldName);
+    
+    // Second test: should reject over max length
+    UiActions.clearPermitForm();
+    
+    if (fieldName === 'permitName') {
+      UiActions.typeInPermitNameField(overMaxChars);
+      UiActions.typeInApplicantNameField('Valid Applicant');
+      UiActions.typeInPermitTypeField('Valid Type');
+    } else if (fieldName === 'applicantName') {
+      UiActions.typeInPermitNameField('Valid Permit');
+      UiActions.typeInApplicantNameField(overMaxChars);
+      UiActions.typeInPermitTypeField('Valid Type');
+    } else {
+      UiActions.typeInPermitNameField('Valid Permit');
+      UiActions.typeInApplicantNameField('Valid Applicant');
+      UiActions.typeInPermitTypeField(overMaxChars);
+    }
+    
+    UiActions.selectStatus('PENDING');
+    UiActions.clickSubmitButton();
+    
+    // Use appropriate error message based on field
+    const errorMessage = fieldName === 'permitName' 
+      ? PERMIT_FORM_ERRORS.invalidPermitName
+      : fieldName === 'applicantName'
+      ? PERMIT_FORM_ERRORS.invalidApplicantName
+      : PERMIT_FORM_ERRORS.invalidPermitType;
+      
+    UiAssertions.verifyFormError(fieldName, errorMessage);
+  }
+
 }
