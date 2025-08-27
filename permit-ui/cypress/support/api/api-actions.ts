@@ -145,4 +145,29 @@ export class ApiActions {
       failOnStatusCode: false,
     });
   }
+
+  /**
+   * Performance optimization: Batch create permits
+   * Creates multiple permits in parallel for faster test setup
+   */
+  static batchCreatePermits(fixtures: PermitFixtureKeys[]): Cypress.Chainable<string[]> {
+    const permitPromises = fixtures.map(fixture => 
+      this.createPermitFromFixture(fixture)
+    );
+    
+    return cy.wrap(Promise.all(permitPromises));
+  }
+
+  /**
+   * Performance optimization: Batch delete permits
+   * Deletes multiple permits in parallel for faster cleanup
+   */
+  static batchDeletePermits(permitIds: string[]): Cypress.Chainable<void> {
+    permitIds.forEach(permitId => {
+      if (permitId) {
+        this.deletePermit(permitId);
+      }
+    });
+    return cy.wrap(null);
+  }
 }

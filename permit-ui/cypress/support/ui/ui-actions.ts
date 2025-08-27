@@ -131,11 +131,28 @@ export class UiActions {
   }
 
   /**
+   * Faster page visit for performance-critical tests
+   * Only waits for key elements, not full page load
+   */
+  static visitPermitsPageFast(): void {
+    cy.visit(dev_env.uiUrl);
+    cy.get(selector_shortcuts.table).should('exist');
+  }
+
+  /**
    * Wait helpers
    */
   static waitForTableLoad(): void {
     cy.get(selector_shortcuts.table).should('exist');
     cy.get(selector_shortcuts.permitRowName(0)).should('exist');
+  }
+
+  /**
+   * Faster table loading for performance-critical tests
+   * Only waits for table existence, not specific content
+   */
+  static waitForTableLoadFast(): void {
+    cy.get(selector_shortcuts.table, { timeout: 5000 }).should('be.visible');
   }
 
   static waitForPermitCount(expectedCount: number): void {
