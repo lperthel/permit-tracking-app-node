@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import {
+  AbstractControl,
   FormControl,
   FormGroup,
   NonNullableFormBuilder,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { PermitStatus } from '../shared/models/permit-status.enums';
 import {
-  PERMIT_FORM_MAX_LENGTHS,
+  PERMIT_FORM_CONSTRAINTS,
   PERMIT_FORM_PATTERNS,
 } from './permit-form.constants';
 
@@ -28,22 +30,35 @@ export class PermitForm {
     status: FormControl<PermitStatus | ''>;
   }>;
 
+  static cannotBeOnlyWhitespace(
+    control: AbstractControl
+  ): ValidationErrors | null {
+    if (control.value.match(/^\s+$/)) {
+      return { cannotBeOnlyWhitespace: true };
+    }
+
+    return null;
+  }
+
   constructor(private readonly fb: NonNullableFormBuilder) {
     this.form = this.fb.group({
       permitName: this.fb.control(this.EMPTY_STRING, [
         Validators.required,
-        Validators.maxLength(PERMIT_FORM_MAX_LENGTHS.PERMIT_NAME),
-        Validators.pattern(PERMIT_FORM_PATTERNS.PERMIT_NAME),
+        Validators.maxLength(PERMIT_FORM_CONSTRAINTS.permitNameMaxLength),
+        Validators.pattern(PERMIT_FORM_PATTERNS.VALID_CHARS),
+        PermitForm.cannotBeOnlyWhitespace,
       ]),
       applicantName: this.fb.control(this.EMPTY_STRING, [
         Validators.required,
-        Validators.maxLength(PERMIT_FORM_MAX_LENGTHS.APPLICANT_NAME),
-        Validators.pattern(PERMIT_FORM_PATTERNS.APPLICANT_NAME),
+        Validators.maxLength(PERMIT_FORM_CONSTRAINTS.applicantNameMaxLength),
+        Validators.pattern(PERMIT_FORM_PATTERNS.VALID_CHARS),
+        PermitForm.cannotBeOnlyWhitespace,
       ]),
       permitType: this.fb.control(this.EMPTY_STRING, [
         Validators.required,
-        Validators.maxLength(PERMIT_FORM_MAX_LENGTHS.PERMIT_TYPE),
-        Validators.pattern(PERMIT_FORM_PATTERNS.PERMIT_TYPE),
+        Validators.maxLength(PERMIT_FORM_CONSTRAINTS.permitTypeMaxLength),
+        Validators.pattern(PERMIT_FORM_PATTERNS.VALID_CHARS),
+        PermitForm.cannotBeOnlyWhitespace,
       ]),
       status: this.fb.control(this.EMPTY_STRING as PermitStatus | '', [
         Validators.required,

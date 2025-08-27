@@ -47,34 +47,20 @@ export const PERMIT_FORM_HEADERS = {
   updatePermit: 'Update Permit',
 };
 export const PERMIT_FORM_CONSTRAINTS = {
-  // Updated to match Java DTO constraints
   permitNameMaxLength: 100,
   applicantNameMaxLength: 100,
   permitTypeMaxLength: 50,
   // Pattern for text fields from Java: ^[a-zA-Z0-9 \-.']+$
   textFieldPattern: /^[a-zA-Z0-9 \-.']+$/,
 };
-/**
- * Validation patterns matching the Java DTO constraints
- */
 
 export const PERMIT_FORM_PATTERNS = {
-  PERMIT_NAME: /^[a-zA-Z0-9 \-.,']+$/,
-  APPLICANT_NAME: /^[a-zA-Z0-9 \-.,']+$/,
-  PERMIT_TYPE: /^[a-zA-Z0-9 \-.,']+$/,
+  VALID_CHARS: /^[a-zA-Z0-9À-ÿ \-.,&()']+$/,
 };
-/**
- * Maximum length constraints from Java DTO
- */
-export const PERMIT_FORM_MAX_LENGTHS = {
-  PERMIT_NAME: 150,
-  APPLICANT_NAME: 100,
-  PERMIT_TYPE: 50,
-};
+
 /**
  * Required field validation messages
  */
-
 export const PERMIT_FORM_REQUIRED_MESSAGES = {
   PERMIT_NAME: 'Permit name is required',
   APPLICANT_NAME: 'Applicant name is required',
