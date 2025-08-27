@@ -17,8 +17,10 @@ import {
   NgbModalRef,
 } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { PERMIT_FORM_SELECTORS } from '../../../assets/constants/permit-form.constants';
-import { PERMIT_FORM_ERRORS } from '../../permit-form-model/permit-form-constants';
+import {
+  PERMIT_FORM_ERRORS,
+  PERMIT_FORM_SELECTORS,
+} from '../../permit-form-model/permit-form.constants';
 import { PermitForm } from '../../permit-form-model/permit-form.model';
 import {
   PERMIT_STATUS_LABELS,
@@ -52,6 +54,7 @@ export class PermitFormComponent {
   errorMessages = PERMIT_FORM_ERRORS;
   permitForm = input.required<PermitForm>();
   formHeader = input.required<string>();
+  isLoading = input<boolean>(false);
 
   public closeModalEvent = output<void>();
   @Output() public formSubmission = new EventEmitter<void>();
@@ -83,7 +86,6 @@ export class PermitFormComponent {
         this.closeResult.set(`${this.CLOSE_REASON_PREFIX}${result}`);
         this.closeModalEvent.emit();
         this.permitForm().form.reset();
-        this.handleModalSuccess(result);
       },
     });
 
@@ -92,10 +94,8 @@ export class PermitFormComponent {
       next: (reason) => {
         this.closeModalEvent.emit();
         this.permitForm().form.reset();
-        this.handleModalDismissal(reason);
       },
     });
-
     // Register cleanup for all subscriptions
     this.closeConnection(modalClosed);
     this.closeConnection(modalDismissed);
@@ -103,16 +103,6 @@ export class PermitFormComponent {
 
   dismissModal(reason: string) {
     this.modalService.dismissAll(reason);
-  }
-
-  private handleModalSuccess(result: any): void {
-    // Handle successful modal completion
-    // Could trigger user notifications, analytics, etc.
-  }
-
-  private handleModalDismissal(reason: any): void {
-    // Handle modal dismissal (user cancelled)
-    // Could save draft, show helpful messages, etc.
   }
 
   onSubmit() {

@@ -322,6 +322,38 @@ describe('PermitService', () => {
       req.flush(updatedPermit);
     });
 
+    it('should rollback optimistic update on HTTP error', () => {
+      const existingPermit = createThisPermit;
+      const updatedPermit = {
+        ...existingPermit,
+        status: PermitStatus.APPROVED,
+      };
+
+      // Set up initial state with existing permit
+      service.permits.set([existingPermit]);
+      const initialPermits = service.permits();
+
+      service.updatePermit(updatedPermit).subscribe({
+        next: () => fail(SHOULD_HAVE_FAILED),
+        error: (error) => {
+          expect(error.message).toBe(SERVER_ERROR);
+          // Verify rollback occurred - should be back to original state
+          expect(service.permits()).toEqual(initialPermits);
+          // Verify optimistic update happened AFTER subscribe but BEFORE HTTP response
+        },
+      });
+      expect(service.permits()[0]).toEqual(updatedPermit);
+
+      const req = httpMock.expectOne(`${BASE_URL}${updatedPermit.id}`);
+      expect(req.request.method).toBe(HTTP_PUT_METHOD);
+
+      // Simulate HTTP error to trigger rollback
+      req.flush(SERVER_ERROR_TEXT, {
+        status: ERROR_STATUS,
+        statusText: INTERNAL_SERVER_ERROR_TEXT,
+      });
+    });
+
     it('should reject invalid input before HTTP request', () => {
       const invalidPermit = INVALID_DATA_OBJECT as any;
       validationServiceSpy.validateInputPermit.and.throwError(VALIDATION_ERROR);
@@ -338,16 +370,34 @@ describe('PermitService', () => {
   });
 
   describe('deletePermit', () => {
-    it('should delete permit with valid ID', () => {
+    it('should delete permit with valid ID and update store on success', () => {
       const permitId = deleteThisPermit.id;
+
+      // Set up initial state with permits
+      service.permits.set([deleteThisPermit, createThisPermit]);
+      const initialPermits = service.permits();
+
+      // Verify initial state contains the permit
+      expect(service.permits()).toContain(deleteThisPermit);
 
       service.deletePermit(permitId).subscribe((response) => {
         expect(response).toBeNull();
+
+        // NEW: Verify permit is removed from store AFTER HTTP success
+        expect(service.permits()).not.toContain(deleteThisPermit);
+        expect(service.permits().length).toBe(initialPermits.length - 1);
       });
+
+      // Verify store is NOT updated immediately (no optimistic update)
+      expect(service.permits()).toEqual(initialPermits);
 
       const req = httpMock.expectOne(`${BASE_URL}${permitId}`);
       expect(req.request.method).toBe(HTTP_DELETE_METHOD);
+
+      // Flush the response to trigger success callback
       req.flush(null);
+
+      // After flush, the subscribe callback should have run and updated the store
     });
 
     it('should reject empty or whitespace permit ID', () => {
@@ -369,7 +419,7 @@ describe('PermitService', () => {
       httpMock.expectNone(`${BASE_URL}${WHITESPACE_STRING}`);
     });
 
-    it('should rollback optimistic delete on HTTP error', () => {
+    it('should NOT update store on HTTP error', () => {
       const permitId = deleteThisPermit.id;
 
       // Set up initial state
@@ -380,15 +430,40 @@ describe('PermitService', () => {
         next: () => fail(SHOULD_HAVE_FAILED),
         error: (error) => {
           expect(error.message).toBe(SERVER_ERROR);
+          // NEW: Store should remain unchanged (no optimistic update, no rollback needed)
           expect(service.permits()).toEqual(initialPermits);
         },
       });
+
+      // Verify store is unchanged immediately (no optimistic update)
+      expect(service.permits()).toEqual(initialPermits);
 
       const req = httpMock.expectOne(`${BASE_URL}${permitId}`);
       req.flush(SERVER_ERROR_TEXT, {
         status: ERROR_STATUS,
         statusText: INTERNAL_SERVER_ERROR_TEXT,
       });
+
+      // Store should still be unchanged after error
+    });
+  });
+
+  describe('closeConnection', () => {
+    it('should register subscription cleanup on destroy', () => {
+      const mockSubscription = jasmine.createSpyObj('Subscription', [
+        'unsubscribe',
+      ]);
+      const destroyRefSpy = spyOn(service['destroyRef'], 'onDestroy');
+
+      service.closeConnection(mockSubscription);
+
+      expect(destroyRefSpy).toHaveBeenCalled();
+
+      // Simulate component destruction
+      const destroyCallback = destroyRefSpy.calls.mostRecent().args[0];
+      destroyCallback();
+
+      expect(mockSubscription.unsubscribe).toHaveBeenCalled();
     });
   });
 });

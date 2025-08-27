@@ -9,12 +9,7 @@ import {
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import {
-  ActivatedRoute,
-  Router,
-  RouterLink,
-  RouterOutlet,
-} from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { ROUTE_CONSTANTS } from '../../../app.routes';
 import { PAGINATION } from '../../../assets/constants/pagination.constants';
@@ -46,8 +41,6 @@ import { AllPermitsComponentConstants } from './all-permits-component.constants'
   styleUrl: './all-permits.component.css',
 })
 export class AllPermitsComponent implements OnInit, AfterViewInit {
-  isLoading = signal<boolean>(false);
-
   // Replace your hardcoded columnsToDisplay with:
   columnsToDisplay: string[] = AllPermitsComponentConstants.COLUMNS_TO_DISPLAY;
 
@@ -66,7 +59,11 @@ export class AllPermitsComponent implements OnInit, AfterViewInit {
   paginator = viewChild.required<MatPaginator>(MatPaginator);
   restError = signal<string>(this.UI_TEXT.EMPTY_ERROR);
   manuallyUpdatePermitsSuccessful = signal<string>(UI_TEXT.EMPTY_ERROR);
+  isLoading = signal<boolean>(false);
+  private readonly failedDeletes = signal<string[]>([]);
+  deletingPermits = signal<Set<string>>(new Set());
   dataSource = new MatTableDataSource<Permit>();
+
   permitService = inject(PermitService);
   private readonly permits$ = toObservable(this.permitService.permits);
 
@@ -116,11 +113,6 @@ export class AllPermitsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  constructor(
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly router: Router
-  ) {}
-
   refreshPermitsFromDB() {
     this.isLoading.set(true);
 
@@ -139,17 +131,58 @@ export class AllPermitsComponent implements OnInit, AfterViewInit {
   }
 
   onDelete(permitId: string) {
+    // Add permit to deleting set
+    const permitName =
+      this.permitService.permits().find((p) => p.id === permitId)?.permitName ||
+      `Permit ${permitId}`;
+
+    this.deletingPermits.update((current) => new Set(current).add(permitId));
+
     const sub = this.permitService.deletePermit(permitId).subscribe({
-      next: (_resp) => this.restError.set(UI_TEXT.EMPTY_ERROR),
-      error: (err: Error) => this.restError.set(err.message),
+      next: (_resp) => {
+        // SUCCESS: Only handle UI state - service already updated the data
+        this.deletingPermits.update((current) => {
+          const updated = new Set(current);
+          updated.delete(permitId);
+          return updated;
+        });
+        this.failedDeletes.update((current) =>
+          current.filter((name) => name !== permitName)
+        );
+        this.updateErrorDisplay();
+      },
+      error: (err: Error) => {
+        this.failedDeletes.update((current) =>
+          current.includes(permitName) ? current : [...current, permitName]
+        );
+
+        // Update error display
+        this.updateErrorDisplay();
+      },
     });
 
     this.permitService.closeConnection(sub);
+  }
 
-    this.router.navigate([this.ROUTES.ROOT_PAGE], {
-      relativeTo: this.activatedRoute,
-      onSameUrlNavigation: 'reload',
-      queryParamsHandling: 'preserve',
-    });
+  isDeleting(permitId: string): boolean {
+    return this.deletingPermits().has(permitId);
+  }
+
+  private updateErrorDisplay() {
+    const failedPermits = this.failedDeletes();
+
+    if (failedPermits.length === 0) {
+      this.restError.set(this.UI_TEXT.EMPTY_ERROR);
+    } else if (failedPermits.length === 1) {
+      this.restError.set(
+        `Could not delete "${failedPermits[0]}". Please try again.`
+      );
+    } else {
+      this.restError.set(
+        `Could not delete ${failedPermits.length} permits: ${failedPermits.join(
+          ', '
+        )}. Please try again.`
+      );
+    }
   }
 }

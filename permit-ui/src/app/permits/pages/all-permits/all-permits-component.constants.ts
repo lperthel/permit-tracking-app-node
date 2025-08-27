@@ -19,8 +19,6 @@ export class AllPermitsComponentConstants {
     AllPermitsComponentConstants.COLUMN_NAMES.UPDATE,
     AllPermitsComponentConstants.COLUMN_NAMES.DELETE,
   ];
-
-  // UI Text constants
   static readonly UI_TEXT = {
     ABOUT_HEADER: 'About',
     NEW_PERMIT_BUTTON: 'New Permit',
@@ -36,6 +34,7 @@ export class AllPermitsComponentConstants {
     DELETE_HEADER: 'Delete',
     UPDATE_BUTTON: 'Update',
     DELETE_BUTTON: 'Delete',
+    DELETING_BUTTON: 'Deleting...', // NEW
     EMPTY_ERROR: '',
   } as const;
 
@@ -60,6 +59,13 @@ export class AllPermitsComponentConstants {
 
   // Test IDs for Cypress testing
   static readonly TEST_IDS = {
+    SUCCESS_ALERT: 'all-permits-success-alert',
+    LOADING_SPINNER: 'all-permits-loading-spinner',
+    LOADING_SPINNER_TEXT: 'all-permits-loading-text',
+    EMPTY_STATE_CONTAINER: 'all-permits-empty-state',
+    EMPTY_STATE_ALERT: 'all-permits-empty-alert',
+    CREATE_FIRST_PERMIT_BUTTON: 'all-permits-create-first-button',
+    REST_ERROR_ALERT: 'all-permits-rest-error',
     NEW_PERMIT_BUTTON: 'new-permit-button',
     REFRESH_PERMITS_BUTTON: 'refresh-permits-button',
     PERMITS_TABLE: 'permits-table',
@@ -75,6 +81,9 @@ export class AllPermitsComponentConstants {
     STATUS_CELL: (index: number) => `status-cell-${index}`,
     UPDATE_CELL: (index: number) => `update-cell-${index}`,
     DELETE_CELL: (index: number) => `delete-cell-${index}`,
+    DELETE_LOADING_SPINNER: (index: number) =>
+      `delete-loading-spinner-${index}`,
+    DELETE_PERMIT_BUTTON: (index: number) => `delete-button-${index}`,
   } as const;
 
   // Pagination settings
@@ -85,13 +94,7 @@ export class AllPermitsComponentConstants {
 
   // Page content
   static readonly APP_HEADER = 'Government Permit Tracking System';
-  static readonly APP_DESCRIPTION_ENCODED = `Enterprise permit tracking platform engineered for government environments with FISMA-aligned security,
-Section 508 accessibility compliance, and cloud-native architecture. Built with Angular frontend and
-Java 17 + Spring Boot microservices on AWS GovCloud-ready infrastructure using PostgreSQL (RDS).
-Features comprehensive audit trails and enterprise integration capabilities for mission-critical operations.`;
+  static readonly APP_DESCRIPTION_ENCODED = `Modern permit tracking application built for government-style environments using Java 17, Spring Boot 3, and PostgreSQL backend with Angular 19 frontend. Implements security-first architecture with input validation, request filtering, and comprehensive test coverage. Features RESTful API design, responsive UI, and local-first development approach with cloud deployment readiness.`;
 
-  static readonly APP_DESCRIPTION = `Enterprise permit tracking platform engineered for government environments with <strong>FISMA-aligned security</strong>,
-<strong>Section 508 accessibility compliance</strong>, and cloud-native architecture. Built with <strong>Angular</strong> frontend and
-<strong>Java 17 + Spring Boot</strong> microservices on <strong>AWS GovCloud-ready infrastructure</strong> using <strong>PostgreSQL (RDS)</strong>.
-Features comprehensive audit trails and enterprise integration capabilities for mission-critical operations.`;
+  static readonly APP_DESCRIPTION = `Modern permit tracking application built for government-style environments using Java 17, Spring Boot 3, and PostgreSQL backend with Angular 19 frontend. Implements security-first architecture with input validation, request filtering, and comprehensive test coverage. Features RESTful API design, responsive UI, and local-first development approach with cloud deployment readiness.`;
 }

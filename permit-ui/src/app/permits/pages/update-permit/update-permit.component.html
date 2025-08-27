@@ -2,6 +2,7 @@
   #permitFormElement
   [formHeader]="modalHeader"
   [permitForm]="permitForm"
+  [isLoading]="isSubmitting()"
   (closeModalEvent)="handleCloseModal()"
   (formSubmission)="handleFormSubmission()"
 ></app-permit-form>

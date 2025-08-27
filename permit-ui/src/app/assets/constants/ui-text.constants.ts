@@ -10,9 +10,6 @@ export const UI_TEXT = {
 
   // UI state text
   EMPTY_ERROR: '',
-  LOADING_MESSAGE: 'Loading permits...',
-  NO_PERMITS_FOUND: 'No permits found.',
-  CREATE_FIRST_PERMIT: 'Create Your First Permit',
 
   // Success messages
   PERMITS_UPDATED_SUCCESS: 'Permits successfully updated from database',

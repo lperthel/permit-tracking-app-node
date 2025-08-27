@@ -33,6 +33,7 @@
     role="alert"
     aria-live="assertive"
     [attr.aria-label]="ARIA_LABELS.ERROR_ALERT"
+    [attr.data-testid]="TEST_IDS.REST_ERROR_ALERT"
     tabindex="0"
   >
     {{ restError() }}
@@ -48,6 +49,7 @@
     role="alert"
     aria-live="polite"
     [attr.aria-label]="ARIA_LABELS.SUCCESS_ALERT"
+    [attr.data-testid]="TEST_IDS.SUCCESS_ALERT"
     tabindex="0"
   >
     {{ manuallyUpdatePermitsSuccessful() }}
@@ -80,23 +82,39 @@
 
   <!-- Loading spinner - simple @if, no @defer -->
   @if(isLoading()) {
-  <div class="d-flex justify-content-center p-4">
+  <div
+    class="d-flex justify-content-center p-4"
+    [attr.data-testid]="TEST_IDS.LOADING_SPINNER"
+  >
     <div class="spinner-border" role="status">
-      <span class="visually-hidden">{{ UI_TEXT.LOADING_MESSAGE }}</span>
+      <span
+        class="visually-hidden"
+        [attr.data-testid]="TEST_IDS.LOADING_SPINNER_TEXT"
+      >
+        {{ UI_TEXT.LOADING_MESSAGE }}
+      </span>
     </div>
   </div>
   }
 
-  <!-- Empty state - simple @if, no @defer -->
+  <!-- Empty state -->
   @if(dataSource.data.length == 0 && !isLoading()) {
-  <div class="text-center p-4">
-    <div class="alert alert-info" role="status">
+  <div
+    class="text-center p-4"
+    [attr.data-testid]="TEST_IDS.EMPTY_STATE_CONTAINER"
+  >
+    <div
+      class="alert alert-info"
+      role="status"
+      [attr.data-testid]="TEST_IDS.EMPTY_STATE_ALERT"
+    >
       <h6 class="mb-2">{{ UI_TEXT.NO_PERMITS_FOUND }}</h6>
       <p class="mb-3">Get started by creating your first permit.</p>
       <button
         type="button"
         class="btn btn-primary btn-sm"
         [routerLink]="ROUTES.NEW_PERMIT_PATH"
+        [attr.data-testid]="TEST_IDS.CREATE_FIRST_PERMIT_BUTTON"
       >
         {{ UI_TEXT.CREATE_FIRST_PERMIT }}
       </button>
@@ -104,7 +122,6 @@
   </div>
   }
 
-  <!-- Table and paginator - NO @defer, always rendered -->
   <table
     mat-table
     [dataSource]="dataSource"
@@ -236,9 +253,22 @@
         <button
           class="btn btn-danger"
           (click)="onDelete(permit.id)"
+          [disabled]="isDeleting(permit.id)"
           [attr.aria-label]="ARIA_LABELS.DELETE_PERMIT(permit.permitName)"
+          [attr.data-testid]="TEST_IDS.DELETE_PERMIT_BUTTON(i)"
         >
+          @if(isDeleting(permit.id)) {
+          <span
+            class="spinner-border spinner-border-sm me-2"
+            role="status"
+            [attr.data-testid]="TEST_IDS.DELETE_LOADING_SPINNER(i)"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </span>
+          {{ UI_TEXT.DELETING_BUTTON }}
+          } @else {
           {{ UI_TEXT.DELETE_BUTTON }}
+          }
         </button>
       </td>
     </ng-container>

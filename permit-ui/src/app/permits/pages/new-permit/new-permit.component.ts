@@ -15,7 +15,7 @@ import { PermitFormComponent } from '../../components/permit-form/permit-form.co
 import {
   PERMIT_FORM_ERRORS,
   PERMIT_FORM_HEADERS,
-} from '../../permit-form-model/permit-form-constants';
+} from '../../permit-form-model/permit-form.constants';
 import { PermitForm } from '../../permit-form-model/permit-form.model';
 import { PermitStatus } from '../../shared/models/permit-status.enums';
 import { Permit } from '../../shared/models/permit.model';
@@ -35,9 +35,10 @@ export class NewPermitComponent implements OnInit {
 
   errorMessages = PERMIT_FORM_ERRORS;
   modalHeader = PERMIT_FORM_HEADERS.newPermit;
+  isSubmitting = signal<boolean>(false);
 
   constructor(
-    private readonly createPermitService: PermitService,
+    private readonly permitService: PermitService,
     private readonly router: Router,
     public permitForm: PermitForm
   ) {}
@@ -51,6 +52,9 @@ export class NewPermitComponent implements OnInit {
   }
 
   createPermit() {
+    // start spinner
+    this.isSubmitting.set(true);
+
     this.permitForm.form.markAllAsTouched();
 
     const rawName = this.permitForm.form.value.permitName!;
@@ -60,6 +64,7 @@ export class NewPermitComponent implements OnInit {
     DOMPurify.sanitize(rawDescription);
 
     if (this.permitForm.form.invalid) {
+      this.isSubmitting.set(false);
       return;
     }
 
@@ -71,16 +76,18 @@ export class NewPermitComponent implements OnInit {
       status: this.permitForm.form.value.status! as PermitStatus,
     };
 
-    const sub = this.createPermitService.createPermit(permit).subscribe({
+    const sub = this.permitService.createPermit(permit).subscribe({
       next: (_resp) => {
+        this.isSubmitting.set(false);
         this.permitFormComponent().restError.set(this.EMPTY_STRING);
         this.permitFormComponent().dismissModal(this.SAVE_CLICK_DISMISS_REASON);
       },
       error: (err: Error) => {
+        this.isSubmitting.set(false);
         this.permitFormComponent().restError.set(err.message);
       },
     });
-    this.createPermitService.closeConnection(sub);
+    this.permitService.closeConnection(sub);
   }
 
   onCancel() {

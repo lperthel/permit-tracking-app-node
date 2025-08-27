@@ -67,3 +67,5 @@ permit-api-app/.env
 permit-ui/cypress/downloads/downloads.html
 README-JAVA.md
 /permit-ui/coverage
+permit-ui/issue22.md
+permit-ui/Issue 21 coversation context.md

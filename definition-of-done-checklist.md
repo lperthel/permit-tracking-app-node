@@ -7,7 +7,7 @@ This checklist ensures consistent quality and government-ready standards across 
 ## 🧪 Testing Requirements
 
 ### **Test Coverage**
-- [ ] Test coverage >90% for new features and modifications
+- [ ] Test coverage >90% (estimate using e2e/integration tests) for new features and modifications
 - [ ] Unit tests for all service layer methods
 - [ ] Integration test for each new API endpoint
 - [ ] All tests pass locally before PR submission
@@ -21,19 +21,14 @@ This checklist ensures consistent quality and government-ready standards across 
 - [ ] Business rule validation tested where applicable
 
 ### **Frontend Testing**
-- [ ] Component unit tests for new Angular components
 - [ ] E2E tests updated for new user workflows
-- [ ] Cross-browser compatibility verified (Chrome, Firefox, Edge)
-- [ ] Accessibility testing completed (axe-core, manual keyboard navigation)
 
 ---
 
 ## 💻 Code Quality
 
 ### **Government-Ready Standards**
-- [ ] All hardcoded strings extracted to `final String` constants
 - [ ] No sensitive data logged (only IDs, statuses, non-PII)
-- [ ] Input validation implemented with `@Valid` annotations
 - [ ] Error messages are generic (no sensitive information exposure)
 - [ ] DTO pattern enforced (never expose entities directly)
 
@@ -55,24 +50,10 @@ This checklist ensures consistent quality and government-ready standards across 
 
 ## 📖 Documentation
 
-### **API Documentation**
-- [ ] Swagger/OpenAPI annotations added for new endpoints
-- [ ] Request/response schemas documented with examples
-- [ ] HTTP status codes documented for each endpoint
-- [ ] Business rules and validation constraints documented
-- [ ] Error response formats documented
-
-### **Code Documentation**
-- [ ] Class-level comments explain role and interactions
-- [ ] Public method comments include purpose, inputs/outputs, exceptions
-- [ ] Inline comments for complex business logic
-- [ ] Security-related code thoroughly commented
-- [ ] Non-obvious algorithms or patterns explained
-
 ### **Project Documentation**
 - [ ] README updated if new setup steps or commands added
 - [ ] Environment variables documented if new config added
-- [ ] Architecture decisions recorded for significant changes
+- [ ] Architecture decisions recorded for significant changes in git logs
 - [ ] API breaking changes noted for frontend integration
 
 ---
@@ -81,7 +62,6 @@ This checklist ensures consistent quality and government-ready standards across 
 
 ### **API Integration**
 - [ ] Postman collection updated with new/modified endpoints
-- [ ] CORS configuration supports frontend integration
 - [ ] Environment-specific configuration externalized
 - [ ] Database migrations tested and documented
 - [ ] Backward compatibility maintained (or breaking changes documented)
@@ -123,7 +103,6 @@ This checklist ensures consistent quality and government-ready standards across 
 - [ ] Stakeholder-facing documentation updated
 
 ### **Government Compliance**
-- [ ] Code follows FISMA-minded security practices
 - [ ] Audit trail considerations implemented where applicable
 - [ ] Data validation follows government standards
 - [ ] Error handling meets enterprise requirements

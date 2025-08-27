@@ -1,0 +1,62 @@
+{
+  "createPermit": {
+    "statusCode": 201,
+    "body": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "permitName": "Integration Test Permit",
+      "applicantName": "Test Applicant Name",
+      "permitType": "Construction",
+      "status": "PENDING"
+    }
+  },
+  "updatePermit": {
+    "statusCode": 200,
+    "body": {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "permitName": "Updated Permit Name",
+      "applicantName": "Updated Applicant Name",
+      "permitType": "Renovation",
+      "status": "APPROVED"
+    }
+  },
+  "deletePermit": {
+    "statusCode": 200,
+    "body": {
+      "message": "Permit deleted successfully",
+      "deletedId": "550e8400-e29b-41d4-a716-446655440002"
+    }
+  },
+  "getPermitsList": {
+    "statusCode": 200,
+    "body": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440003",
+        "permitName": "First Test Permit",
+        "applicantName": "First Applicant",
+        "permitType": "Construction",
+        "status": "PENDING"
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440004",
+        "permitName": "Second Test Permit",
+        "applicantName": "Second Applicant",
+        "permitType": "Electrical",
+        "status": "APPROVED"
+      }
+    ]
+  },
+  "getSinglePermit": {
+    "statusCode": 200,
+    "body": {
+      "id": "550e8400-e29b-41d4-a716-446655440005",
+      "permitName": "Single Test Permit",
+      "applicantName": "Single Applicant",
+      "permitType": "Plumbing",
+      "status": "UNDER_REVIEW"
+    }
+  },
+  "emptyPermitsList": {
+    "statusCode": 200,
+    "body": []
+  }
+}
