@@ -9,8 +9,7 @@ import {
 } from '@angular/forms';
 import { PermitStatus } from '../shared/models/permit-status.enums';
 import {
-  PERMIT_FORM_CONSTRAINTS,
-  PERMIT_FORM_PATTERNS,
+  PERMIT_FORM_CONSTRAINTS
 } from './permit-form.constants';
 
 @Injectable({
@@ -45,19 +44,19 @@ export class PermitForm {
       permitName: this.fb.control(this.EMPTY_STRING, [
         Validators.required,
         Validators.maxLength(PERMIT_FORM_CONSTRAINTS.permitNameMaxLength),
-        Validators.pattern(PERMIT_FORM_PATTERNS.VALID_CHARS),
+        Validators.pattern(PERMIT_FORM_CONSTRAINTS.textFieldPattern),
         PermitForm.cannotBeOnlyWhitespace,
       ]),
       applicantName: this.fb.control(this.EMPTY_STRING, [
         Validators.required,
         Validators.maxLength(PERMIT_FORM_CONSTRAINTS.applicantNameMaxLength),
-        Validators.pattern(PERMIT_FORM_PATTERNS.VALID_CHARS),
+        Validators.pattern(PERMIT_FORM_CONSTRAINTS.textFieldPattern),
         PermitForm.cannotBeOnlyWhitespace,
       ]),
       permitType: this.fb.control(this.EMPTY_STRING, [
         Validators.required,
         Validators.maxLength(PERMIT_FORM_CONSTRAINTS.permitTypeMaxLength),
-        Validators.pattern(PERMIT_FORM_PATTERNS.VALID_CHARS),
+        Validators.pattern(PERMIT_FORM_CONSTRAINTS.textFieldPattern),
         PermitForm.cannotBeOnlyWhitespace,
       ]),
       status: this.fb.control(this.EMPTY_STRING as PermitStatus | '', [
